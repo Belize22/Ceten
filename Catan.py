@@ -1,6 +1,7 @@
 import pygame
 from TileFacade import TileFacade
 from Tile import Tile
+from Board import Board
 class Catan:
 
 	def __init__(self):
@@ -13,6 +14,11 @@ class Catan:
 
 	def run(self):
 		running = True
+		b = Board()
+		print(b.str())
+		b.randomize()
+		b.connectEdges()
+		
 		while running:
 			for event in pygame.event.get():
 				self.update()

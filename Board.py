@@ -26,11 +26,12 @@ class Board:
 	def __init__(self, tile_count = 19):
 		self.tiles = []
 		while len(Board.resources) > 0 and len(Board.activation_values) > 0:
-			rs, rs_count  = random.choice(Board.resources.items())
+			rs, rs_count = random.choice(list(Board.resources.items()))
+			print(rs)
 			if (rs_count < 1):
 				Board.resources.pop(rs)
 				continue
-			av, av_count = random.choice(Board.activation_values.items())
+			av, av_count = random.choice(list(Board.activation_values.items()))
 			if (av_count < 1):
 				Board.activation_values.pop(av)
 				continue
@@ -48,13 +49,45 @@ class Board:
 				t.edges.append(e)
 						
 	def __random_tile(self):
-		return self.tiles.get( random.randomint(0,len(self.tiles)) )
-	
+		return self.tiles[random.randint(0,len(self.tiles))]
+
+	def connectEdges(self):
+		num_circles = 2;
+		total_tile_quantity = get_exponential_sum(num_circles)
+		val = 1
+		level = 1
+
+		while val < total_tile_quantity:
+			level_tile_quantity = get_exponential_sum(level)
+			i = level_tile_quantity - 6**level
+			print("NUM: " + str(i))
+			#print("LTQ: " + str(level_tile_quantity))
+			print("6**level: " + str(6**level))
+			if (level == 1):           #2nd to inner-most circle
+				while i < 6**level+1:
+					print("ON TILE #" + str(i))
+					printNums(val, val-1)
+					if (i > 0):
+						printNums(val, 0)
+					if (i == 6**level):
+						printNums(val, 1)
+					i = i + 1
+					val = val + 1
+				level = level + 1
+			else:
+				val = 100
+
 	def str(self):
 		ret = ""
 		for t in self.tiles:
-			ret+=t.str()					
-b = Board()
-print b.str()
-b.randomize()
+			ret += t.str()
 
+def printNums(num1, num2):
+		print ("(" + str(num1) + ", " + str(num2) + ")")
+
+def get_exponential_sum(num):
+		sum = 0
+		num += 1
+		for i in range(num):
+			sum += 6**i
+		return sum
