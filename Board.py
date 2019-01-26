@@ -44,7 +44,7 @@ class Board:
 		for e in seed.edges:
 			if(e.connected_tiles != 2):
 				t = self.__random_tile()
-				e.connected_tiles.append(t)
+				e.adjacent_tiles.append(t)
 				t.edges.append(e)
 						
 	def __random_tile(self):
