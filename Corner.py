@@ -9,6 +9,6 @@ class Corner:
         self.ownership = ownership
 
     def str(self):
-        return "Corner Settlement: " + self.settlement + ", Owned By:" + self.ownership +  
-               ", Edge Count: " + repr(len(self.edges)) +  ", Tile Count: " + 
-               repr(len(self.adjacent_tiles)))  
+        return "Corner Settlement: " + self.settlement + ", Owned By:" + self.ownership \  
+               + ", Edge Count: " + repr(len(self.edges)) +  ", Tile Count: " \
+               + repr(len(self.adjacent_tiles)))  
