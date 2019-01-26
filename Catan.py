@@ -2,7 +2,7 @@ import pygame
 
 class Catan:
 	
-	def init(self):
+	def __init__(self):
 		pygame.init()
 		pygame.display.set_caption("First Window")
 		pygame.display.set_mode((640,640))
@@ -16,5 +16,4 @@ class Catan:
 
 
 game = Catan()
-game.init()
 game.run()
