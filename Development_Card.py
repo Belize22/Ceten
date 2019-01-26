@@ -16,6 +16,4 @@ class Development_Card:
     cost_ore = 1
 
     def __init__(self, _type):
-        self.type = type
-
-
+        self.type = _type
