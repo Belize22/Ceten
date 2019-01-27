@@ -20,7 +20,7 @@ class Board:
 	"9"  : 2,
 	"10" : 2,
 	"11" : 2,
-	"12" : 2,
+	"12" : 1,
 	}
 
 	def __init__(self, tile_count = 19):
@@ -29,6 +29,10 @@ class Board:
 			(rs, rs_count)  = random.choice(list(Board.resources.items()))
 			if (rs_count < 1):
 				Board.resources.pop(rs)
+				continue
+			if (rs == "desert"):
+				self.tiles.append(Tile(rs,0))
+				Board.resources[rs]-= 1
 				continue
 			(av, av_count) = random.choice(list(Board.activation_values.items()))
 			if (av_count < 1):

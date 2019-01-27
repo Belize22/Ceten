@@ -1,8 +1,8 @@
 class Player:
-    def __init__(self, name_):
+    def __init__(self, name):
 
         # resources
-        self.name = name_
+        self.name = name
         self.num_lumber = 0
         self.num_wool = 0
         self.num_grain = 0
