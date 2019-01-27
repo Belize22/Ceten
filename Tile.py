@@ -13,8 +13,8 @@ class Tile:
 
 	def numEdges(self):
 		return len(self.edges)
-
-	def edgesConnectedToCorner(self, corner):
+	
+	def numEdgesConnectedToCorner(self, corner):
 		count = 0
 		for e in self.edges:
 			if (e.hasCorner(corner) == "true"):
