@@ -3,7 +3,6 @@ from Board import Board
 from BoardFacade import BoardFacade
 
 class Catan:
-
     def __init__(self):
         pygame.init()
         pygame.display.set_caption("Pilgrims of Ceten")

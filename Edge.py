@@ -9,6 +9,6 @@ class Edge:
 		self.port = port
 
     def str(self):
-        return "Edge Ownership: " + self.settlement + ", Port: " + repr(self.port) +  
-		       ", Edge Count: "+ repr(len(self.edges)) + ", Tile Count: " + 
-			   repr(len(self.adjacent_tiles))) 
+        return "Edge Ownership: " + self.settlement + ", Port: " + repr(self.port) \
+		       + ", Edge Count: "+ repr(len(self.edges)) + ", Tile Count: " \ 
+			   + repr(len(self.adjacent_tiles))) 
