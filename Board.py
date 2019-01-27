@@ -26,11 +26,11 @@ class Board:
 	def __init__(self, tile_count = 19):
 		self.tiles = []
 		while len(Board.resources) > 0 and len(Board.activation_values) > 0:
-			rs, rs_count  = random.choice(Board.resources.items())
+			(rs, rs_count)  = random.choice(list(Board.resources.items()))
 			if (rs_count < 1):
 				Board.resources.pop(rs)
 				continue
-			av, av_count = random.choice(Board.activation_values.items())
+			(av, av_count) = random.choice(list(Board.activation_values.items()))
 			if (av_count < 1):
 				Board.activation_values.pop(av)
 				continue
@@ -38,7 +38,7 @@ class Board:
 			Board.resources[rs]-= 1
 			Board.activation_values[av]-=1
 
-	def randomize(self):
+	def connect_tiles(self):
 		seed = self.__random_tile()
 		#generate a random ring of tiles around the seed tile	
 		for e in seed.edges:
@@ -46,15 +46,16 @@ class Board:
 				t = self.__random_tile()
 				e.adjacent_tiles.append(t)
 				t.edges.append(e)
+				inner_ring.append(t)
 						
 	def __random_tile(self):
-		return self.tiles.get( random.randomint(0,len(self.tiles)) )
+		return self.tiles[ random.randint(0,len(self.tiles) - 1) ]
 	
 	def str(self):
-		ret = ""
+		ret = "Board has the Following Tiles:\n"
 		for t in self.tiles:
-			ret+=t.str()					
-b = Board()
-print b.str()
-b.randomize()
+			ret+=t.str() + "\n"
+		return ret
+
+
 
