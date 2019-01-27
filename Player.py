@@ -18,7 +18,21 @@ class Player:
         self.dev_cards = []
 
     def str(self):
-        ret = "Player: " + str(self.name)
-        ret += "\nPlayer Resources:\n" + "Wool: " + str(self.num_wool) + "\nLumber: " + str(self.num_lumber) + "\nGrain: " + str(self.num_grain) + "\nBrick: " + str(self.num_brick) + "\nOre: " + str(self.num_ore)
-        ret += "\nPlayer Pieces:\n" + "Settlements: " + str(self.num_settlements) + "\nCities: " + str(self.num_cities) + "\nRoads: " + str(self.num_roads)
+        ret = self.name_str() + "\n"
+        for s in self.res_str_list():
+            ret += s + "\n"
+        for s in self.piece_str_list():
+            ret += s + "\n"
         return ret
+	
+    def name_str(self):
+        return str(self.name)
+	
+    def res_str_list(self):
+        return ["Wool: " + str(self.num_wool), "Lumber: " + str(self.num_lumber),"Grain: " + str(self.num_grain), "Brick: " + str(self.num_brick), "Ore: " + str(self.num_ore)]
+
+    def piece_str_list(self):
+        return ["Settlements: " + str(self.num_settlements), "Cities: " + str(self.num_cities), "Roads: " + str(self.num_roads)]
+
+
+
