@@ -13,5 +13,5 @@ class DieRoller:
 		return ret
 	def test(self):
 		for x in range(6):
-			print self.roll_dice()
+			print (str(self.roll_dice()))
 
