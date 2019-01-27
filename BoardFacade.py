@@ -33,7 +33,7 @@ class BoardFacade:
 		self.screen = screen
 		self.tile_facades = []
 		self.__generate_facades()
-
+		
 	def __generate_facades(self, start = [320.0, 320.0], size = 70.0):
 		tile_count = 0
 		offset_y   = 0
