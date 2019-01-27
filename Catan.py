@@ -6,10 +6,10 @@ class Catan:
 
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("First Window")
+        pygame.display.set_caption("Pilgrims of Ceten")
         self.screen = pygame.display.set_mode((680, 640))
         self.bf = BoardFacade(Board(), self.screen)
-
+        self.screen.fill((0, 51, 204))
     def run(self):
         running = True
         while running:
