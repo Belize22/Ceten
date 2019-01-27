@@ -1,4 +1,3 @@
-import pygame
 from Board import Board
 from Player import Player
 from BoardFacade import BoardFacade
@@ -9,6 +8,9 @@ class Catan:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption("Pilgrims of Ceten")
+       	b = Board()
+		    print(b.board_str())
+		    b.connectEdges()
         self.screen = pygame.display.set_mode((680, 940))
         self.bf = BoardFacade(Board(), self.screen)
         self.screen.fill((0, 51, 204))
@@ -64,7 +66,6 @@ class Catan:
             self.current %= 4
             self.has_rolled = False
             self.next_phase_button.reset()
-		
 
 game = Catan()
 game.run()
