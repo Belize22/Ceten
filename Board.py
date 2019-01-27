@@ -31,7 +31,9 @@ class Board:
 				Board.resources.pop(rs)
 				continue
 			if (rs == "desert"):
-				self.tiles.append(Tile(rs,0))
+				t = Tile(rs,0)
+				t.robber = True
+				self.tiles.append(t)
 				Board.resources[rs]-= 1
 				continue
 			(av, av_count) = random.choice(list(Board.activation_values.items()))
@@ -54,7 +56,11 @@ class Board:
 						
 	def __random_tile(self):
 		return self.tiles[ random.randint(0,len(self.tiles) - 1) ]
-	
+	def tile_list_copy(self):
+		ret = []
+		for t in self.tiles:
+			ret.append(t)
+		return ret		
 	def str(self):
 		ret = "Board has the Following Tiles:\n"
 		for t in self.tiles:

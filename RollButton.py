@@ -12,6 +12,10 @@ class RollButton(Button):
 		super().on_click()
 		self.roll = self.__roll_dice()
 		self.draw()
+	def on_roll(self):
+		if self.roll == 7:
+			return True
+		return False
 	def __roll_dice(self):
 		roll = self.dr.roll_dice()
 		print("Current Role: " + str(roll))

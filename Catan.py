@@ -14,6 +14,8 @@ class Catan:
         self.button = RollButton((600,600), "Roll the Dice!", self.screen)
         self.clock = pygame.time.Clock()
         self.pf = PlayerFacade(Player("Gertrude"), (340,740), self.screen)
+        self.active_robber = False;
+    
     def run(self):
         running = True
         while running:
@@ -30,7 +32,19 @@ class Catan:
         self.clock.tick(15)
 
     def handle_mouse(self):
-        if self.button.in_boundaries(pygame.mouse.get_pos()):
+        print("Is the Robber Active? " + str(self.active_robber))
+        mouse_pos = pygame.mouse.get_pos()
+        if self.button.in_boundaries(mouse_pos) and self.active_robber == False:
             self.button.on_click()
+            self.active_robber = self.button.on_roll()
+        if self.bf.in_boundaries(mouse_pos) and self.active_robber == True:
+            print("I got the tile!")
+            rtf = self.bf.find_robber()
+            rtf.set_robber(False)
+            tf = self.bf.find_tile_at(mouse_pos)
+            tf.set_robber(True)
+            self.active_robber = False
+            
+
 game = Catan()
 game.run()

@@ -13,3 +13,4 @@ class PlayerFacade:
 				(228, 205, 180), 
 				((0, self.center[1]),(self.screen.get_width(), self.screen.get_height() - self.center[1])), 
 				0)
+		

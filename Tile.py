@@ -4,7 +4,8 @@ class Tile:
 		self.activation_value = activation_value
 		self.corners 	      = corners
 		self.edges	      = edges
-		self.adjacent_tiles   = adjacent_tiles	
+		self.adjacent_tiles   = adjacent_tiles
+		self.robber 	      = False	
 	def str(self):
 		return "Tile: " + self.resource + ", Value: " + repr(self.activation_value)\
 			   + ", Edge Count: "+ repr(len(self.edges)) + ", Corner Count: "\

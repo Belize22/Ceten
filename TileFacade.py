@@ -14,14 +14,15 @@ class TileFacade:
 		self.points 	   = self.__hex_pointlist_generator(scale - 3, centre)
 		self.border_points = self.__hex_pointlist_generator(scale, centre)
 		self.colour 	   = self.__set_colour(self.tile.resource)
-		if str(self.tile.activation_value) != "0" :
-			self.text 	   = self.__set_activation_value( str(self.tile.activation_value)) 
+		self.text	   = ""
 		self.centre	   = [round(centre[0]), round(centre[1])]
+		self.rect	   = None
 	def draw(self):
 		pygame.draw.polygon(self.screen, (0, 0, 0), self.border_points, 0)
 		pygame.draw.polygon(self.screen, self.colour, self.points, 0)
-		if str(self.tile.activation_value) != "0":
-			pygame.draw.circle(self.screen, (228, 205, 180), self.centre, 20, 0)
+		self.text  = self.__set_activation_value( str(self.tile.activation_value)) 
+		if str(self.tile.activation_value) != "0" or self.tile.robber == True:
+			self.rect = pygame.draw.circle(self.screen, (228, 205, 180), self.centre, 20, 0)
 			self.screen.blit(self.text,[self.centre[0] - 11, self.centre[1] - 8] )
 	
 	def __hex_pointlist_generator(self, scale, centre):
@@ -33,6 +34,8 @@ class TileFacade:
 		return ret
 	def __set_activation_value(self, activation_value):
 		font = pygame.font.Font(None, 36)
+		if self.tile.robber == True:
+			activation_value = "R"
 		return font.render(activation_value, 1, (10,10,10))
 			
 	def __set_colour(self,resource):
@@ -49,5 +52,7 @@ class TileFacade:
 		else:
 			#desert
 			return TileFacade.WHITE
+	def set_robber(self,flag):
+		self.tile.robber = flag
 	def str(self):
 		return "TileFacade with Points: " + str(self.points) + "\n" + self.tile.str()
