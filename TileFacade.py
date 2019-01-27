@@ -8,7 +8,7 @@ class TileFacade:
 		self.points = self.__hex_pointlist_generator(scale, centre)
 	
 	def draw(self):
-		pygame.draw.polygon(self.screen, (255,   0,   0), self.points, 0)	
+		pygame.draw.polygon(self.screen, (255,   0,   0), self.points, 1)	
 	
 	def __hex_pointlist_generator(self, scale, centre):
 		ret = []
@@ -17,6 +17,5 @@ class TileFacade:
 			rad = math.pi / 180.0 * deg
 			ret.append([centre[0] + scale * math.cos(rad), centre[1] + scale * math.sin(rad)])
 		return ret	
-		
-		
-
+	def str(self):
+		return "TileFacade with Points: " + str(self.points)
