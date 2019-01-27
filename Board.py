@@ -80,6 +80,7 @@ class Board:
 					if (nth_tile_being_iterated == 6*level):
 						bridge_corner = Corner()
 						setEdges(self.tiles[val], self.tiles[1], third_corner, bridge_corner)
+						print("CORNERS: " + str(self.tiles[0].edgesConnectedToCorner(third_corner)))
 
 					if (nth_tile_being_iterated == 1):
 						first_corner = second_corner

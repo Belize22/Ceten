@@ -10,5 +10,11 @@ class Edge:
 		self.corners.add(corner)
 		self.corners = set(self.corners)
 
+	def hasCorner(self, corner):
+		if (corner in self.corners):
+			return "true"
+		else:
+			return "false"
+
 	def getCorners(self):
 		return corners

@@ -11,7 +11,6 @@ class Catan:
 		t = Tile("test", 2)
 		self.tf = TileFacade(t, self.screen, [320,320], 20)
 	
-
 	def run(self):
 		running = True
 		b = Board()

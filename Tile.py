@@ -14,6 +14,13 @@ class Tile:
 	def numEdges(self):
 		return len(self.edges)
 
+	def edgesConnectedToCorner(self, corner):
+		count = 0
+		for e in self.edges:
+			if (e.hasCorner(corner) == "true"):
+				count += 1
+		return count
+				
 	def str(self):
 		print("Tile: " + self.resource)
 		return "Tile: " + self.resource + ", Value: " + repr(self.activation_value) \
