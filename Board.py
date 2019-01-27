@@ -53,41 +53,66 @@ class Board:
 
 	def connectEdges(self):
 		num_circles = 2;
-		total_tile_quantity = get_exponential_sum(num_circles)
+		total_tile_quantity = get_product_sum(num_circles)
 		val = 1
 		level = 1
 
 		while val < total_tile_quantity:
-			level_tile_quantity = get_exponential_sum(level)
-			i = level_tile_quantity - 6**level
-			print("NUM: " + str(i))
-			#print("LTQ: " + str(level_tile_quantity))
-			print("6**level: " + str(6**level))
-			if (level == 1):           #2nd to inner-most circle
-				while i < 6**level+1:
-					print("ON TILE #" + str(i))
+			level_tile_quantity = get_product_sum(level)
+			nth_tile_being_iterated = 1
+			if (level == 1):           #Middle Level
+				while nth_tile_being_iterated < 6*level+1:
+					print("ON TILE #" + str(val))
 					printNums(val, val-1)
-					if (i > 0):
+					if (nth_tile_being_iterated > 1):
 						printNums(val, 0)
-					if (i == 6**level):
+					if (nth_tile_being_iterated == 6*level):
 						printNums(val, 1)
-					i = i + 1
+					nth_tile_being_iterated = nth_tile_being_iterated + 1
 					val = val + 1
 				level = level + 1
-			else:
-				val = 100
+			else:                       #Outer Level
+				adjacent_tile_of_previous_level = val - 6*(level-1)
+				tiles_on_current_level_iterated = 0
+				while nth_tile_being_iterated < 6*level+1:
+					print("TEST: (" + str(nth_tile_being_iterated) + ", " + str(val) + ")")
+					print("ON TILE #" + str(val))
+					printNums(val, val-1)
+					printNums(val, adjacent_tile_of_previous_level)
+
+					if (val > 7 and nth_tile_being_iterated % 2 == 1):
+						adjacent_tile_of_previous_level += 1
+						printNums(val, adjacent_tile_of_previous_level)
+
+					if (nth_tile_being_iterated == 6*level):
+						printNums(val, val - 6*level+1)
+					
+					lone_edges_to_generate = 3 - (nth_tile_being_iterated % 2)
+
+					for j in range(lone_edges_to_generate):
+						printNum(val)
+
+					nth_tile_being_iterated = nth_tile_being_iterated + 1
+					val = val + 1
+
 
 	def str(self):
 		ret = ""
 		for t in self.tiles:
 			ret += t.str()
 
+def printNum(num):
+	print ("(" + str(num) + ")")
+	
 def printNums(num1, num2):
-		print ("(" + str(num1) + ", " + str(num2) + ")")
+	print ("(" + str(num1) + ", " + str(num2) + ")")
 
-def get_exponential_sum(num):
-		sum = 0
-		num += 1
-		for i in range(num):
-			sum += 6**i
-		return sum
+def get_product_sum(num):
+	sum = 0
+	num += 1
+	for i in range(num):
+		if (i > 0):
+			sum += 6*i
+		else:
+			sum += 1
+	return sum
