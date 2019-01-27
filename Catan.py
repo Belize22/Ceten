@@ -15,10 +15,10 @@ class Catan:
 	def run(self):
 		running = True
 		b = Board()
-		print(b.str())
-		b.randomize()
+		print(b.board_str())
+		#b.randomize()
 		b.connectEdges()
-		
+
 		while running:
 			for event in pygame.event.get():
 				self.update()

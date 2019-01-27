@@ -1,13 +1,21 @@
+from Edge import Edge
+
 class Tile:
 
-	def __init__(self, resource, activation_value, corners = [], edges = [], adjacent_tiles = []):
+	def __init__(self, resource, activation_value, edges = [], adjacent_tiles = []):
 		self.resource 	      = resource
 		self.activation_value = activation_value
-		self.corners 	      = corners
 		self.edges	          = edges
 		self.adjacent_tiles   = adjacent_tiles
 		
+	def addEdge(self, edge):
+		self.edges.append(edge)
+
+	def numEdges(self):
+		return len(self.edges)
+
 	def str(self):
+		print("Tile: " + self.resource)
 		return "Tile: " + self.resource + ", Value: " + repr(self.activation_value) \
-			   + ", Edge Count: "+ repr(len(self.edges)) + ", Corner Count: " \
-			   + repr(len(self.corners)) + ", Tile Count: " + repr(len(self.adjacent_tiles)) 
+			   + ", Edge Count: "+ repr(len(self.edges)) + ", Tile Count: " \
+			   + repr(len(self.adjacent_tiles)) 
