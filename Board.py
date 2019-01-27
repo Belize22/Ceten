@@ -159,15 +159,15 @@ class Board:
 			count += 1
 
 
-def setEdge(tile):
-	edge = Edge()
-	tile.addEdge(edge)
+	def setEdge(tile):
+		edge = Edge()
+		tile.addEdge(edge)
 	
-def setEdges(tiles, corners):
-	edge = Edge()
-	for i in range(len(tiles)):
-		edge.addCorner(corners[i])
-		tiles[i].addEdge(edge)
+	def setEdges(tiles, corners):
+		edge = Edge()
+		for i in range(len(tiles)):
+			edge.addCorner(corners[i])
+			tiles[i].addEdge(edge)
 
 	def connect_tiles(self):
 		seed = self.__random_tile()
@@ -217,12 +217,12 @@ def setEdges(tiles, corners):
 			ret+=t.str() + "\n"
 		return ret
 
-def get_product_sum(num):
-	sum = 0
-	num += 1
-	for i in range(num):
-		if (i > 0):
-			sum += 6*i
-		else:
-			sum += 1
-	return sum
+	def get_product_sum(num):
+		sum = 0
+		num += 1
+		for i in range(num):
+			if (i > 0):
+				sum += 6*i
+			else:
+				sum += 1
+		return sum

@@ -7,7 +7,7 @@ class Tile:
 		self.activation_value = activation_value
 		self.edges	          = []
 		self.adjacent_tiles   = []
-		
+		self.robber = False	
 	def addEdge(self, edge):
 		self.edges.append(edge)
 
@@ -23,7 +23,4 @@ class Tile:
 				
 	def str(self):
 		print("Tile: " + self.resource)
-		return "Tile: " + self.resource + ", Value: " + repr(self.activation_value) \
-			   + ", Edge Count: "+ repr(len(self.edges)) + ", Tile Count: " \
-			   + repr(len(self.adjacent_tiles)) 
-			   + repr(len(self.corners)) + ", Tile Count: " + repr(len(self.adjacent_tiles)) 
+		return "Tile: " + self.resource + ", Value: " + repr(self.activation_value) + ", Edge Count: "+ repr(len(self.edges)) + ", Tile Count: " + repr(len(self.adjacent_tiles)) + ", Edge Count: " + repr(len(self.edges)) 
