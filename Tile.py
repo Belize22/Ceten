@@ -2,11 +2,11 @@ from Edge import Edge
 
 class Tile:
 
-	def __init__(self, resource, activation_value, edges = [], adjacent_tiles = []):
+	def __init__(self, resource, activation_value):
 		self.resource 	      = resource
 		self.activation_value = activation_value
-		self.edges	          = edges
-		self.adjacent_tiles   = adjacent_tiles
+		self.edges	          = []
+		self.adjacent_tiles   = []
 		
 	def addEdge(self, edge):
 		self.edges.append(edge)

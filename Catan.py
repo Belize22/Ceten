@@ -16,7 +16,6 @@ class Catan:
 		running = True
 		b = Board()
 		print(b.board_str())
-		#b.randomize()
 		b.connectEdges()
 
 		while running:
