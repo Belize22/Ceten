@@ -37,9 +37,12 @@ class Catan:
         if self.button.in_boundaries(mouse_pos) and self.active_robber == False:
             self.button.on_click()
             self.active_robber = self.button.on_roll()
+            if self.active_robber == False:
+                self.pf.gather( self.bf.get_resources(self.button.roll) ) 
         if self.bf.in_boundaries(mouse_pos) and self.active_robber == True:
             print("I got the tile!")
             rtf = self.bf.find_robber()
+            print(str(type(rtf)))
             rtf.set_robber(False)
             tf = self.bf.find_tile_at(mouse_pos)
             tf.set_robber(True)

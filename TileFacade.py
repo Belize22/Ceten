@@ -19,10 +19,10 @@ class TileFacade:
 		self.rect	   = None
 	def draw(self):
 		pygame.draw.polygon(self.screen, (0, 0, 0), self.border_points, 0)
-		pygame.draw.polygon(self.screen, self.colour, self.points, 0)
+		self.rect = pygame.draw.polygon(self.screen, self.colour, self.points, 0)
 		self.text  = self.__set_activation_value( str(self.tile.activation_value)) 
 		if str(self.tile.activation_value) != "0" or self.tile.robber == True:
-			self.rect = pygame.draw.circle(self.screen, (228, 205, 180), self.centre, 20, 0)
+			pygame.draw.circle(self.screen, (228, 205, 180), self.centre, 20, 0)
 			self.screen.blit(self.text,[self.centre[0] - 11, self.centre[1] - 8] )
 	
 	def __hex_pointlist_generator(self, scale, centre):
