@@ -64,15 +64,28 @@ class Board:
 			nth_tile_being_iterated = 1
 			if (level == 1):           #Middle Level
 				while nth_tile_being_iterated < 6*level+1:
-					first_corner = Corner()
 					second_corner = Corner()
+					third_corner = Corner()
+
 					if (nth_tile_being_iterated == 1):
+						first_corner = Corner()
 						final_corner = first_corner
-					setEdges(self.tiles[val], self.tiles[val-1])
-					if (nth_tile_being_iterated > 1):
-						setEdges(self.tiles[val], self.tiles[0])
+
+					setEdges(self.tiles[val], self.tiles[val-1], first_corner, second_corner)
+
 					if (nth_tile_being_iterated == 6*level):
-						setEdges(self.tiles[val], self.tiles[1])
+						third_corner = final_corner
+					if (nth_tile_being_iterated > 1):
+						setEdges(self.tiles[val], self.tiles[0], first_corner, third_corner)
+					if (nth_tile_being_iterated == 6*level):
+						bridge_corner = Corner()
+						setEdges(self.tiles[val], self.tiles[1], third_corner, bridge_corner)
+
+					if (nth_tile_being_iterated == 1):
+						first_corner = second_corner
+					else:
+						first_corner = third_corner
+
 					nth_tile_being_iterated = nth_tile_being_iterated + 1
 					val = val + 1
 				level = level + 1
@@ -104,10 +117,9 @@ class Board:
 			corners_of_edges = []
 			for e in t.edges:
 				for c in e.corners:
-					c.append(corners_of_edges)
+					corners_of_edges.append(c)
 
 			corners_of_current_tile = set(corners_of_edges)
-
 			info = "Tile #" + str(count) + ": " + str(t.numEdges()) + " edges, " \
 				 + str(len(corners_of_current_tile)) + " corners, Resource: " + t.resource
 			print(info)
@@ -127,11 +139,12 @@ def setEdge(tile):
 	edge = Edge()
 	tile.addEdge(edge)
 	
-def setEdges(tile1, tile2):
-	edge1 = Edge()
-	edge2 = Edge()
-	tile1.addEdge(edge1)
-	tile2.addEdge(edge2)
+def setEdges(tile1, tile2, corner1, corner2):
+	edge = Edge()
+	edge.addCorner(corner1)
+	edge.addCorner(corner2)
+	tile1.addEdge(edge)
+	tile2.addEdge(edge)
 
 def get_product_sum(num):
 	sum = 0
