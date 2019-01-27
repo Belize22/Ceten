@@ -1,5 +1,6 @@
 from Tile import Tile
 from Edge import Edge
+from Corner import Corner
 import random
 
 class Board:
@@ -63,39 +64,53 @@ class Board:
 			nth_tile_being_iterated = 1
 			if (level == 1):           #Middle Level
 				while nth_tile_being_iterated < 6*level+1:
-					printNums(self.tiles[val], self.tiles[val-1])
+					first_corner = Corner()
+					second_corner = Corner()
+					if (nth_tile_being_iterated == 1):
+						final_corner = first_corner
+					setEdges(self.tiles[val], self.tiles[val-1])
 					if (nth_tile_being_iterated > 1):
-						printNums(self.tiles[val], self.tiles[0])
+						setEdges(self.tiles[val], self.tiles[0])
 					if (nth_tile_being_iterated == 6*level):
-						printNums(self.tiles[val], self.tiles[1])
+						setEdges(self.tiles[val], self.tiles[1])
 					nth_tile_being_iterated = nth_tile_being_iterated + 1
 					val = val + 1
 				level = level + 1
+				val = 100
 			else:                       #Outer Level
 				adjacent_tile_of_previous_level = val - 6*(level-1)
 				tiles_on_current_level_iterated = 0
 				while nth_tile_being_iterated < 6*level+1:
-					printNums(self.tiles[val], self.tiles[val-1])
-					printNums(self.tiles[val], self.tiles[adjacent_tile_of_previous_level])
+					setEdges(self.tiles[val], self.tiles[val-1])
+					setEdges(self.tiles[val], self.tiles[adjacent_tile_of_previous_level])
 
 					if (val > 7 and nth_tile_being_iterated % 2 == 1):
 						adjacent_tile_of_previous_level += 1
-						printNums(self.tiles[val], self.tiles[adjacent_tile_of_previous_level])
+						setEdges(self.tiles[val], self.tiles[adjacent_tile_of_previous_level])
 
 					if (nth_tile_being_iterated == 6*level):
-						printNums(self.tiles[val], self.tiles[val - 6*level+1])
+						setEdges(self.tiles[val], self.tiles[val - 6*level+1])
 					
 					lone_edges_to_generate = 3 - (nth_tile_being_iterated % 2)
 
 					for j in range(lone_edges_to_generate):
-						printNum(self.tiles[val])
+						setEdge(self.tiles[val])
 
 					nth_tile_being_iterated = nth_tile_being_iterated + 1
 					val = val + 1
 	
 		count = 1
 		for t in self.tiles:
-			print("Tile #" + str(count) + ": " + str(t.numEdges()) + " edges, Resource: " + t.resource)
+			corners_of_edges = []
+			for e in t.edges:
+				for c in e.corners:
+					c.append(corners_of_edges)
+
+			corners_of_current_tile = set(corners_of_edges)
+
+			info = "Tile #" + str(count) + ": " + str(t.numEdges()) + " edges, " \
+				 + str(len(corners_of_current_tile)) + " corners, Resource: " + t.resource
+			print(info)
 			count += 1
 
 
@@ -108,11 +123,11 @@ class Board:
 			count += 1
 
 
-def printNum(tile):
+def setEdge(tile):
 	edge = Edge()
 	tile.addEdge(edge)
 	
-def printNums(tile1, tile2):
+def setEdges(tile1, tile2):
 	edge1 = Edge()
 	edge2 = Edge()
 	tile1.addEdge(edge1)

@@ -2,8 +2,8 @@ import pygame
 from TileFacade import TileFacade
 from Tile import Tile
 from Board import Board
-class Catan:
 
+class Catan:
 	def __init__(self):
 		pygame.init()
 		pygame.display.set_caption("First Window")

@@ -5,3 +5,6 @@ class Edge:
 		self.corners = corners
 		self.ownership = ownership
 		self.port = port
+
+	def getCorners(self):
+		return corners
