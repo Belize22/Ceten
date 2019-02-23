@@ -1,2 +1,2 @@
 # Catan
-This is an implementation of Settler of Catan in Python for ConUHacks IV.
+This is an implementation of Settlers of Catan using Python and PyGame. Inspired by and created during ConUHacks IV.
