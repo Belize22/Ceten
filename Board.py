@@ -53,11 +53,13 @@ class Board:
 		val = 1
 		level = 1
 
+		self.tiles[0].relational_id = str(0)
 		while val < total_tile_quantity:
 			level_tile_quantity = get_product_sum(level)
 			nth_tile_being_iterated = 1
 			if (level == 1):           #Middle Level
 				while nth_tile_being_iterated < 6*level+1:
+					self.tiles[val].relational_id = str(val)
 					second_corner = Corner()
 					third_corner = Corner()
 
@@ -90,6 +92,7 @@ class Board:
 				adjacent_tile_of_previous_level = val - 6*(level-1)
 				tiles_on_current_level_iterated = 0
 				while nth_tile_being_iterated < 6*level+1:
+					self.tiles[val].relational_id = str(val)
 					second_corner = Corner()
 					third_corner = Corner()
 					setEdges([self.tiles[val], self.tiles[val-1]], [first_corner, second_corner])
@@ -136,18 +139,21 @@ class Board:
 		self.tile_info()
 
 	def tile_info(self):
-		count = 1
 		for t in self.tiles:
 			corners_of_edges = []
+			edge_ids = ""
 			for e in t.edges:
+				if (edge_ids == ""):
+					edge_ids += e.relational_id
+				else:
+					edge_ids += (", " + e.relational_id)
 				for c in e.corners:
 					corners_of_edges.append(c)
 
 			corners_of_current_tile = set(corners_of_edges)
-			info = "Tile #" + str(count) + ": " + str(t.numEdges()) + " edges, " \
+			info = "Tile #" + t.relational_id + ": " + "Edge Relationships - {" + edge_ids + "}, " \
 				 + str(len(corners_of_current_tile)) + " corners, Resource: " + t.resource
 			print(info)
-			count += 1
 
 
 	def board_str(self):
@@ -224,4 +230,8 @@ def setEdges(tiles, corners):
 	for i in range(len(tiles)):
 		edge.addCorner(corners[i])
 		tiles[i].addEdge(edge)
+		if (edge.relational_id == ""):
+			edge.relational_id += tiles[i].relational_id
+		else:
+			edge.relational_id += ("-" + tiles[i].relational_id)
 

@@ -1,7 +1,8 @@
 class Corner:
 	def __init__(self, settlement = "none", ownership = "none"):
-		self.settlement = settlement
-		self.ownership = ownership
+		self.relational_id = ""
+		self.settlement    = settlement
+		self.ownership     = ownership
 
 	def addCorner(self, corner):
 		self.corners.append(corner)

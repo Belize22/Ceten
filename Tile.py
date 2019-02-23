@@ -3,11 +3,12 @@ from Edge import Edge
 class Tile:
 
 	def __init__(self, resource, activation_value):
+		self.relational_id    = ""
 		self.resource 	      = resource
 		self.activation_value = activation_value
 		self.edges	          = []
 		self.adjacent_tiles   = []
-		self.robber = False	
+		self.robber           = False	
 	def addEdge(self, edge):
 		self.edges.append(edge)
 
