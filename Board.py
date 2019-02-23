@@ -89,8 +89,8 @@ class Board:
                     #if nth_tile_being_iterated == 2:
                     #    nth_tile_being_iterated = 100
                     #    val = 100
-                level = level + 1
-                val = 100
+                level += 1
+                #val = 100
             else:                       #Outer Level
                 first_corner = bridge_corner
                 adjacent_tile_of_previous_level = val - 6*(level-1)
@@ -101,7 +101,7 @@ class Board:
                     third_corner = Corner()
                     setEdges([self.tiles[val], self.tiles[val-1]], [first_corner, second_corner])
 
-                    if (val == 12):
+                    if (val == 18):
                         third_corner = final_corner
 
                     if (val > 7 and nth_tile_being_iterated % 2 == 1):
@@ -134,12 +134,13 @@ class Board:
                     #for j in range(lone_edges_to_generate):
                     #	setEdge(self.tiles[val])
 
-                    #if nth_tile_being_iterated == 12:
-                    #    nth_tile_being_iterated = 100
-                    #    val = 100
+                    if nth_tile_being_iterated == 12:
+                        nth_tile_being_iterated = 100
+                        val = 100
 
                     nth_tile_being_iterated = nth_tile_being_iterated + 1
                     val = val + 1
+                level += 1
         self.tile_info()
 
     def tile_info(self):
