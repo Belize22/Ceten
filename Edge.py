@@ -8,7 +8,7 @@ class Edge:
         self.ownership     = ownership
         self.port          = port
 
-    def addCorners(self, corners, tile_id):
+    def addCorners(self, corners, tile_id, at_perimeter):
         for c in corners:
             detect_num = re.search("([^0-9]*" + tile_id + "[^0-9]+)|([^0-9]+" + tile_id + "[^0-9]*)", c.relational_id)
             if (c.relational_id == "" and not detect_num):
