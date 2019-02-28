@@ -1,20 +1,29 @@
+import re
 from Corner import Corner
 
 class Edge:
-	def __init__(self, ownership="none", port="none"):
-		self.corners = set([])
-		self.ownership = ownership
-		self.port = port
+    def __init__(self, ownership="none", port=False):
+        self.relational_id = ""
+        self.corners       = []
+        self.ownership     = ownership
+        self.port          = port
 
-	def addCorner(self, corner):
-		self.corners.add(corner)
-		self.corners = set(self.corners)
+    def addCorners(self, corners, tile_id):
+        for c in corners:
+            detect_num = re.search("([^0-9]*" + tile_id + "[^0-9]+)|([^0-9]+" + tile_id + "[^0-9]*)", c.relational_id)
+            if (c.relational_id == "" and not detect_num):
+                c.relational_id += tile_id
+            elif (not detect_num):
+                c.relational_id += ("-" + tile_id)
+            
+            if (c not in self.corners):
+                self.corners.append(c)
 
-	def hasCorner(self, corner):
-		if (corner in self.corners):
-			return "true"
-		else:
-			return "false"
+    def hasCorner(self, corner):
+        if (corner in self.corners):
+            return "true"
+        else:
+            return "false"
 
-	def getCorners(self):
-		return corners
+    def getCorners(self):
+        return corners
