@@ -48,14 +48,14 @@ class Board:
             Board.resources[rs]-= 1
             Board.activation_values[av]-=1
       
-    def connectEdges(self):
+    def connectBoard(self):
         num_circles = 2;
         total_tile_quantity = get_product_sum(num_circles)
         val = 1
         level = 1
 
         self.tiles[0].relational_id = str(0)
-        while val < total_tile_quantity:
+        while level <= num_circles+1:
             level_tile_quantity = get_product_sum(level)
             nth_tile_being_iterated = 1
             if (level == 1):           #Middle Level
@@ -68,16 +68,15 @@ class Board:
                         first_corner = Corner()
                         final_corner = first_corner
 
-                    setEdges([self.tiles[val], self.tiles[val-1]], [first_corner, second_corner], False)
+                    setInnerEdges([self.tiles[val], self.tiles[val-1]], [first_corner, second_corner])
 
                     if (nth_tile_being_iterated == 6*level):
                         third_corner = final_corner
                     if (nth_tile_being_iterated > 1):
-                        setEdges([self.tiles[val], self.tiles[0]], [first_corner, third_corner], False)
+                        setInnerEdges([self.tiles[val], self.tiles[0]], [first_corner, third_corner])
                     if (nth_tile_being_iterated == 6*level):
                         bridge_corner = Corner()
-                        setEdges([self.tiles[val], self.tiles[1]], [third_corner, bridge_corner], False)
-                        print("CORNERS: " + str(self.tiles[0].numEdgesConnectedToCorner(third_corner)))
+                        setInnerEdges([self.tiles[val], self.tiles[1]], [third_corner, bridge_corner])
 
                     if (nth_tile_being_iterated == 1):
                         first_corner = second_corner
@@ -86,12 +85,8 @@ class Board:
 
                     nth_tile_being_iterated = nth_tile_being_iterated + 1
                     val = val + 1
-
-                    #if nth_tile_being_iterated == 2:
-                    #    nth_tile_being_iterated = 100
-                    #    val = 100
                 level += 1
-                #val = 100
+
             elif (level == 2):                       #Outer Level
                 first_corner = bridge_corner
                 adjacent_tile_of_previous_level = val - 6*(level-1)
@@ -100,7 +95,7 @@ class Board:
                     self.tiles[val].relational_id = str(val)
                     second_corner = Corner()
                     third_corner = Corner()
-                    setEdges([self.tiles[val], self.tiles[val-1]], [first_corner, second_corner], False)
+                    setInnerEdges([self.tiles[val], self.tiles[val-1]], [first_corner, second_corner])
 
                     if (val == 18):
                         third_corner = final_corner
@@ -111,7 +106,7 @@ class Board:
                             for c in e.corners:
                                 if (self.tiles[adjacent_tile_of_previous_level].numEdgesConnectedToCorner(c) == 1 and c != first_corner):
                                     third_corner = c
-                    setEdges([self.tiles[val], self.tiles[adjacent_tile_of_previous_level]], [first_corner, third_corner], False)
+                    setInnerEdges([self.tiles[val], self.tiles[adjacent_tile_of_previous_level]], [first_corner, third_corner])
 
                     if (val == 7):
                         final_corner = second_corner
@@ -121,61 +116,56 @@ class Board:
                     if (val > 7 and nth_tile_being_iterated % 2 == 1):
                         fourth_corner = Corner()
                         adjacent_tile_of_previous_level += 1
-                        setEdges([self.tiles[val], self.tiles[adjacent_tile_of_previous_level]], [third_corner, fourth_corner], False)
+                        setInnerEdges([self.tiles[val], self.tiles[adjacent_tile_of_previous_level]], [third_corner, fourth_corner])
                         first_corner = fourth_corner
                     else:
                         first_corner = third_corner
 
                     if (nth_tile_being_iterated == 6*level):
                         fourth_corner = Corner()
-                        setEdges([self.tiles[val], self.tiles[val - 6*level+1]], [third_corner, fourth_corner], False)
+                        setInnerEdges([self.tiles[val], self.tiles[val - 6*level+1]], [third_corner, fourth_corner])
                         if (val == 18):
                             bridge_corner = fourth_corner
                     
                     lone_edges_to_generate = 3 - (nth_tile_being_iterated % 2)
 
-                    #for j in range(lone_edges_to_generate):
-                    #	setEdge(self.tiles[val])
-
-                    #if nth_tile_being_iterated == 12:
-                    #    nth_tile_being_iterated = 100
-                    #    val = 100
-
                     nth_tile_being_iterated = nth_tile_being_iterated + 1
                     val = val + 1
                 level += 1
-                val = 7
-            else:
-                first_corner = bridge_corner
-                while (val < total_tile_quantity):
-                    second_corner = Corner()
-                    setEdges([self.tiles[val]], [first_corner, second_corner], True)
 
-                    if (val % 2 == 1):
+            else:
+                nth_tile_being_iterated = 7;
+                first_corner = bridge_corner
+                while nth_tile_being_iterated < total_tile_quantity:
+                    second_corner = Corner()
+                    setPerimeterEdges(self.tiles[nth_tile_being_iterated], str(val), [first_corner, second_corner])
+                    val += 1
+                    if (nth_tile_being_iterated % 2 == 1):
                         second_to_last_corner = second_corner
                     else:
                         third_corner = Corner()
-                        setEdges([self.tiles[val]], [second_corner, third_corner], True)
+                        setPerimeterEdges(self.tiles[nth_tile_being_iterated], str(val), [second_corner, third_corner])
                         second_to_last_corner = third_corner
+                        val += 1
                     
-                    if (val == 18):
+                    if (nth_tile_being_iterated == 18):
                         next_index = 7
+                        val = 19
+                        last_corner = bridge_corner
                     else:
-                        next_index = val+1
-                        
-                    for e in self.tiles[next_index].edges:
-                        for c in e.corners:
-                            has_current_tile = re.search("([0-9]+-" + str(val) + ")|(" + str(val) + "[0-9]+)", e.relational_id)
-                            if (has_current_tile):
-                                two_corners_only = re.search("([0-9]+-" + str(val) + ")|(" + str(val) + "[0-9]+)", c.relational_id)
-                                if (two_corners_only):
-                                    last_corner = c
-                    
-                    setEdges([self.tiles[val]], [second_to_last_corner, last_corner], True)
+                        next_index = nth_tile_being_iterated+1                        
+                        for e in self.tiles[next_index].edges:
+                            for c in e.corners:
+                                has_current_tile = re.search("([0-9]+-" + str(nth_tile_being_iterated) + ")|(" + str(nth_tile_being_iterated) + "[0-9]+)", e.relational_id)
+                                if (has_current_tile):
+                                    two_corners_only = re.search("(^[0-9]+-" + str(nth_tile_being_iterated) + "$)|(^" + str(nth_tile_being_iterated) + "[0-9]+)$", c.relational_id)
+                                    if (two_corners_only):
+                                        last_corner = c            
+
+                    setPerimeterEdges(self.tiles[nth_tile_being_iterated], str(val), [second_to_last_corner, last_corner])
                     first_corner = last_corner
-                    val += 1
-                    #if val == 18:
-                    #    val = 100
+                    nth_tile_being_iterated += 1
+                level += 1
         self.tile_info()
 
     def tile_info(self):
@@ -273,16 +263,22 @@ def get_product_sum(num):
             sum += 1
     return sum
 
-def setEdges(tiles, corners, at_perimeter):
+def setInnerEdges(tiles, corners):
     edge = Edge()
     for i in range(len(tiles)):
-        if (at_perimeter):
-            edge.addCorners(corners, tiles[i].relational_id, True)
-        else:
-            edge.addCorners(corners, tiles[i].relational_id, False)
+        edge.addCorners(corners, tiles[i].relational_id)
         tiles[i].addEdge(edge)
         if (edge.relational_id == ""):
             edge.relational_id += tiles[i].relational_id
         else:
             edge.relational_id += ("-" + tiles[i].relational_id)
+
+def setPerimeterEdges(tile, phantom_tile_id, corners):
+    edge = Edge()
+    edge.addCorners(corners, phantom_tile_id)
+    edge.addCorners(corners, tile.relational_id)
+    tile.addEdge(edge)
+    edge.relational_id = tile.relational_id + "-" + phantom_tile_id
+    if (int(tile.relational_id) % 4 != 0 and int(phantom_tile_id) % 2 == 0):
+        edge.port = True
 

@@ -13,7 +13,7 @@ class Catan:
         pygame.init()
         pygame.display.set_caption("Pilgrims of Ceten (Catan Clone)")
         b = Board()
-        b.connectEdges()
+        b.connectBoard()
         self.screen = pygame.display.set_mode((680, 940))
         self.bf = BoardFacade(b, self.screen)
         self.screen.fill((0, 51, 204))

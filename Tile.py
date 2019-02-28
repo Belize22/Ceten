@@ -9,6 +9,7 @@ class Tile:
 		self.edges	          = []
 		self.adjacent_tiles   = []
 		self.robber           = False	
+		
 	def addEdge(self, edge):
 		self.edges.append(edge)
 
