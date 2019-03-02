@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 class Development_card_type(Enum):
     Knight = 1
     Victory_Point = 2
@@ -10,7 +9,6 @@ class Development_card_type(Enum):
 
 
 class Development_Card:
-
     cost_sheep = 1
     cost_grain = 1
     cost_ore = 1

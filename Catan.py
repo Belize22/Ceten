@@ -6,8 +6,6 @@ from RollButton import RollButton
 from PlayerFacade import PlayerFacade
 import pygame
 
-#test commit
-
 class Catan:
     def __init__(self):
         pygame.init()
@@ -28,6 +26,7 @@ class Catan:
         self.active_robber = False
         self.has_rolled = False
         self.current = 0
+
     def run(self):
         running = True
         while running:
@@ -37,6 +36,7 @@ class Catan:
                 if event.type == pygame.QUIT:
                     running = False
                 self.update()
+
     def update(self):
         self.bf.draw()
         self.player_facades[self.current].draw()
@@ -56,6 +56,7 @@ class Catan:
             else:
                 self.next_phase_button.on_roll_robber()
             self.has_rolled = True
+
         if self.bf.in_boundaries(mouse_pos) and self.active_robber == True:
             print("I got the tile!")
             rtf = self.bf.find_robber()
@@ -63,9 +64,9 @@ class Catan:
             rtf.set_robber(False)
             tf = self.bf.find_tile_at(mouse_pos)
             tf.set_robber(True)
-            self.active_robber = False
+            self.active_robber = False           
         if self.has_rolled == True and self.active_robber == False:
-            self.current+=1
+            self.current += 1
             self.current %= 4
             self.has_rolled = False
             self.next_phase_button.reset()

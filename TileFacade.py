@@ -18,6 +18,7 @@ class TileFacade:
 		"grain": "./res/wheatHex.gif",
 		"lumber":"./res/woodHex.gif",
 	}
+	
 	def __init__(self, tile, screen, centre = [0, 0], scale = 1):
 		self.tile   	   = tile
 		self.screen 	   = screen
@@ -28,6 +29,7 @@ class TileFacade:
 		self.text	   = ""
 		self.centre	   = [round(centre[0]), round(centre[1])]
 		self.rect	   = None
+
 	def draw(self):
 		pygame.draw.polygon(self.screen, (0, 0, 0), self.border_points, 0)
 		self.rect = pygame.draw.polygon(self.screen, self.colour, self.points, 0)
@@ -38,6 +40,7 @@ class TileFacade:
 		if str(self.tile.activation_value) != "0" or self.tile.robber == True:
 			pygame.draw.circle(self.screen, (228, 205, 180), self.centre, 20, 0)
 			self.screen.blit(self.text,[self.centre[0] - 11, self.centre[1] - 8] )
+
 	def __hex_pointlist_generator(self, scale, centre):
 		ret = []
 		for i in range(6):
@@ -45,6 +48,7 @@ class TileFacade:
 			rad = math.pi / 180.0 * deg
 			ret.append([centre[0] + scale * math.cos(rad), centre[1] + scale * math.sin(rad)])
 		return ret
+
 	def __set_activation_value(self, activation_value):
 		font = pygame.font.Font(None, 36)
 		if self.tile.robber == True:
@@ -65,6 +69,7 @@ class TileFacade:
 		else:
 			#desert
 			return TileFacade.colour["WHITE"]
+
 	def __set_texture(self,resource):
 		if resource == "lumber":
 			return pygame.image.load(TileFacade.texture["lumber"])
@@ -81,5 +86,6 @@ class TileFacade:
 			return pygame.image.load(TileFacade.texture["desert"])
 	def set_robber(self,flag):
 		self.tile.robber = flag
+
 	def str(self):
 		return "TileFacade with Points: " + str(self.points) + "\n" + self.tile.str()

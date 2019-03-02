@@ -1,6 +1,5 @@
 class Player:
     def __init__(self, name):
-
         # resources
         self.name = name
         self.num_lumber = 0

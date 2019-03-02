@@ -2,7 +2,6 @@ from Player import Player
 import pygame
 
 class PlayerFacade:
-
 	def __init__(self, player, center, screen):
 		self.player = player
 		self.center = center
@@ -29,7 +28,6 @@ class PlayerFacade:
 		for s in self.player.piece_str_list():
 			self.__render_blit(s,[x,y])	
 			y += shift_y
-
 
 	def gather(self, res_dict):
 		self.player.num_wool 	+= res_dict["wool"]	

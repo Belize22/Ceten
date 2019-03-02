@@ -1,5 +1,6 @@
 import pygame
 from Button import Button
+
 class NextPhaseButton(Button):
 	phases = {
 		1  	: "Roll the Dice!",
@@ -16,25 +17,29 @@ class NextPhaseButton(Button):
 		self.center = position
 		self.text_surf = None
 		self.text_box = None
-		
 		self.draw()	
+
 	def on_click(self):
 		super().on_click()
 		self.phase += 1
+
 	def on_roll_robber(self):
 		self.phase_num = 2
 		self.dialog = NextPhaseButton.phases[self.phase_num]
 		self.draw()
 		print("Robbing the other players")
+
 	def reset(self):
 		self.phase_num = 1
 		self.dialog = NextPhaseButton.phases[self.phase_num]
 		self.draw()
+
 	def on_roll_next(self):
 		self.phase_num = 3
 		self.dialog = NextPhaseButton.phases[self.phase_num]
 		self.draw()
 		print("next phase")
+		
 	def in_boundaries(self, position):
 		return super().in_boundaries(position)
 	

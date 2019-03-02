@@ -11,6 +11,7 @@ class DieRoller:
 		for d in self.dice:
 			ret+=d.roll()
 		return ret
+		
 	def test(self):
 		for x in range(6):
 			print (str(self.roll_dice()))

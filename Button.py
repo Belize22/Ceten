@@ -12,7 +12,9 @@ class Button:
 	def text_objects(self, text, font):
     		text_surface = font.render(text, 1, (10, 10, 10))
     		return text_surface, text_surface.get_rect()
+
 	def on_click(self):
 		print ("Ping!")
+		
 	def in_boundaries(self, position):
 		return self.text_box.collidepoint(position)	

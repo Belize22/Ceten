@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 class Resource_Enum(Enum):
     Lumber = 1
     Wool = 2

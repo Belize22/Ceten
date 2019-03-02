@@ -59,8 +59,10 @@ class BoardFacade:
 				offset_x = size * 1.72
 			else:
 				offset_x -= size * math.sqrt(3.0)/2.0
+
 	def get_resources(self, roll):
  		return self.board.get_resources(roll)
+
 	#will always return at least one robber
 	def find_robber(self):
 		t = self.board.find_robber()
@@ -69,14 +71,17 @@ class BoardFacade:
 			if tf.tile == t:
 				print("Robber Facade Found! " + str(tf))
 				return tf
+
 	def find_tile_at(self, pos):
 		for tf in self.tile_facades:
 			if tf.rect.collidepoint(pos):
 				return tf
+
 	def in_boundaries(self,pos):
 		if self.find_tile_at(pos) != None:
 			return True
-		return False				
+		return False	
+				
 	def draw(self):
 		for tf in self.tile_facades:
 			tf.draw()

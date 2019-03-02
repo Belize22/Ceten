@@ -53,7 +53,6 @@ class Board:
         total_tile_quantity = get_product_sum(num_circles)
         val = 1
         level = 1
-
         self.tiles[0].relational_id = str(0)
         while level <= num_circles+1:
             level_tile_quantity = get_product_sum(level)
@@ -63,13 +62,10 @@ class Board:
                     self.tiles[val].relational_id = str(val)
                     second_corner = Corner()
                     third_corner = Corner()
-
                     if (nth_tile_being_iterated == 1):
                         first_corner = Corner()
                         final_corner = first_corner
-
                     setInnerEdges([self.tiles[val], self.tiles[val-1]], [first_corner, second_corner])
-
                     if (nth_tile_being_iterated == 6*level):
                         third_corner = final_corner
                     if (nth_tile_being_iterated > 1):
@@ -77,12 +73,10 @@ class Board:
                     if (nth_tile_being_iterated == 6*level):
                         bridge_corner = Corner()
                         setInnerEdges([self.tiles[val], self.tiles[1]], [third_corner, bridge_corner])
-
                     if (nth_tile_being_iterated == 1):
                         first_corner = second_corner
                     else:
                         first_corner = third_corner
-
                     nth_tile_being_iterated = nth_tile_being_iterated + 1
                     val = val + 1
                 level += 1
@@ -96,10 +90,8 @@ class Board:
                     second_corner = Corner()
                     third_corner = Corner()
                     setInnerEdges([self.tiles[val], self.tiles[val-1]], [first_corner, second_corner])
-
                     if (val == 18):
                         third_corner = final_corner
-
                     if (val > 7 and nth_tile_being_iterated % 2 == 1):
                         corners_of_edges = []
                         for e in self.tiles[adjacent_tile_of_previous_level].edges:
@@ -107,12 +99,10 @@ class Board:
                                 if (self.tiles[adjacent_tile_of_previous_level].numEdgesConnectedToCorner(c) == 1 and c != first_corner):
                                     third_corner = c
                     setInnerEdges([self.tiles[val], self.tiles[adjacent_tile_of_previous_level]], [first_corner, third_corner])
-
                     if (val == 7):
                         final_corner = second_corner
                     if (val == 12):
                         second_corner = final_corner
-
                     if (val > 7 and nth_tile_being_iterated % 2 == 1):
                         fourth_corner = Corner()
                         adjacent_tile_of_previous_level += 1
@@ -120,19 +110,15 @@ class Board:
                         first_corner = fourth_corner
                     else:
                         first_corner = third_corner
-
                     if (nth_tile_being_iterated == 6*level):
                         fourth_corner = Corner()
                         setInnerEdges([self.tiles[val], self.tiles[val - 6*level+1]], [third_corner, fourth_corner])
                         if (val == 18):
-                            bridge_corner = fourth_corner
-                    
+                            bridge_corner = fourth_corner                  
                     lone_edges_to_generate = 3 - (nth_tile_being_iterated % 2)
-
                     nth_tile_being_iterated = nth_tile_being_iterated + 1
                     val = val + 1
                 level += 1
-
             else:
                 nth_tile_being_iterated = 7;
                 first_corner = bridge_corner
@@ -146,8 +132,7 @@ class Board:
                         third_corner = Corner()
                         setPerimeterEdges(self.tiles[nth_tile_being_iterated], str(val), [second_corner, third_corner])
                         second_to_last_corner = third_corner
-                        val += 1
-                    
+                        val += 1                   
                     if (nth_tile_being_iterated == 18):
                         next_index = 7
                         val = 19
@@ -161,7 +146,6 @@ class Board:
                                     two_corners_only = re.search("(^[0-9]+-" + str(nth_tile_being_iterated) + "$)|(^" + str(nth_tile_being_iterated) + "[0-9]+)$", c.relational_id)
                                     if (two_corners_only):
                                         last_corner = c            
-
                     setPerimeterEdges(self.tiles[nth_tile_being_iterated], str(val), [second_to_last_corner, last_corner])
                     first_corner = last_corner
                     nth_tile_being_iterated += 1
@@ -181,10 +165,6 @@ class Board:
                 for c in e.corners:
                     corners_of_edges.append(c)
                     corner_ids.append(c.relational_id)
-                    #if (corner_ids == ""):
-                    #    corner_ids += c.relational_id
-                    #else:
-                    #    corner_ids += (", " + c.relational_id)
             corner_ids = set(corner_ids)
             corner_id_string = ""
             for c in corner_ids:
@@ -197,7 +177,6 @@ class Board:
                  + ": " + "Corner Relationships - {" + corner_id_string + "}, " + str(len(corners_of_current_tile)) + " corners, Resource: " + t.resource
             print(info)
 
-
     def board_str(self):
         ret = ""
         count = 1;
@@ -205,6 +184,7 @@ class Board:
             print("TILE #" + str(count))
             ret += ("TILE #" + str(count) + t.str())
             count += 1
+
     def connect_tiles(self):
         seed = self.__random_tile()
         #generate a random ring of tiles around the seed tile	
@@ -214,6 +194,7 @@ class Board:
                 e.adjacent_tiles.append(t)
                 t.edges.append(e)
                 inner_ring.append(t)
+                
     def get_resources(self, roll):
         res_dict = {
             "wool"  : 0,
@@ -236,17 +217,21 @@ class Board:
                     elif t.resource == "grain":
                             res_dict["grain"]+=1
         return res_dict
+
     def __random_tile(self):
-        return self.tiles[ random.randint(0,len(self.tiles) - 1) ]
+        return self.tiles[random.randint(0,len(self.tiles) - 1)]
+
     def tile_list_copy(self):
         ret = []
         for t in self.tiles:
             ret.append(t)
         return ret
+
     def find_robber(self):
         for t in self.tiles:
             if t.robber == True:
                 return t
+
     def str(self):
         ret = "Board has the Following Tiles:\n"
         for t in self.tiles:

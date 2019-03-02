@@ -1,7 +1,6 @@
 from Edge import Edge
 
 class Tile:
-
 	def __init__(self, resource, activation_value):
 		self.relational_id    = ""
 		self.resource 	      = resource
@@ -24,5 +23,4 @@ class Tile:
 		return count
 				
 	def str(self):
-		print("Tile: " + self.resource)
-		return "Tile: " + self.resource + ", Value: " + repr(self.activation_value) + ", Edge Count: "+ repr(len(self.edges)) + ", Tile Count: " + repr(len(self.adjacent_tiles)) + ", Edge Count: " + repr(len(self.edges)) 
+		return "Tile: Resource - " + self.resource + ", ID - " + self.relational_id
