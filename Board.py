@@ -1,6 +1,7 @@
 from Tile import Tile
 from Edge import Edge
 from Corner import Corner
+from Player import Player
 import random
 import re
 import pdb
@@ -35,6 +36,17 @@ class Board:
 
     def __init__(self, tile_count = 19):
         self.tiles = []
+        self.players = []
+        self.num_lumber = 19
+        self.num_wool = 19
+        self.num_grain = 19
+        self.num_brick = 19
+        self.num_ore = 19
+        self.num_lumber_buffer = 0
+        self.num_wool_buffer = 0
+        self.num_grain_buffer = 0
+        self.num_brick_buffer = 0
+        self.num_ore_buffer = 0
         while len(Board.resources) > 0 and len(Board.activation_values) > 0:
             (rs, rs_count)  = random.choice(list(Board.resources.items()))
             if (rs_count < 1):
@@ -202,28 +214,38 @@ class Board:
                 t.edges.append(e)
                 inner_ring.append(t)
 
-    def get_resources(self, roll):
-        res_dict = {
-            "wool"  : 0,
-            "lumber": 0,
-            "ore"   : 0,
-            "brick" : 0,
-            "grain" : 0
-        }
-        #todo check if the tile has an associated city or sentiment!
+    def produceResources(self, roll):
+        productive_tiles = []
         for t in self.tiles:
             if str(t.activation_value) == str(roll) and t.robber == False:
-                    if t.resource == "wool":
-                        res_dict["wool"]+=1
-                    elif t.resource == "lumber":
-                        res_dict["lumber"]+=1
-                    elif t.resource == "ore":
-                            res_dict["ore"]+=1
-                    elif t.resource == "brick":
-                            res_dict["brick"]+=1
-                    elif t.resource == "grain":
-                            res_dict["grain"]+=1
-        return res_dict
+                productive_tiles.append(t)
+        for pt in productive_tiles:
+            print("Traversing Tile #" + pt.relational_id)
+            starting_edge = pt.edges[0]
+            starting_corner = pt.edges[0].corners[0]
+            current_edge = starting_edge
+            current_corner = starting_corner
+            self.gatherResourceWithSettlement(pt, current_corner)
+            for c in current_edge.corners:
+                if c != current_corner:
+                    current_corner = c
+                    break
+            while c != starting_corner:
+                for e in current_corner.edges:
+                    if pt in e.tiles and e != current_edge:
+                        current_edge = e
+                        break
+                self.gatherResourceWithSettlement(pt, current_corner)
+                for c in current_edge.corners:
+                    if c != current_corner:
+                        current_corner = c
+                        break
+            if self.didResourceDeplete(pt.resource):
+                for p in self.players:
+                    p.clearBufferOfSpecificResource(pt.resource)
+
+        for p in self.players:
+            p.confirmResourceCollection()
 
     def __random_tile(self):
         return self.tiles[random.randint(0,len(self.tiles) - 1)]
@@ -240,6 +262,63 @@ class Board:
         for t in self.tiles:
             if t.robber == True:
                 return t
+    
+    def gatherResourceWithSettlement(self, tile, corner):
+        resource = tile.resource
+        if corner.settlement == "city": 
+            quantity = 2;
+        elif corner.settlement == "settlement": 
+            quantity = 1;
+        else:
+            quantity = 0;
+        if corner.ownership != 0:
+            owner = self.players[corner.ownership-1]
+            owner.addResourcesToBuffer(resource, quantity)
+            self.addResourcesToBuffer(resource, quantity)
+
+    def addResourcesToBuffer(self, resource, quantity):
+        if resource == "lumber":
+            self.num_lumber_buffer += quantity
+        elif resource == "wool":
+            self.num_wool_buffer += quantity
+        elif resource == "grain":
+            self.num_grain_buffer += quantity
+        elif resource == "brick":
+            self.num_brick_buffer += quantity
+        elif resource == "ore":
+            self.num_ore_buffer += quantity
+    
+    def didResourceDeplete(self, resource):
+        if resource == "lumber":
+            if (self.num_lumber-self.num_lumber_buffer) < 0:
+                return True
+            else:
+                return False
+        elif resource == "wool":
+            if (self.num_wool-self.num_wool_buffer) < 0:
+                return True
+            else:
+                return False
+        elif resource == "grain":
+            if (self.num_grain-self.num_grain_buffer) < 0:
+                return True
+            else:
+                return False
+        elif resource == "brick":
+            if (self.num_brick-self.num_brick_buffer) < 0:
+                return True
+            else:
+                return False
+        elif resource == "ore":
+            if (self.num_ore-self.num_ore_buffer) < 0:
+                return True
+            else:
+                return False
+
+    def getPlayerByName(self, player_name):
+        for p in self.players:
+            if p.name == player_name:
+                return p
 
     def str(self):
         ret = "Board has the Following Tiles:\n"

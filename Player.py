@@ -1,12 +1,18 @@
 class Player:
-    def __init__(self, name):
+    def __init__(self, id, name):
         # resources
+        self.id = id
         self.name = name
         self.num_lumber = 0
         self.num_wool = 0
         self.num_grain = 0
         self.num_brick = 0
         self.num_ore = 0
+        self.num_lumber_buffer = 0
+        self.num_wool_buffer = 0
+        self.num_grain_buffer = 0
+        self.num_brick_buffer = 0
+        self.num_ore_buffer = 0
 
         # pieces
         self.num_settlements = 5
@@ -15,7 +21,43 @@ class Player:
 
         # development cards
         self.dev_cards = []
+    
+    def addResourcesToBuffer(self, resource, quantity):
+        if resource == "lumber":
+            self.num_lumber_buffer += quantity
+        elif resource == "wool":
+            self.num_wool_buffer += quantity
+        elif resource == "grain":
+            self.num_grain_buffer += quantity
+        elif resource == "brick":
+            self.num_brick_buffer += quantity
+        elif resource == "ore":
+            self.num_ore_buffer += quantity
 
+    def clearBufferOfSpecificResource(self, resource):
+        if resource == "lumber":
+            self.num_lumber_buffer = 0
+        elif resource == "wool":
+            self.num_wool_buffer = 0
+        elif resource == "grain":
+            self.num_grain_buffer = 0
+        elif resource == "brick":
+            self.num_brick_buffer = 0
+        elif resource == "ore":
+            self.num_ore_buffer = 0
+    
+    def confirmResourceCollection(self):
+        self.num_lumber += self.num_lumber_buffer
+        self.num_wool += self.num_wool_buffer
+        self.num_grain += self.num_grain_buffer
+        self.num_brick += self.num_brick_buffer
+        self.num_ore += self.num_ore_buffer
+        self.num_lumber_buffer = 0
+        self.num_wool_buffer = 0
+        self.num_grain_buffer = 0
+        self.num_brick_buffer = 0
+        self.num_ore_buffer = 0
+            
     def str(self):
         ret = self.name_str() + "\n"
         for s in self.res_str_list():
