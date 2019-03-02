@@ -170,7 +170,6 @@ class Board:
         for t in self.tiles:
             t.physical_id = self.relational_to_physical_id_mapping[int(t.relational_id)]    
         self.tile_info()
-        self.settlementAndCitySimulation()
 
     def tile_info(self):
         for t in self.tiles:
@@ -273,7 +272,7 @@ class Board:
         else:
             quantity = 0;
         if corner.ownership != 0:
-            owner = self.getPlayerByName(corner.ownership)
+            owner = self.players[corner.ownership-1]
             owner.addResourcesToBuffer(resource, quantity)
             self.addResourcesToBuffer(resource, quantity)
 
@@ -320,22 +319,6 @@ class Board:
         for p in self.players:
             if p.name == player_name:
                 return p
-
-    def settlementAndCitySimulation(self):
-        self.tiles[11].edges[4].corners[1].settlement = "settlement"
-        self.tiles[11].edges[4].corners[1].ownership = 1
-        self.tiles[4].edges[0].corners[1].settlement = "settlement"
-        self.tiles[4].edges[0].corners[1].ownership = 1
-        self.tiles[6].edges[3].corners[1].settlement = "settlement"
-        self.tiles[6].edges[3].corners[1].ownership = 2
-        self.tiles[5].edges[3].corners[1].settlement = "settlement"
-        self.tiles[5].edges[3].corners[1].ownership = 2
-        self.tiles[9].edges[3].corners[1].settlement = "settlement"
-        self.tiles[9].edges[3].corners[1].ownership = 3
-        self.tiles[0].edges[4].corners[1].settlement = "city"
-        self.tiles[0].edges[4].corners[1].ownership = 3
-        self.tiles[0].edges[1].corners[1].settlement = "city"
-        self.tiles[0].edges[1].corners[1].ownership = 4
 
     def str(self):
         ret = "Board has the Following Tiles:\n"

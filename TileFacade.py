@@ -38,8 +38,11 @@ class TileFacade:
 		self.text  = self.__set_activation_value( str(self.tile.activation_value)) 
 		
 		if str(self.tile.activation_value) != "0" or self.tile.robber == True:
-			pygame.draw.circle(self.screen, (228, 205, 180), self.centre, 20, 0)
-			self.screen.blit(self.text,[self.centre[0] - 11, self.centre[1] - 8] )
+			color = (228, 205, 180)
+			if (self.tile.robber == True):
+				color = (27, 50, 75)			
+			pygame.draw.circle(self.screen, color, self.centre, 20, 0)
+			self.screen.blit(self.text,[self.centre[0] - 11, self.centre[1] - 8])
 
 	def __hex_pointlist_generator(self, scale, centre):
 		ret = []
