@@ -4,7 +4,6 @@ from TileFacade import TileFacade
 import pygame
 import math
 import random
-import pdb
 
 class BoardFacade:
 	grid_coordinates = [
@@ -40,7 +39,6 @@ class BoardFacade:
 		offset_y   = 0
 		offset_x   = 0
 		tiles = self.board.getTilesOrderedByPhysicalID()
-		pdb.set_trace()
 		for q, r in BoardFacade.grid_coordinates:
 			s = - q - r
 			tf =TileFacade(tiles.pop(0), 

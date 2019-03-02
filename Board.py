@@ -86,7 +86,6 @@ class Board:
                     nth_tile_being_iterated = nth_tile_being_iterated + 1
                     val = val + 1
                 level += 1
-
             elif (level == 2):                       #Outer Level
                 first_corner = bridge_corner
                 adjacent_tile_of_previous_level = val - 6*(level-1)
@@ -231,7 +230,6 @@ class Board:
 
     def getTilesOrderedByPhysicalID(self):
         sorted_tiles = []
-        pdb.set_trace()
         for i in range(len(self.tiles)):
             for t in self.tiles:
                 if (t.relational_id == self.relational_to_physical_id_mapping[i]):
@@ -263,6 +261,7 @@ def setInnerEdges(tiles, corners):
     edge = Edge()
     for i in range(len(tiles)):
         edge.addCorners(corners, tiles[i].relational_id)
+        edge.addTile(tiles[i])
         tiles[i].addEdge(edge)
         if (edge.relational_id == ""):
             edge.relational_id += tiles[i].relational_id
@@ -273,6 +272,7 @@ def setPerimeterEdges(tile, phantom_tile_id, corners):
     edge = Edge()
     edge.addCorners(corners, phantom_tile_id)
     edge.addCorners(corners, tile.relational_id)
+    edge.addTile(tile)
     tile.addEdge(edge)
     edge.relational_id = tile.relational_id + "-" + phantom_tile_id
     if (int(tile.relational_id) % 4 != 0 and int(phantom_tile_id) % 2 == 0):

@@ -4,10 +4,9 @@ class Tile:
 	def __init__(self, resource, activation_value):
 		self.physical_id      = ""
 		self.relational_id    = ""
+		self.edges	          = []
 		self.resource 	      = resource
 		self.activation_value = activation_value
-		self.edges	          = []
-		self.adjacent_tiles   = []
 		self.robber           = False	
 		
 	def addEdge(self, edge):
