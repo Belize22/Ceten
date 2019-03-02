@@ -1,7 +1,7 @@
 class Corner:
-	def __init__(self, settlement = "none", ownership = "none"):
+	def __init__(self, settlement = "none", ownership = 0):
 		self.relational_id = ""
-		self.edges = []
+		self.edges         = []
 		self.settlement    = settlement
 		self.ownership     = ownership
 	

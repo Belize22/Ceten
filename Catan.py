@@ -20,10 +20,10 @@ class Catan:
         self.next_phase_button = NextPhaseButton((100,700), "", self.screen)
         self.clock = pygame.time.Clock()
         self.player_facades = []
-        self.player_facades.append(PlayerFacade(Player("Player1"), (340,740), self.screen))
-        self.player_facades.append(PlayerFacade(Player("Player2"), (340,740), self.screen))
-        self.player_facades.append(PlayerFacade(Player("Player3"), (340,740), self.screen))
-        self.player_facades.append(PlayerFacade(Player("Player4"), (340,740), self.screen))
+        self.player_facades.append(PlayerFacade(Player(1, "Player1"), (340,740), self.screen))
+        self.player_facades.append(PlayerFacade(Player(2, "Player2"), (340,740), self.screen))
+        self.player_facades.append(PlayerFacade(Player(3, "Player3"), (340,740), self.screen))
+        self.player_facades.append(PlayerFacade(Player(4, "Player4"), (340,740), self.screen))
         for pf in self.player_facades:
             self.bf.board.players.append(pf.player)
         self.active_robber = False

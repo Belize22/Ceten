@@ -263,22 +263,6 @@ class Board:
         for t in self.tiles:
             if t.robber == True:
                 return t
-
-    def settlementAndCitySimulation(self):
-        self.tiles[11].edges[4].corners[1].settlement = "settlement"
-        self.tiles[11].edges[4].corners[1].ownership = "Player1"
-        self.tiles[4].edges[0].corners[1].settlement = "settlement"
-        self.tiles[4].edges[0].corners[1].ownership = "Player1"
-        self.tiles[6].edges[3].corners[1].settlement = "settlement"
-        self.tiles[6].edges[3].corners[1].ownership = "Player2"
-        self.tiles[5].edges[3].corners[1].settlement = "settlement"
-        self.tiles[5].edges[3].corners[1].ownership = "Player2"
-        self.tiles[9].edges[3].corners[1].settlement = "settlement"
-        self.tiles[9].edges[3].corners[1].ownership = "Player3"
-        self.tiles[0].edges[4].corners[1].settlement = "city"
-        self.tiles[0].edges[4].corners[1].ownership = "Player3"
-        self.tiles[0].edges[1].corners[1].settlement = "city"
-        self.tiles[0].edges[1].corners[1].ownership = "Player4"
     
     def gatherResourceWithSettlement(self, tile, corner):
         resource = tile.resource
@@ -288,7 +272,7 @@ class Board:
             quantity = 1;
         else:
             quantity = 0;
-        if corner.ownership != "none":
+        if corner.ownership != 0:
             owner = self.getPlayerByName(corner.ownership)
             owner.addResourcesToBuffer(resource, quantity)
             self.addResourcesToBuffer(resource, quantity)
@@ -336,6 +320,22 @@ class Board:
         for p in self.players:
             if p.name == player_name:
                 return p
+
+    def settlementAndCitySimulation(self):
+        self.tiles[11].edges[4].corners[1].settlement = "settlement"
+        self.tiles[11].edges[4].corners[1].ownership = 1
+        self.tiles[4].edges[0].corners[1].settlement = "settlement"
+        self.tiles[4].edges[0].corners[1].ownership = 1
+        self.tiles[6].edges[3].corners[1].settlement = "settlement"
+        self.tiles[6].edges[3].corners[1].ownership = 2
+        self.tiles[5].edges[3].corners[1].settlement = "settlement"
+        self.tiles[5].edges[3].corners[1].ownership = 2
+        self.tiles[9].edges[3].corners[1].settlement = "settlement"
+        self.tiles[9].edges[3].corners[1].ownership = 3
+        self.tiles[0].edges[4].corners[1].settlement = "city"
+        self.tiles[0].edges[4].corners[1].ownership = 3
+        self.tiles[0].edges[1].corners[1].settlement = "city"
+        self.tiles[0].edges[1].corners[1].ownership = 4
 
     def str(self):
         ret = "Board has the Following Tiles:\n"
