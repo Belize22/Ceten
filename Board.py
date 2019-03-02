@@ -37,6 +37,16 @@ class Board:
     def __init__(self, tile_count = 19):
         self.tiles = []
         self.players = []
+        self.num_lumber = 19
+        self.num_wool = 19
+        self.num_grain = 19
+        self.num_brick = 19
+        self.num_ore = 19
+        self.num_lumber_buffer = 0
+        self.num_wool_buffer = 0
+        self.num_grain_buffer = 0
+        self.num_brick_buffer = 0
+        self.num_ore_buffer = 0
         while len(Board.resources) > 0 and len(Board.activation_values) > 0:
             (rs, rs_count)  = random.choice(list(Board.resources.items()))
             if (rs_count < 1):
@@ -231,6 +241,12 @@ class Board:
                     if c != current_corner:
                         current_corner = c
                         break
+            if self.didResourceDeplete(pt.resource):
+                for p in self.players:
+                    p.clearBufferOfSpecificResource(pt.resource)
+
+        for p in self.players:
+            p.confirmResourceCollection()
 
     def __random_tile(self):
         return self.tiles[random.randint(0,len(self.tiles) - 1)]
@@ -274,8 +290,48 @@ class Board:
             quantity = 0;
         if corner.ownership != "none":
             owner = self.getPlayerByName(corner.ownership)
-            owner.addResources(resource, quantity)
-                
+            owner.addResourcesToBuffer(resource, quantity)
+            self.addResourcesToBuffer(resource, quantity)
+
+    def addResourcesToBuffer(self, resource, quantity):
+        if resource == "lumber":
+            self.num_lumber_buffer += quantity
+        elif resource == "wool":
+            self.num_wool_buffer += quantity
+        elif resource == "grain":
+            self.num_grain_buffer += quantity
+        elif resource == "brick":
+            self.num_brick_buffer += quantity
+        elif resource == "ore":
+            self.num_ore_buffer += quantity
+    
+    def didResourceDeplete(self, resource):
+        if resource == "lumber":
+            if (self.num_lumber-self.num_lumber_buffer) < 0:
+                return True
+            else:
+                return False
+        elif resource == "wool":
+            if (self.num_wool-self.num_wool_buffer) < 0:
+                return True
+            else:
+                return False
+        elif resource == "grain":
+            if (self.num_grain-self.num_grain_buffer) < 0:
+                return True
+            else:
+                return False
+        elif resource == "brick":
+            if (self.num_brick-self.num_brick_buffer) < 0:
+                return True
+            else:
+                return False
+        elif resource == "ore":
+            if (self.num_ore-self.num_ore_buffer) < 0:
+                return True
+            else:
+                return False
+
     def getPlayerByName(self, player_name):
         for p in self.players:
             if p.name == player_name:
