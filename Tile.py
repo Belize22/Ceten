@@ -2,6 +2,7 @@ from Edge import Edge
 
 class Tile:
 	def __init__(self, resource, activation_value):
+		self.physical_id      = ""
 		self.relational_id    = ""
 		self.resource 	      = resource
 		self.activation_value = activation_value

@@ -26,6 +26,12 @@ class Board:
     "11" : 2,
     "12" : 1,
     }
+    relational_to_physical_id_mapping = [
+        "14", "13", "12", "15", "4", 
+        "3", "11", "16", "5", "0", 
+        "2", "10", "17", "6", "1",
+        "9", "18", "7", "8"
+    ]
 
     def __init__(self, tile_count = 19):
         self.tiles = []
@@ -150,6 +156,8 @@ class Board:
                     first_corner = last_corner
                     nth_tile_being_iterated += 1
                 level += 1
+        for t in self.tiles:
+            t.physical_id = self.relational_to_physical_id_mapping[int(t.relational_id)]    
         self.tile_info()
 
     def tile_info(self):
@@ -194,7 +202,7 @@ class Board:
                 e.adjacent_tiles.append(t)
                 t.edges.append(e)
                 inner_ring.append(t)
-                
+
     def get_resources(self, roll):
         res_dict = {
             "wool"  : 0,
@@ -221,11 +229,14 @@ class Board:
     def __random_tile(self):
         return self.tiles[random.randint(0,len(self.tiles) - 1)]
 
-    def tile_list_copy(self):
-        ret = []
-        for t in self.tiles:
-            ret.append(t)
-        return ret
+    def getTilesOrderedByPhysicalID(self):
+        sorted_tiles = []
+        pdb.set_trace()
+        for i in range(len(self.tiles)):
+            for t in self.tiles:
+                if (t.relational_id == self.relational_to_physical_id_mapping[i]):
+                    sorted_tiles.append(t)
+        return sorted_tiles
 
     def find_robber(self):
         for t in self.tiles:

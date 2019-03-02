@@ -4,6 +4,7 @@ from TileFacade import TileFacade
 import pygame
 import math
 import random
+import pdb
 
 class BoardFacade:
 	grid_coordinates = [
@@ -38,10 +39,11 @@ class BoardFacade:
 		tile_count = 0
 		offset_y   = 0
 		offset_x   = 0
-		tiles = self.board.tile_list_copy()
+		tiles = self.board.getTilesOrderedByPhysicalID()
+		pdb.set_trace()
 		for q, r in BoardFacade.grid_coordinates:
 			s = - q - r
-			tf =TileFacade(tiles.pop(random.randint(0, len(tiles) - 1)), 
+			tf =TileFacade(tiles.pop(0), 
 			  		  self.screen, 
 					  [start[0] + s * size * math.sqrt(3.0) + offset_x, start[1] + 1.5 * q * size + offset_y], 
 					   size)
@@ -81,7 +83,7 @@ class BoardFacade:
 		if self.find_tile_at(pos) != None:
 			return True
 		return False	
-				
+
 	def draw(self):
 		for tf in self.tile_facades:
 			tf.draw()
