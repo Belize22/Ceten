@@ -60,8 +60,8 @@ class BoardFacade:
 			else:
 				offset_x -= size * math.sqrt(3.0)/2.0
 
-	def get_resources(self, roll):
- 		return self.board.get_resources(roll)
+	def produceResources(self, roll):
+ 		return self.board.produceResources(roll)
 
 	#will always return at least one robber
 	def find_robber(self):

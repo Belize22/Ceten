@@ -1,6 +1,7 @@
 from Tile import Tile
 from Edge import Edge
 from Corner import Corner
+from Player import Player
 import random
 import re
 import pdb
@@ -35,6 +36,7 @@ class Board:
 
     def __init__(self, tile_count = 19):
         self.tiles = []
+        self.players = []
         while len(Board.resources) > 0 and len(Board.activation_values) > 0:
             (rs, rs_count)  = random.choice(list(Board.resources.items()))
             if (rs_count < 1):
@@ -158,6 +160,7 @@ class Board:
         for t in self.tiles:
             t.physical_id = self.relational_to_physical_id_mapping[int(t.relational_id)]    
         self.tile_info()
+        self.settlementAndCitySimulation()
 
     def tile_info(self):
         for t in self.tiles:
@@ -202,28 +205,32 @@ class Board:
                 t.edges.append(e)
                 inner_ring.append(t)
 
-    def get_resources(self, roll):
-        res_dict = {
-            "wool"  : 0,
-            "lumber": 0,
-            "ore"   : 0,
-            "brick" : 0,
-            "grain" : 0
-        }
-        #todo check if the tile has an associated city or sentiment!
+    def produceResources(self, roll):
+        productive_tiles = []
         for t in self.tiles:
             if str(t.activation_value) == str(roll) and t.robber == False:
-                    if t.resource == "wool":
-                        res_dict["wool"]+=1
-                    elif t.resource == "lumber":
-                        res_dict["lumber"]+=1
-                    elif t.resource == "ore":
-                            res_dict["ore"]+=1
-                    elif t.resource == "brick":
-                            res_dict["brick"]+=1
-                    elif t.resource == "grain":
-                            res_dict["grain"]+=1
-        return res_dict
+                productive_tiles.append(t)
+        for pt in productive_tiles:
+            print("Traversing Tile #" + pt.relational_id)
+            starting_edge = pt.edges[0]
+            starting_corner = pt.edges[0].corners[0]
+            current_edge = starting_edge
+            current_corner = starting_corner
+            self.gatherResourceWithSettlement(pt, current_corner)
+            for c in current_edge.corners:
+                if c != current_corner:
+                    current_corner = c
+                    break
+            while c != starting_corner:
+                for e in current_corner.edges:
+                    if pt in e.tiles and e != current_edge:
+                        current_edge = e
+                        break
+                self.gatherResourceWithSettlement(pt, current_corner)
+                for c in current_edge.corners:
+                    if c != current_corner:
+                        current_corner = c
+                        break
 
     def __random_tile(self):
         return self.tiles[random.randint(0,len(self.tiles) - 1)]
@@ -240,6 +247,39 @@ class Board:
         for t in self.tiles:
             if t.robber == True:
                 return t
+
+    def settlementAndCitySimulation(self):
+        self.tiles[11].edges[4].corners[1].settlement = "settlement"
+        self.tiles[11].edges[4].corners[1].ownership = "Player1"
+        self.tiles[4].edges[0].corners[1].settlement = "settlement"
+        self.tiles[4].edges[0].corners[1].ownership = "Player1"
+        self.tiles[6].edges[3].corners[1].settlement = "settlement"
+        self.tiles[6].edges[3].corners[1].ownership = "Player2"
+        self.tiles[5].edges[3].corners[1].settlement = "settlement"
+        self.tiles[5].edges[3].corners[1].ownership = "Player2"
+        self.tiles[9].edges[3].corners[1].settlement = "settlement"
+        self.tiles[9].edges[3].corners[1].ownership = "Player3"
+        self.tiles[0].edges[4].corners[1].settlement = "city"
+        self.tiles[0].edges[4].corners[1].ownership = "Player3"
+        self.tiles[0].edges[1].corners[1].settlement = "city"
+        self.tiles[0].edges[1].corners[1].ownership = "Player4"
+    
+    def gatherResourceWithSettlement(self, tile, corner):
+        resource = tile.resource
+        if corner.settlement == "city": 
+            quantity = 2;
+        elif corner.settlement == "settlement": 
+            quantity = 1;
+        else:
+            quantity = 0;
+        if corner.ownership != "none":
+            owner = self.getPlayerByName(corner.ownership)
+            owner.addResources(resource, quantity)
+                
+    def getPlayerByName(self, player_name):
+        for p in self.players:
+            if p.name == player_name:
+                return p
 
     def str(self):
         ret = "Board has the Following Tiles:\n"

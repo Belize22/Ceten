@@ -15,7 +15,19 @@ class Player:
 
         # development cards
         self.dev_cards = []
-
+    
+    def addResources(self, resource, quantity):
+        if resource == "lumber":
+            self.num_lumber += quantity
+        elif resource == "wool":
+            self.num_wool += quantity
+        elif resource == "grain":
+            self.num_grain += quantity
+        elif resource == "brick":
+            self.num_brick += quantity
+        elif resource == "ore":
+            self.num_ore += quantity
+            
     def str(self):
         ret = self.name_str() + "\n"
         for s in self.res_str_list():
