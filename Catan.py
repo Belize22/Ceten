@@ -15,7 +15,7 @@ class Catan:
         b.connectBoard()
         self.screen = pygame.display.set_mode((680, 940))
         self.bf = BoardFacade(b, self.screen)
-        self.screen.fill((0, 51, 204))
+        self.screen.fill((91, 146, 176))
         self.roll_dice_button = RollButton((600,600), "Roll Dice", self.screen)
         self.next_phase_button = NextPhaseButton((100,700), "", self.screen)
         self.clock = pygame.time.Clock()
@@ -69,13 +69,14 @@ class Catan:
             self.has_rolled = True
 
         if self.bf.in_boundaries(mouse_pos) and self.active_robber == True:
-            print("I got the tile!")
-            rtf = self.bf.find_robber()
-            print(str(type(rtf)))
-            rtf.set_robber(False)
             tf = self.bf.find_tile_at(mouse_pos)
-            tf.set_robber(True)
-            self.active_robber = False           
+            if (int(tf.tile.relational_id) < 19):
+                print("I got the tile!")
+                rtf = self.bf.find_robber()
+                print(str(type(rtf)))
+                rtf.set_robber(False)
+                tf.set_robber(True)
+                self.active_robber = False           
         if self.has_rolled == True and self.active_robber == False:
             self.current += 1
             if (self.current > 4):
