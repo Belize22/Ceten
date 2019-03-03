@@ -34,7 +34,7 @@ class Board:
         "9", "18", "7", "8"
     ]
 
-    def __init__(self, tile_count = 19):
+    def __init__(self, tile_count = 37):
         self.tiles = []
         self.players = []
         self.num_lumber = 19
@@ -65,6 +65,21 @@ class Board:
             self.tiles.append(Tile(rs,av))
             Board.resources[rs]-= 1
             Board.activation_values[av]-=1
+        #directions = ["TOP-RIGHT", "RIGHT", "BOTTOM-RIGHT", "BOTTOM-LEFT", "LEFT", "TOP-LEFT"]
+        port_types = ["grain", "ore", "standard", "wool", "standard", "standard", "brick", "lumber", "standard"]
+        current_direction = 1
+        amount_of_ports_placed = 0;
+        #amount_of_direction_in_a_row = 2
+        #amount_of_directions_depleted = 0
+        for i in range(19, 37):
+            if i % 2 == 0:
+                t = Tile(port_types[amount_of_ports_placed] + "_port", 0)
+                amount_of_ports_placed += 1
+            else:
+                t = Tile("water", 0)
+            self.tiles.append(t)
+        pdb.set_trace()
+                
       
     def connectBoard(self):
         num_circles = 2;
@@ -141,13 +156,15 @@ class Board:
                 first_corner = bridge_corner
                 while nth_tile_being_iterated < total_tile_quantity:
                     second_corner = Corner()
-                    setPerimeterEdges(self.tiles[nth_tile_being_iterated], str(val), [first_corner, second_corner])
+                    self.tiles[val].relational_id = str(val)
+                    setInnerEdges([self.tiles[nth_tile_being_iterated], self.tiles[val]], [first_corner, second_corner])
                     val += 1
                     if (nth_tile_being_iterated % 2 == 1):
                         second_to_last_corner = second_corner
                     else:
                         third_corner = Corner()
-                        setPerimeterEdges(self.tiles[nth_tile_being_iterated], str(val), [second_corner, third_corner])
+                        self.tiles[val].relational_id = str(val)
+                        setInnerEdges([self.tiles[nth_tile_being_iterated], self.tiles[val]], [second_corner, third_corner])
                         second_to_last_corner = third_corner
                         val += 1                   
                     if (nth_tile_being_iterated == 18):
@@ -162,13 +179,15 @@ class Board:
                                 if (has_current_tile):
                                     two_corners_only = re.search("(^[0-9]+-" + str(nth_tile_being_iterated) + "$)|(^" + str(nth_tile_being_iterated) + "[0-9]+)$", c.relational_id)
                                     if (two_corners_only):
-                                        last_corner = c            
-                    setPerimeterEdges(self.tiles[nth_tile_being_iterated], str(val), [second_to_last_corner, last_corner])
+                                        last_corner = c 
+                    self.tiles[val].relational_id = str(val)           
+                    setInnerEdges([self.tiles[nth_tile_being_iterated], self.tiles[val]], [second_to_last_corner, last_corner])
                     first_corner = last_corner
                     nth_tile_being_iterated += 1
                 level += 1
         for t in self.tiles:
-            t.physical_id = self.relational_to_physical_id_mapping[int(t.relational_id)]    
+            if (t.relational_id != '' and int(t.relational_id) < 19):
+                t.physical_id = self.relational_to_physical_id_mapping[int(t.relational_id)]    
         self.tile_info()
 
     def tile_info(self):
@@ -254,8 +273,9 @@ class Board:
         sorted_tiles = []
         for i in range(len(self.tiles)):
             for t in self.tiles:
-                if (t.relational_id == self.relational_to_physical_id_mapping[i]):
-                    sorted_tiles.append(t)
+                if (i < 19):
+                    if (t.relational_id == self.relational_to_physical_id_mapping[i]):
+                        sorted_tiles.append(t)
         return sorted_tiles
 
     def find_robber(self):
