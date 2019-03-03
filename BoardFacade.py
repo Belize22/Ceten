@@ -9,25 +9,53 @@ import pdb
 
 class BoardFacade:
 	grid_coordinates = [
+	(0,-3),
+	(-1,-2),
+	(-2,-1),
+	(-3,0),
+	(1,-3),	
+	#
 	(0,-2),
 	(-1,-1),
 	(-2,0),
+	#
+	(-3,1),
+	(2,-3),
+	#
 	(1,-2),
 	(0,-1),
 	(-1,0),
 	(-2,1),
+	#
+	(-3,2),
+	(3,-3),
+	#
 	(2,-2),
 	(1,-1),
 	(0,0),
 	(-1,1),
 	(-2,2),
+	#
+	(-3,3),
+	(3,-2),
+	#
 	(2,-1),
 	(1,0),
 	(0,1),
 	(-1,2),
+	#
+	(-2,3),
+	(3,-1),
+	#
 	(2,0),
 	(1,1),
 	(0,2),
+	#
+	(-1,3),
+	(3,0),
+	(2,1),
+	(1,2),
+	(0,3)
 	]
 
 	def __init__(self, board, screen):
@@ -37,7 +65,7 @@ class BoardFacade:
 		self.corner_facades = []
 		self.__generate_facades()
 		
-	def __generate_facades(self, start = [320.0, 320.0], size = 70.0):
+	def __generate_facades(self, start = [340.0, 340.0], size = 50.0):
 		tile_count = 0
 		offset_y   = 0
 		offset_x   = 0
@@ -60,20 +88,24 @@ class BoardFacade:
 			self.tile_facades.insert(index, tile_facade)
 			tile_count += 1
 			#be careful tinkering with this code, it is tempermental
-			if   tile_count == 3:
+			if tile_count == 4:
 				offset_x = size * 0.87
-			elif tile_count == 7:
+			elif tile_count == 9:
 				offset_x = size * 1.72
-			elif tile_count == 12:
-				offset_x = size * 1.72
-			elif tile_count == 16:
-				offset_x = size * 1.72
+			elif tile_count == 15:
+				offset_x = size * 2.6
+			elif tile_count == 22:
+				offset_x = size * 2.6
+			elif tile_count == 28:
+				offset_x = size * 2.6
+			elif tile_count == 33:
+				offset_x = size * 2.6
 			else:
 				offset_x -= size * math.sqrt(3.0)/2.0
 
 		corners_of_tile = []
-		for i in range(7):
-			for e in self.tile_facades[i].tile.edges:
+		for tf in self.tile_facades:
+			for e in tf.tile.edges:
 				for c in e.corners:
 					if c not in corners_of_tile:
 						corners_of_tile.append(c)

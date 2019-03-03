@@ -1,6 +1,8 @@
 from Tile import Tile
 import pygame
 import math
+import pdb
+
 class TileFacade:
 	colour = {
 		"RED" : (255, 0, 0),
@@ -17,6 +19,7 @@ class TileFacade:
 		"wool": "./res/sheepHex.gif",
 		"grain": "./res/wheatHex.gif",
 		"lumber":"./res/woodHex.gif",
+		"water": "./res/waterHex.gif"
 	}
 	
 	def __init__(self, tile, screen, centre = [0, 0], scale = 1):
@@ -84,9 +87,10 @@ class TileFacade:
 			return pygame.image.load(TileFacade.texture["wool"])
 		elif resource == "grain":
 			return pygame.image.load(TileFacade.texture["grain"])
-		else:
-			#desert
+		elif resource == "desert":
 			return pygame.image.load(TileFacade.texture["desert"])
+		else:
+			return pygame.image.load(TileFacade.texture["water"])
 	def set_robber(self,flag):
 		self.tile.robber = flag
 

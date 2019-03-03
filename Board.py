@@ -27,11 +27,20 @@ class Board:
     "11" : 2,
     "12" : 1,
     }
+    #relational_to_physical_id_mapping = [
+    #    "14", "13", "12", "15", "4", 
+    #    "3", "11", "16", "5", "0", 
+    #    "2", "10", "17", "6", "1",
+    #    "9", "18", "7", "8"
+    #]
     relational_to_physical_id_mapping = [
-        "14", "13", "12", "15", "4", 
-        "3", "11", "16", "5", "0", 
-        "2", "10", "17", "6", "1",
-        "9", "18", "7", "8"
+        "30", "29", "28", "27",
+        "31", "14", "13", "12", "26",
+        "32", "15", "4", "3", "11","25", 
+        "33", "16", "5", "0", "2", "10", "24",
+        "34", "17", "6", "1", "9", "23",
+        "35", "18", "7", "8", "22",
+        "36", "19", "20", "21"
     ]
 
     def __init__(self, tile_count = 37):
@@ -78,9 +87,7 @@ class Board:
             else:
                 t = Tile("water", 0)
             self.tiles.append(t)
-        pdb.set_trace()
                 
-      
     def connectBoard(self):
         num_circles = 2;
         total_tile_quantity = get_product_sum(num_circles)
@@ -273,9 +280,8 @@ class Board:
         sorted_tiles = []
         for i in range(len(self.tiles)):
             for t in self.tiles:
-                if (i < 19):
-                    if (t.relational_id == self.relational_to_physical_id_mapping[i]):
-                        sorted_tiles.append(t)
+                if (t.relational_id == self.relational_to_physical_id_mapping[i]):
+                    sorted_tiles.append(t)
         return sorted_tiles
 
     def find_robber(self):

@@ -15,7 +15,7 @@ class Catan:
         b.connectBoard()
         self.screen = pygame.display.set_mode((680, 940))
         self.bf = BoardFacade(b, self.screen)
-        self.screen.fill((0, 51, 204))
+        self.screen.fill((91, 146, 176))
         self.roll_dice_button = RollButton((600,600), "Roll Dice", self.screen)
         self.next_phase_button = NextPhaseButton((100,700), "", self.screen)
         self.clock = pygame.time.Clock()
