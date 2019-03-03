@@ -78,7 +78,8 @@ class Catan:
             self.active_robber = False           
         if self.has_rolled == True and self.active_robber == False:
             self.current += 1
-            self.current %= 5
+            if (self.current > 4):
+                self.current = 1
             self.has_rolled = False
             self.next_phase_button.reset()
 
