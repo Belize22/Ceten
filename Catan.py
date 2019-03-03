@@ -69,13 +69,14 @@ class Catan:
             self.has_rolled = True
 
         if self.bf.in_boundaries(mouse_pos) and self.active_robber == True:
-            print("I got the tile!")
-            rtf = self.bf.find_robber()
-            print(str(type(rtf)))
-            rtf.set_robber(False)
             tf = self.bf.find_tile_at(mouse_pos)
-            tf.set_robber(True)
-            self.active_robber = False           
+            if (int(tf.tile.relational_id) < 19):
+                print("I got the tile!")
+                rtf = self.bf.find_robber()
+                print(str(type(rtf)))
+                rtf.set_robber(False)
+                tf.set_robber(True)
+                self.active_robber = False           
         if self.has_rolled == True and self.active_robber == False:
             self.current += 1
             if (self.current > 4):

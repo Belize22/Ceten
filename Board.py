@@ -74,16 +74,11 @@ class Board:
             self.tiles.append(Tile(rs,av))
             Board.resources[rs]-= 1
             Board.activation_values[av]-=1
-        #directions = ["TOP-RIGHT", "RIGHT", "BOTTOM-RIGHT", "BOTTOM-LEFT", "LEFT", "TOP-LEFT"]
         port_types = ["grain", "ore", "standard", "wool", "standard", "standard", "brick", "lumber", "standard"]
         current_direction = 1
-        amount_of_ports_placed = 0;
-        #amount_of_direction_in_a_row = 2
-        #amount_of_directions_depleted = 0
         for i in range(19, 37):
             if i % 2 == 0:
-                t = Tile(port_types[amount_of_ports_placed] + "_port", 0)
-                amount_of_ports_placed += 1
+                t = Tile(port_types.pop(random.randint(0, len(port_types)-1)) + "_port", 0)
             else:
                 t = Tile("water", 0)
             self.tiles.append(t)
