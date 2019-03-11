@@ -1,6 +1,7 @@
 from Board import Board
 from Player import Player
 from BoardFacade import BoardFacade
+from Button import Button
 from NextPhaseButton import NextPhaseButton
 from RollButton import RollButton
 from PlayerFacade import PlayerFacade
@@ -18,6 +19,7 @@ class Catan:
         self.screen.fill((91, 146, 176))
         self.roll_dice_button = RollButton((600,600), "Roll Dice", self.screen)
         self.next_phase_button = NextPhaseButton((100,700), "", self.screen)
+        self.end_turn_button = Button((100,600), "End Turn", self.screen)
         self.clock = pygame.time.Clock()
         self.player_facades = []
         self.player_facades.append(PlayerFacade(Player(1, "Player1"), (340,740), self.screen))
@@ -27,6 +29,7 @@ class Catan:
         for pf in self.player_facades:
             self.bf.board.players.append(pf.player)
         self.active_robber = False
+        self.active_building = False
         self.has_rolled = False
         self.current = 1
 
@@ -49,12 +52,14 @@ class Catan:
     def handle_mouse(self):
         print("Is the Robber Active? " + str(self.active_robber))
         mouse_pos = pygame.mouse.get_pos()
-        for cf in self.bf.corner_facades:
-            if cf.in_boundaries(mouse_pos):
-                cf.corner.update(self.current)
-                print("Clicked Corner: " + cf.corner.relational_id, \
-                      "Settlement: " + cf.corner.settlement, \
-                      "Ownership: " + str(cf.corner.ownership))
+        
+        if self.active_building == True:
+            for cf in self.bf.corner_facades:
+                if cf.in_boundaries(mouse_pos):
+                    cf.corner.update(self.current)
+                    print("Clicked Corner: " + cf.corner.relational_id, \
+                        "Settlement: " + cf.corner.settlement, \
+                        "Ownership: " + str(cf.corner.ownership))
 
         if self.roll_dice_button.in_boundaries(mouse_pos) and self.active_robber == False and self.has_rolled == False:
             self.roll_dice_button.on_click()
@@ -76,12 +81,18 @@ class Catan:
                 print(str(type(rtf)))
                 rtf.set_robber(False)
                 tf.set_robber(True)
-                self.active_robber = False           
+                self.active_robber = False  
+                self.next_phase_button.on_roll_next()
+
         if self.has_rolled == True and self.active_robber == False:
+            self.active_building = True
+
+        if self.end_turn_button.in_boundaries(mouse_pos) and self.active_building == True:
             self.current += 1
             if (self.current > 4):
                 self.current = 1
             self.has_rolled = False
+            self.active_building = False
             self.next_phase_button.reset()
 
 game = Catan()

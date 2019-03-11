@@ -35,7 +35,7 @@ class NextPhaseButton(Button):
 		self.draw()
 
 	def on_roll_next(self):
-		self.phase_num = 3
+		self.phase_num = 4
 		self.dialog = NextPhaseButton.phases[self.phase_num]
 		self.draw()
 		print("next phase")
