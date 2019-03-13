@@ -57,6 +57,13 @@ class Player:
         self.num_grain_buffer = 0
         self.num_brick_buffer = 0
         self.num_ore_buffer = 0
+
+    def gatherResourcesToBuild(self, lumber, wool, grain, brick, ore):
+        self.num_lumber_buffer += lumber
+        self.num_wool_buffer += wool
+        self.num_grain_buffer += grain
+        self.num_brick_buffer += brick
+        self.num_ore_buffer += ore
             
     def str(self):
         ret = self.name_str() + "\n"

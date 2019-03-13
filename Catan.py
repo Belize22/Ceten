@@ -28,6 +28,7 @@ class Catan:
         self.player_facades.append(PlayerFacade(Player(4, "Player4"), (340,740), self.screen))
         for pf in self.player_facades:
             self.bf.board.players.append(pf.player)
+        b.simulate_starting_phase()
         self.active_robber = False
         self.active_building = False
         self.has_rolled = False
@@ -56,7 +57,7 @@ class Catan:
         if self.active_building == True:
             for cf in self.bf.corner_facades:
                 if cf.in_boundaries(mouse_pos):
-                    cf.corner.update(self.current)
+                    self.bf.place_settlement(cf, self.player_facades[self.current-1])
                     print("Clicked Corner: " + cf.corner.relational_id, \
                         "Settlement: " + cf.corner.settlement, \
                         "Ownership: " + str(cf.corner.ownership))
