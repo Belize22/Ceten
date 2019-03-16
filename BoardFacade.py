@@ -162,23 +162,29 @@ class BoardFacade:
                 return tf
 
     def place_settlement(self, corner_facade, player_facade):
-        if corner_facade.corner.settlement == "none" and player_facade.player.num_settlements > 0:
-            if self.board.can_resources_be_spent(player_facade.player, 1, 1, 1, 1, 0):
-                corner_facade.update(player_facade.player)
-                if corner_facade.corner.settlement == "settlement":
-                    self.board.spend_resources(player_facade.player, 1, 1, 1, 1, 0)
-                    player_facade.player.num_settlements -= 1
+        if corner_facade.corner.settlement == "none":
+            if player_facade.player.num_settlements > 0:
+                if self.board.can_resources_be_spent(player_facade.player, 1, 1, 1, 1, 0):
+                    corner_facade.update(player_facade.player)
+                    if corner_facade.corner.settlement == "settlement":
+                        self.board.spend_resources(player_facade.player, 1, 1, 1, 1, 0)
+                        player_facade.player.num_settlements -= 1
+                else:
+                    print("Insufficient resources to build a settlement!")
             else:
-                print("Insufficient resources to build a settlement!")
-        elif corner_facade.corner.settlement == "settlement" and player_facade.player.num_cities > 0:
-            if self.board.can_resources_be_spent(player_facade.player, 0, 0, 2, 0, 3):
-                corner_facade.update(player_facade.player)
-                if corner_facade.corner.settlement == "city":
-                    self.board.spend_resources(player_facade.player, 0, 0, 2, 0, 3)
-                    player_facade.player.num_cities -= 1
-                    player_facade.player.num_settlements += 1
+                print("You have no more settlements in your inventory!")
+        elif corner_facade.corner.settlement == "settlement":
+            if player_facade.player.num_cities > 0:
+                if self.board.can_resources_be_spent(player_facade.player, 0, 0, 2, 0, 3):
+                    corner_facade.update(player_facade.player)
+                    if corner_facade.corner.settlement == "city":
+                        self.board.spend_resources(player_facade.player, 0, 0, 2, 0, 3)
+                        player_facade.player.num_cities -= 1
+                        player_facade.player.num_settlements += 1
+                else:
+                    print("Insufficient resources to build a city!")
             else:
-                print("Insufficient resources to build a city!")
+                print("You have no more cities in your inventory!")
         else:
             print("Cities cannot be upgraded further!")
 

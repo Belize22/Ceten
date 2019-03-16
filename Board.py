@@ -377,12 +377,18 @@ class Board:
         self.tiles[12].edges[1].corners[1].settlement = "settlement"
         self.tiles[12].edges[1].corners[1].ownership = 4
         for p in self.players:
-            p.num_lumber = 5
-            p.num_wool = 5
-            p.num_grain = 5
-            p.num_brick = 5
-            p.num_ore = 5
-
+            p.num_lumber = 3
+            p.num_wool = 3
+            p.num_grain = 3
+            p.num_brick = 3
+            p.num_ore = 3
+            p.num_settlements -= 1
+            self.num_lumber -= 3
+            self.num_wool -= 3
+            self.num_grain -= 3
+            self.num_brick -= 3
+            self.num_ore -= 3
+            
     def str(self):
         ret = "Board has the Following Tiles:\n"
         for t in self.tiles:
