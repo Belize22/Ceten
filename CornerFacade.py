@@ -2,6 +2,7 @@ from Corner import Corner
 from Button import Button
 import math
 import pygame
+import pdb
 
 class CornerFacade(Button):
 	colour = {
@@ -33,8 +34,8 @@ class CornerFacade(Button):
 		else:
 			return False
 
-	def update(self, ownership):
-		self.corner.update(ownership)
+	def update(self, player):
+		self.corner.update(player.id)
 		self.draw()
 	
 	def draw(self):

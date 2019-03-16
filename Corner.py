@@ -21,10 +21,7 @@ class Corner:
 			if is_an_adjacent_corner_settled == False:				
 				if self.settlement == "settlement":
 					self.settlement = "city"
-				elif self.settlement == "city":
-					self.ownership = 0
-					self.settlement = "none"
-				else:
+				elif self.settlement == "none":
 					self.ownership = ownership
 					self.settlement = "settlement"
 			else:

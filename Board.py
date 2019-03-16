@@ -335,12 +335,60 @@ class Board:
                 return True
             else:
                 return False
+    
+    def can_resources_be_spent(self, player, lumber, wool, grain, brick, ore):
+        if (player.num_lumber < lumber):
+            return False
+        if (player.num_wool < wool):
+            return False
+        if (player.num_grain < grain):
+            return False
+        if (player.num_brick < brick):
+            return False
+        if (player.num_ore < ore):
+            return False
+        return True
+        
+    def spend_resources(self, player, lumber, wool, grain, brick, ore):
+        player.num_lumber -= lumber
+        player.num_wool -= wool
+        player.num_grain -= grain
+        player.num_brick -= brick
+        player.num_ore -= ore
+        self.num_lumber += lumber
+        self.num_wool += wool
+        self.num_grain += grain
+        self.num_brick += brick
+        self.num_ore += ore
+        
 
     def getPlayerByName(self, player_name):
         for p in self.players:
             if p.name == player_name:
                 return p
 
+    def simulate_starting_phase(self):
+        self.tiles[9].edges[2].corners[1].settlement = "settlement"
+        self.tiles[9].edges[2].corners[1].ownership = 1
+        self.tiles[7].edges[0].corners[1].settlement = "settlement"
+        self.tiles[7].edges[0].corners[1].ownership = 2
+        self.tiles[15].edges[2].corners[1].settlement = "settlement"
+        self.tiles[15].edges[2].corners[1].ownership = 3
+        self.tiles[12].edges[1].corners[1].settlement = "settlement"
+        self.tiles[12].edges[1].corners[1].ownership = 4
+        for p in self.players:
+            p.num_lumber = 3
+            p.num_wool = 3
+            p.num_grain = 3
+            p.num_brick = 3
+            p.num_ore = 3
+            p.num_settlements -= 1
+            self.num_lumber -= 3
+            self.num_wool -= 3
+            self.num_grain -= 3
+            self.num_brick -= 3
+            self.num_ore -= 3
+            
     def str(self):
         ret = "Board has the Following Tiles:\n"
         for t in self.tiles:
