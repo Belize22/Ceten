@@ -3,7 +3,7 @@ from Button import Button
 from DiceRoller import DieRoller
 
 class RollButton(Button):
-	def __init__(self, position, dialog, screen, num_dice = 2):
+	def __init__(self, position, dialog, screen, num_dice=2):
 		super().__init__(position, dialog, screen)
 		self.dr = DieRoller(num_dice)
 		self.center = (position[0], position[1] + 60)

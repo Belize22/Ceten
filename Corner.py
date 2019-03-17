@@ -1,9 +1,9 @@
 class Corner:
-	def __init__(self, settlement = "none", ownership = 0):
+	def __init__(self, settlement="none", ownership=0):
 		self.relational_id = ""
-		self.edges         = []
-		self.settlement    = settlement
-		self.ownership     = ownership
+		self.edges = []
+		self.settlement = settlement
+		self.ownership = ownership
 	
 	def addEdge(self, edge):
 		if edge not in self.edges:
@@ -18,7 +18,7 @@ class Corner:
 						if c.ownership != 0:
 							is_an_adjacent_corner_settled = True
 
-			if is_an_adjacent_corner_settled == False:				
+			if not is_an_adjacent_corner_settled:				
 				if self.settlement == "settlement":
 					self.settlement = "city"
 				elif self.settlement == "none":
@@ -28,4 +28,5 @@ class Corner:
 				print("Neighboring corners have settlements!")
 
 	def str(self):
-		return "Corner Settlement: " + self.settlement + ", Owned By:" + self.ownership
+		return "Corner Settlement: " + self.settlement \
+		       + ", Owned By:" + self.ownership

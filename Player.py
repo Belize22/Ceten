@@ -72,15 +72,21 @@ class Player:
         for s in self.piece_str_list():
             ret += s + "\n"
         return ret
-	
+    
     def name_str(self):
         return str(self.name)
-	
+    
     def res_str_list(self):
-        return ["Wool: " + str(self.num_wool), "Lumber: " + str(self.num_lumber),"Grain: " + str(self.num_grain), "Brick: " + str(self.num_brick), "Ore: " + str(self.num_ore)]
+        return ["Wool: " + str(self.num_wool),
+                "Lumber: " + str(self.num_lumber),
+                "Grain: " + str(self.num_grain),
+                "Brick: " + str(self.num_brick),
+                "Ore: " + str(self.num_ore)]
 
     def piece_str_list(self):
-        return ["Settlements: " + str(self.num_settlements), "Cities: " + str(self.num_cities), "Roads: " + str(self.num_roads)]
+        return ["Settlements: " + str(self.num_settlements),
+                "Cities: " + str(self.num_cities),
+                "Roads: " + str(self.num_roads)]
 
 
 
