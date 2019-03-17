@@ -22,7 +22,7 @@ class Player:
         # development cards
         self.dev_cards = []
     
-    def addResourcesToBuffer(self, resource, quantity):
+    def add_resources_to_buffer(self, resource, quantity):
         if resource == "lumber":
             self.num_lumber_buffer += quantity
         elif resource == "wool":
@@ -34,7 +34,7 @@ class Player:
         elif resource == "ore":
             self.num_ore_buffer += quantity
 
-    def clearBufferOfSpecificResource(self, resource):
+    def clear_buffer_of_specific_resource(self, resource):
         if resource == "lumber":
             self.num_lumber_buffer = 0
         elif resource == "wool":
@@ -46,7 +46,7 @@ class Player:
         elif resource == "ore":
             self.num_ore_buffer = 0
     
-    def confirmResourceCollection(self):
+    def confirm_resource_collection(self):
         self.num_lumber += self.num_lumber_buffer
         self.num_wool += self.num_wool_buffer
         self.num_grain += self.num_grain_buffer
@@ -57,13 +57,6 @@ class Player:
         self.num_grain_buffer = 0
         self.num_brick_buffer = 0
         self.num_ore_buffer = 0
-
-    def gatherResourcesToBuild(self, lumber, wool, grain, brick, ore):
-        self.num_lumber_buffer += lumber
-        self.num_wool_buffer += wool
-        self.num_grain_buffer += grain
-        self.num_brick_buffer += brick
-        self.num_ore_buffer += ore
             
     def str(self):
         ret = self.name_str() + "\n"

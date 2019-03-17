@@ -56,9 +56,9 @@ class BoardFacade:
         
     def generate_facades(self, start=[340.0, 340.0], size=50.0):
         tile_count = 0
-        offset_y   = 0
-        offset_x   = 0
-        tiles = self.board.getTilesOrderedByPhysicalID()
+        offset_y = 0
+        offset_x = 0
+        tiles = self.board.get_tiles_ordered_by_physical_ID()
         for q, r in BoardFacade.grid_coordinates:
             current_tile = tiles.pop(0)
             if (int(current_tile.relational_id) > 18
@@ -143,8 +143,8 @@ class BoardFacade:
                 if insert_facade:
                     self.corner_facades.append(corner_facade)
 
-    def produceResources(self, roll):
-         return self.board.produceResources(roll)
+    def produce_resources(self, roll):
+         return self.board.produce_resources(roll)
 
     #will always return at least one robber
     def find_robber(self):

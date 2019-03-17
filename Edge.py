@@ -9,11 +9,11 @@ class Edge:
         self.ownership = ownership
         self.port = port
 
-    def addTile(self, tile):
+    def add_tile(self, tile):
         if tile not in self.tiles:
             self.tiles.append(tile)
 
-    def addCorners(self, corners, tile_id):
+    def add_corners(self, corners, tile_id):
         for c in corners:
             detect_num = re.search("([^0-9]*" + tile_id + "[^0-9]+)|([^0-9]+"
                         + tile_id + "[^0-9]*)", c.relational_id)            
@@ -22,14 +22,11 @@ class Edge:
             elif (not detect_num):
                 c.relational_id += ("-" + tile_id)           
             if (c not in self.corners):
-                c.addEdge(self)
+                c.add_edge(self)
                 self.corners.append(c)
 
-    def hasCorner(self, corner):
+    def has_corner(self, corner):
         if (corner in self.corners):
             return True
         else:
             return False
-
-    def getCorners(self):
-        return corners

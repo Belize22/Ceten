@@ -5,7 +5,7 @@ class Corner:
 		self.settlement = settlement
 		self.ownership = ownership
 	
-	def addEdge(self, edge):
+	def add_edge(self, edge):
 		if edge not in self.edges:
 			self.edges.append(edge)
 

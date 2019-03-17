@@ -82,7 +82,7 @@ class Board:
                 t = Tile("water", 0)
             self.tiles.append(t)
                 
-    def connectBoard(self):
+    def connect_board(self):
         num_circles = 2;
         total_tile_quantity = get_product_sum(num_circles)
         val = 1
@@ -99,16 +99,16 @@ class Board:
                     if (nth_tile_being_iterated == 1):
                         first_corner = Corner()
                         final_corner = first_corner
-                    setInnerEdges([self.tiles[val], self.tiles[val-1]],
+                    set_edges([self.tiles[val], self.tiles[val-1]],
                                   [first_corner, second_corner])
                     if (nth_tile_being_iterated == 6*level):
                         third_corner = final_corner
                     if (nth_tile_being_iterated > 1):
-                        setInnerEdges([self.tiles[val], self.tiles[0]],
+                        set_edges([self.tiles[val], self.tiles[0]],
                                       [first_corner, third_corner])
                     if (nth_tile_being_iterated == 6*level):
                         bridge_corner = Corner()
-                        setInnerEdges([self.tiles[val], self.tiles[1]],
+                        set_edges([self.tiles[val], self.tiles[1]],
                                       [third_corner, bridge_corner])
                     if (nth_tile_being_iterated == 1):
                         first_corner = second_corner
@@ -125,7 +125,7 @@ class Board:
                     self.tiles[val].relational_id = str(val)
                     second_corner = Corner()
                     third_corner = Corner()
-                    setInnerEdges([self.tiles[val], self.tiles[val-1]],
+                    set_edges([self.tiles[val], self.tiles[val-1]],
                                   [first_corner, second_corner])
                     if (val == 18):
                         third_corner = final_corner
@@ -136,10 +136,10 @@ class Board:
                             for c in e.corners:
                                 if (self.tiles[
                                     adjacent_tile_of_previous_level]
-                                    .numEdgesConnectedToCorner(c) == 1 
+                                    .num_edges_connected_to_corner(c) == 1
                                     and c != first_corner):
                                     third_corner = c
-                    setInnerEdges([self.tiles[val],
+                    set_edges([self.tiles[val],
                                    self.tiles[
                                    adjacent_tile_of_previous_level]],
                                   [first_corner, third_corner])
@@ -150,7 +150,7 @@ class Board:
                     if (val > 7 and nth_tile_being_iterated % 2 == 1):
                         fourth_corner = Corner()
                         adjacent_tile_of_previous_level += 1
-                        setInnerEdges([self.tiles[val],
+                        set_edges([self.tiles[val],
                                        self.tiles[
                                        adjacent_tile_of_previous_level]],
                                       [third_corner, fourth_corner])
@@ -159,7 +159,7 @@ class Board:
                         first_corner = third_corner
                     if (nth_tile_being_iterated == 6*level):
                         fourth_corner = Corner()
-                        setInnerEdges([self.tiles[val], 
+                        set_edges([self.tiles[val], 
                                        self.tiles[val - 6*level + 1]],
                                       [third_corner, fourth_corner])
                         if (val == 18):
@@ -174,7 +174,7 @@ class Board:
                 while nth_tile_being_iterated < total_tile_quantity:
                     second_corner = Corner()
                     self.tiles[val].relational_id = str(val)
-                    setInnerEdges([self.tiles[nth_tile_being_iterated],
+                    set_edges([self.tiles[nth_tile_being_iterated],
                                    self.tiles[val]], 
                                   [first_corner, second_corner])
                     val += 1
@@ -183,7 +183,7 @@ class Board:
                     else:
                         third_corner = Corner()
                         self.tiles[val].relational_id = str(val)
-                        setInnerEdges([self.tiles[nth_tile_being_iterated],
+                        set_edges([self.tiles[nth_tile_being_iterated],
                                        self.tiles[val]], 
                                       [second_corner, third_corner])
                         second_to_last_corner = third_corner
@@ -212,7 +212,7 @@ class Board:
                                     if (two_corners_only):
                                         last_corner = c 
                     self.tiles[val].relational_id = str(val)           
-                    setInnerEdges([self.tiles[nth_tile_being_iterated],
+                    set_edges([self.tiles[nth_tile_being_iterated],
                                    self.tiles[val]],
                                   [second_to_last_corner, last_corner])
                     first_corner = last_corner
@@ -260,7 +260,7 @@ class Board:
             ret += ("TILE #" + str(count) + t.str())
             count += 1
 
-    def produceResources(self, roll):
+    def produce_resources(self, roll):
         productive_tiles = []
         for t in self.tiles:
             if str(t.activation_value) == str(roll) and not t.robber:
@@ -271,7 +271,7 @@ class Board:
             starting_corner = pt.edges[0].corners[0]
             current_edge = starting_edge
             current_corner = starting_corner
-            self.gatherResourceWithSettlement(pt, current_corner)
+            self.gather_resource_with_settlement(pt, current_corner)
             for c in current_edge.corners:
                 if c != current_corner:
                     current_corner = c
@@ -281,21 +281,21 @@ class Board:
                     if pt in e.tiles and e != current_edge:
                         current_edge = e
                         break
-                self.gatherResourceWithSettlement(pt, current_corner)
+                self.gather_resource_with_settlement(pt, current_corner)
                 for c in current_edge.corners:
                     if c != current_corner:
                         current_corner = c
                         break
-            if self.didResourceDeplete(pt.resource):
+            if self.did_resource_deplete(pt.resource):
                 for p in self.players:
-                    p.clearBufferOfSpecificResource(pt.resource)
+                    p.clear_buffer_of_specific_resource(pt.resource)
         for p in self.players:
-            p.confirmResourceCollection()
+            p.confirm_resource_collection()
 
     def __random_tile(self):
         return self.tiles[random.randint(0,len(self.tiles) - 1)]
 
-    def getTilesOrderedByPhysicalID(self):
+    def get_tiles_ordered_by_physical_ID(self):
         sorted_tiles = []
         for i in range(len(self.tiles)):
             for t in self.tiles:
@@ -309,7 +309,7 @@ class Board:
             if t.robber:
                 return t
     
-    def gatherResourceWithSettlement(self, tile, corner):
+    def gather_resource_with_settlement(self, tile, corner):
         resource = tile.resource
         if corner.settlement == "city": 
             quantity = 2;
@@ -319,10 +319,10 @@ class Board:
             quantity = 0;
         if corner.ownership != 0:
             owner = self.players[corner.ownership-1]
-            owner.addResourcesToBuffer(resource, quantity)
-            self.addResourcesToBuffer(resource, quantity)
+            owner.add_resources_to_buffer(resource, quantity)
+            self.add_resources_to_buffer(resource, quantity)
 
-    def addResourcesToBuffer(self, resource, quantity):
+    def add_resources_to_buffer(self, resource, quantity):
         if resource == "lumber":
             self.num_lumber_buffer += quantity
         elif resource == "wool":
@@ -334,7 +334,7 @@ class Board:
         elif resource == "ore":
             self.num_ore_buffer += quantity
     
-    def didResourceDeplete(self, resource):
+    def did_resource_deplete(self, resource):
         if resource == "lumber":
             if (self.num_lumber-self.num_lumber_buffer) < 0:
                 return True
@@ -385,12 +385,6 @@ class Board:
         self.num_grain += grain
         self.num_brick += brick
         self.num_ore += ore
-        
-
-    def getPlayerByName(self, player_name):
-        for p in self.players:
-            if p.name == player_name:
-                return p
 
     def simulate_starting_phase(self):
         self.tiles[9].edges[2].corners[1].settlement = "settlement"
@@ -426,31 +420,20 @@ def get_product_sum(num):
     num += 1
     for i in range(num):
         if (i > 0):
-            sum += 6*i
+            sum += 6 * i
         else:
             sum += 1
     return sum
 
 
-def setInnerEdges(tiles, corners):
+def set_edges(tiles, corners):
     edge = Edge()
     for i in range(len(tiles)):
-        edge.addCorners(corners, tiles[i].relational_id)
-        edge.addTile(tiles[i])
-        tiles[i].addEdge(edge)
+        edge.add_corners(corners, tiles[i].relational_id)
+        edge.add_tile(tiles[i])
+        tiles[i].add_edge(edge)
         if (edge.relational_id == ""):
             edge.relational_id += tiles[i].relational_id
         else:
             edge.relational_id += ("-" + tiles[i].relational_id)
-
-
-def setPerimeterEdges(tile, phantom_tile_id, corners):
-    edge = Edge()
-    edge.addCorners(corners, phantom_tile_id)
-    edge.addCorners(corners, tile.relational_id)
-    edge.addTile(tile)
-    tile.addEdge(edge)
-    edge.relational_id = tile.relational_id + "-" + phantom_tile_id
-    if (int(tile.relational_id) % 4 != 0 and int(phantom_tile_id) % 2 == 0):
-        edge.port = True
 

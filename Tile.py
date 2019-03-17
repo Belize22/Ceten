@@ -9,16 +9,13 @@ class Tile:
         self.activation_value = activation_value
         self.robber = False	
         
-    def addEdge(self, edge):
+    def add_edge(self, edge):
         self.edges.append(edge)
-
-    def numEdges(self):
-        return len(self.edges)
     
-    def numEdgesConnectedToCorner(self, corner):
+    def num_edges_connected_to_corner(self, corner):
         count = 0
         for e in self.edges:
-            if (e.hasCorner(corner)):
+            if (e.has_corner(corner)):
                 count += 1
         return count
                 
