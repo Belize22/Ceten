@@ -1,5 +1,6 @@
 from Edge import Edge
 
+
 class Tile:
     def __init__(self, resource, activation_value):
         self.physical_id = ""
@@ -15,7 +16,7 @@ class Tile:
     def num_edges_connected_to_corner(self, corner):
         count = 0
         for e in self.edges:
-            if (e.has_corner(corner)):
+            if e.has_corner(corner):
                 count += 1
         return count
                 

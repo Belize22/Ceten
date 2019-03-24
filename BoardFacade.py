@@ -6,49 +6,50 @@ import pygame
 import math
 import random
 
+
 class BoardFacade:
     grid_coordinates = [
-    (0,-3),
-    (-1,-2),
-    (-2,-1),
-    (-3,0),
-    (1,-3),	
-    (0,-2),
-    (-1,-1),
-    (-2,0),
-    (-3,1),
-    (2,-3),
-    (1,-2),
-    (0,-1),
-    (-1,0),
-    (-2,1),
-    (-3,2),
-    (3,-3),
-    (2,-2),
-    (1,-1),
-    (0,0),
-    (-1,1),
-    (-2,2),
-    (-3,3),
-    (3,-2),
-    (2,-1),
-    (1,0),
-    (0,1),
-    (-1,2),
-    (-2,3),
-    (3,-1),
-    (2,0),
-    (1,1),
-    (0,2),
-    (-1,3),
-    (3,0),
-    (2,1),
-    (1,2),
-    (0,3)
+        (0, -3),
+        (-1, -2),
+        (-2, -1),
+        (-3, 0),
+        (1, -3),
+        (0, -2),
+        (-1, -1),
+        (-2, 0),
+        (-3, 1),
+        (2, -3),
+        (1, -2),
+        (0, -1),
+        (-1, 0),
+        (-2, 1),
+        (-3, 2),
+        (3, -3),
+        (2, -2),
+        (1, -1),
+        (0, 0),
+        (-1, 1),
+        (-2, 2),
+        (-3, 3),
+        (3, -2),
+        (2, -1),
+        (1, 0),
+        (0, 1),
+        (-1, 2),
+        (-2, 3),
+        (3, -1),
+        (2, 0),
+        (1, 1),
+        (0, 2),
+        (-1, 3),
+        (3, 0),
+        (2, 1),
+        (1, 2),
+        (0, 3)
     ]
 
     def __init__(self, board, screen):
-        self.board  = board
+        self.board = board
         self.screen = screen
         self.tile_facades = []
         self.corner_facades = []
@@ -58,23 +59,23 @@ class BoardFacade:
         tile_count = 0
         offset_y = 0
         offset_x = 0
-        tiles = self.board.get_tiles_ordered_by_physical_ID()
+        tiles = self.board.get_tiles_ordered_by_physical_id()
         for q, r in BoardFacade.grid_coordinates:
             current_tile = tiles.pop(0)
             if (int(current_tile.relational_id) > 18
                and int(current_tile.relational_id) % 2 == 0):
                 if int(current_tile.relational_id) > 18:
-                    current_direction = 0;
+                    current_direction = 0
                 if int(current_tile.relational_id) > 22:
-                    current_direction = 1;
+                    current_direction = 1
                 if int(current_tile.relational_id) > 24:
-                    current_direction = 2;
+                    current_direction = 2
                 if int(current_tile.relational_id) > 28:
-                    current_direction = 3;
+                    current_direction = 3
                 if int(current_tile.relational_id) > 30:
-                    current_direction = 4;
+                    current_direction = 4
                 if int(current_tile.relational_id) > 34:
-                    current_direction = 5;
+                    current_direction = 5
             else:
                 tile_direction = -1
             s = -q - r
@@ -83,8 +84,8 @@ class BoardFacade:
                                      [start[0]+s * size
                                       * math.sqrt(3.0)+offset_x, 
                                       start[1]+1.5 * q * size+offset_y], 
-                                      size,
-                                      current_direction)
+                                     size,
+                                     current_direction)
             print (tile_facade.str())
             index = 0
             for tf in self.tile_facades:
@@ -95,7 +96,7 @@ class BoardFacade:
                     break
             self.tile_facades.insert(index, tile_facade)
             tile_count += 1
-            #be careful tinkering with this code, it is tempermental
+            # be careful tinkering with this code, it is tempermental
             if tile_count == 4:
                 offset_x = size * 0.87
             elif tile_count == 9:
@@ -129,24 +130,24 @@ class BoardFacade:
                             tile_facade_reference_points.append(tf)
                 center_x = 0
                 center_y = 0
-                for tf in tile_facade_reference_points:
-                    center_x += tf.centre[0]/3
-                    center_y += tf.centre[1]/3
+                for tfrp in tile_facade_reference_points:
+                    center_x += tfrp.centre[0]/3
+                    center_y += tfrp.centre[1]/3
                 corner_facade = CornerFacade([round(center_x),
                                               round(center_y)],
                                              c, self.screen)			
                 insert_facade = True
                 for cf in self.corner_facades:
-                    if (cf.center == corner_facade.center):
+                    if cf.center == corner_facade.center:
                         insert_facade = False
                         break
                 if insert_facade:
                     self.corner_facades.append(corner_facade)
 
     def produce_resources(self, roll):
-         return self.board.produce_resources(roll)
+        return self.board.produce_resources(roll)
 
-    #will always return at least one robber
+    # will always return at least one robber
     def find_robber(self):
         tile = self.board.find_robber()
         print("Robber Found! " + tile.str())
@@ -156,43 +157,44 @@ class BoardFacade:
                 return tf
 
     def place_settlement(self, corner_facade, player_facade):
-        if corner_facade.corner.settlement == "none":
-            if player_facade.player.num_settlements > 0:
-                if self.board.can_resources_be_spent(player_facade.player, 
-                                                     1, 1, 1, 1, 0):
-                    corner_facade.update(player_facade.player)
-                    if corner_facade.corner.settlement == "settlement":
-                        self.board.spend_resources(player_facade.player, 
-                                                   1, 1, 1, 1, 0)
-                        player_facade.player.num_settlements -= 1
+        if corner_facade.corner.can_settlement_be_placed(player_facade.player.id):
+            if corner_facade.corner.settlement == "none":
+                if player_facade.player.game_piece_bank.settlements > 0:
+                    player_facade.player.resource_bank.spend_resources([1, 1, 1, 1, 0])
+                    self.board.resource_bank.collect_resources([1, 1, 1, 1, 0])
+                    transaction_valid = player_facade.player.resource_bank.validate_transaction()
+                    if transaction_valid:
+                        self.board.resource_bank.validate_transaction()
+                        corner_facade.update(player_facade.player)
+                        player_facade.player.game_piece_bank.settlements -= 1
+                    else:
+                        print("Insufficient resources to build a settlement!")
                 else:
-                    print("Insufficient resources to build a settlement!")
-            else:
-                print("You have no more settlements in your inventory!")
-        elif corner_facade.corner.settlement == "settlement":
-            if player_facade.player.num_cities > 0:
-                if self.board.can_resources_be_spent(player_facade.player, 
-                                                     0, 0, 2, 0, 3):
-                    corner_facade.update(player_facade.player)
-                    if corner_facade.corner.settlement == "city":
-                        self.board.spend_resources(player_facade.player, 
-                                                   0, 0, 2, 0, 3)
-                        player_facade.player.num_cities -= 1
-                        player_facade.player.num_settlements += 1
+                    print("You have no more settlements in your inventory!")
+            elif corner_facade.corner.settlement == "settlement":
+                if player_facade.player.game_piece_bank.cities > 0:
+                    player_facade.player.resource_bank.spend_resources([0, 0, 2, 0, 3])
+                    self.board.resource_bank.collect_resources([0, 0, 2, 0, 3])
+                    transaction_valid = player_facade.player.resource_bank.validate_transaction()
+                    if transaction_valid:
+                        self.board.resource_bank.validate_transaction()
+                        corner_facade.update(player_facade.player)
+                        player_facade.player.game_piece_bank.cities -= 1
+                        player_facade.player.game_piece_bank.settlements += 1
+                    else:
+                        print("Insufficient resources to build a city!")
                 else:
-                    print("Insufficient resources to build a city!")
+                    print("You have no more cities in your inventory!")
             else:
-                print("You have no more cities in your inventory!")
-        else:
-            print("Cities cannot be upgraded further!")
+                print("Cities cannot be upgraded further!")
 
     def find_tile_at(self, pos):
         for tf in self.tile_facades:
             if tf.rect.collidepoint(pos):
                 return tf
 
-    def in_boundaries(self,pos):
-        if self.find_tile_at(pos) != None:
+    def in_boundaries(self, pos):
+        if self.find_tile_at(pos) is not None:
             return True
         return False	
 

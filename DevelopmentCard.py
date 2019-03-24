@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class DevelopmentCardType(Enum):
     KNIGHT = 1
     VICTORY_POINT = 2

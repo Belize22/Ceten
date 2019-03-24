@@ -1,6 +1,7 @@
 from Player import Player
 import pygame
 
+
 class PlayerFacade:
     def __init__(self, player, center, screen):
         self.player = player
@@ -13,21 +14,21 @@ class PlayerFacade:
                           (self.screen.get_width(),
                            self.screen.get_height() - self.center[1])),
                          0)
-        self.__render_blit(self.player.name_str(),[0, self.center[1]])
+        self.__render_blit(self.player.name_str(), [0, self.center[1]])
         shift_x = 200
-        self.__render_blit("Resources",[shift_x, self.center[1]])
+        self.__render_blit("Resources", [shift_x, self.center[1]])
         shift_y = 20
         x = shift_x
         y = self.center[1] + shift_y
         for s in self.player.res_str_list():
-            self.__render_blit(s,[x, y])
+            self.__render_blit(s, [x, y])
             y += shift_y
         x += shift_x
         y = self.center[1]
         self.__render_blit("Inventory", [x, self.center[1]])
         y += shift_y
         for s in self.player.piece_str_list():
-            self.__render_blit(s,[x,y])	
+            self.__render_blit(s, [x, y])
             y += shift_y
 
     def gather(self, res_dict):
@@ -40,5 +41,5 @@ class PlayerFacade:
 
     def __render_blit(self, string, point):
         font = pygame.font.Font(None, 24)
-        text = font.render(string, 1, (10,10,10))
+        text = font.render(string, 1, (10, 10, 10))
         self.screen.blit( text, point)

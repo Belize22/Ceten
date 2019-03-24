@@ -1,5 +1,6 @@
 from Die import Die
 
+
 class DieRoller:
     def __init__(self, num_dice=2, dice=[]):
         self.dice = dice
@@ -14,5 +15,5 @@ class DieRoller:
         
     def test(self):
         for x in range(6):
-            print (str(self.roll_dice()))
+            print(str(self.roll_dice()))
 

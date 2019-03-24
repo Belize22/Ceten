@@ -1,6 +1,7 @@
 import pygame
 from Button import Button
 
+
 class NextPhaseButton(Button):
     phases = {
         1  	: "Roll the Dice!",
@@ -11,7 +12,7 @@ class NextPhaseButton(Button):
     }
 
     def __init__(self, position, dialog, screen):
-        super().__init__(position,dialog,screen)
+        super().__init__(position, dialog, screen)
         self.phase_num = 1
         self.dialog = NextPhaseButton.phases[self.phase_num]
         self.center = position
