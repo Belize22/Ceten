@@ -55,7 +55,7 @@ class BoardFacade:
         self.corner_facades = []
         self.generate_facades()
         
-    def generate_facades(self, start=[340.0, 340.0], size=50.0):
+    def generate_facades(self, start=[310.0, 290.0], size=50.0):
         tile_count = 0
         offset_y = 0
         offset_x = 0
