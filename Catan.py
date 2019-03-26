@@ -14,19 +14,19 @@ class Catan:
         pygame.display.set_caption("Pilgrims of Ceten (Catan Clone)")
         board = Board()
         board.connect_board()
-        self.screen = pygame.display.set_mode((640, 780))
+        self.screen = pygame.display.set_mode((900, 650))
         self.board_facade = BoardFacade(board, self.screen)
         self.screen.fill((91, 146, 176))
-        self.roll_dice_button = RollButton((550, 525), "Roll Dice",
+        self.roll_dice_button = RollButton((int(self.screen.get_width()*0.85), 350), "Roll Dice",
                                            self.screen)
         self.next_phase_button = NextPhaseButton((100, 620), "", self.screen)
-        self.end_turn_button = Button((75, 525), "End Turn", self.screen)
+        self.end_turn_button = Button((int(self.screen.get_width()*0.85), 500), "End Turn", self.screen)
         self.clock = pygame.time.Clock()
         self.num_players = 4
         self.player_facades = []
         for i in range(1, self.num_players+1):
             self.player_facades.append(PlayerFacade(Player(i, "Player" + str(i)), 
-                                       (340, 660), self.screen))
+                                       (340, 0), self.screen))
         for pf in self.player_facades:
             self.board_facade.board.players.append(pf.player)
         board.simulate_starting_phase()
