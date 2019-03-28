@@ -7,7 +7,7 @@ import pdb
 
 class CornerFacade(Button):
     colour = {
-        "WHITE": (255, 255, 255),
+        "WHITE": (225, 225, 225),
         "YELLOW": (255, 180, 0),
         "BLUE": (0, 0, 255),
         "RED": (255, 0, 0),

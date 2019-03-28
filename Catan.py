@@ -14,13 +14,18 @@ class Catan:
         pygame.display.set_caption("Pilgrims of Ceten (Catan Clone)")
         board = Board()
         board.connect_board()
-        self.screen = pygame.display.set_mode((900, 650))
+        self.screen = pygame.display.set_mode((900, 525))
         self.board_facade = BoardFacade(board, self.screen)
         self.screen.fill((91, 146, 176))
-        self.roll_dice_button = RollButton((int(self.screen.get_width()*0.85), 350), "Roll Dice",
+        pygame.draw.rect(self.screen, (178, 155, 130),
+                         ((self.screen.get_width()*0.8, self.screen.get_height()*0.5),
+                          (self.screen.get_width()*0.2,
+                           self.screen.get_height()*0.5)),
+                         0)
+        self.roll_dice_button = RollButton((int(self.screen.get_width()*0.9), 275), "Roll Dice",
                                            self.screen)
-        self.next_phase_button = NextPhaseButton((100, 620), "", self.screen)
-        self.end_turn_button = Button((int(self.screen.get_width()*0.85), 500), "End Turn", self.screen)
+        self.end_turn_button = Button((int(self.screen.get_width()*0.9), 425), "End Turn", self.screen)
+        self.next_phase_button = NextPhaseButton((self.screen.get_width()*0.5, self.screen.get_height()*0.95), "", self.screen)
         self.clock = pygame.time.Clock()
         self.num_players = 4
         self.player_facades = []
@@ -48,6 +53,8 @@ class Catan:
     def update(self):
         self.board_facade.draw()
         self.player_facades[self.current-1].draw()
+        for pf in self.player_facades:
+            pf.draw_public()
         pygame.display.flip()
         self.clock.tick(15)
 

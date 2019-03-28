@@ -55,7 +55,7 @@ class BoardFacade:
         self.corner_facades = []
         self.generate_facades()
         
-    def generate_facades(self, start=[310.0, 290.0], size=50.0):
+    def generate_facades(self, start=[400.0, 290.0], size=40.0):
         tile_count = 0
         offset_y = 0
         offset_x = 0
@@ -81,9 +81,9 @@ class BoardFacade:
             s = -q - r
             tile_facade = TileFacade(current_tile, 
                                      self.screen, 
-                                     [start[0]+s * size
+                                     [self.screen.get_width()*0.5+s * size
                                       * math.sqrt(3.0)+offset_x, 
-                                      start[1]+1.5 * q * size+offset_y], 
+                                      self.screen.get_height()*0.5+1.5 * q * size+offset_y],
                                      size,
                                      current_direction)
             print (tile_facade.str())
