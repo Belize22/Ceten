@@ -159,28 +159,27 @@ class BoardFacade:
     def place_settlement(self, corner_facade, player_facade):
         if corner_facade.corner.can_settlement_be_placed(player_facade.player.id):
             if corner_facade.corner.settlement == "none":
-                if player_facade.player.game_piece_bank.settlements > 0:
+                if player_facade.player.game_piece_bank.game_pieces[1] > 0:
                     player_facade.player.resource_bank.spend_resources([1, 1, 1, 1, 0])
                     self.board.resource_bank.collect_resources([1, 1, 1, 1, 0])
                     transaction_valid = player_facade.player.resource_bank.validate_transaction()
                     if transaction_valid:
                         self.board.resource_bank.validate_transaction()
                         corner_facade.update(player_facade.player)
-                        player_facade.player.game_piece_bank.settlements -= 1
+                        player_facade.player.game_piece_bank.place_settlement()
                     else:
                         print("Insufficient resources to build a settlement!")
                 else:
                     print("You have no more settlements in your inventory!")
             elif corner_facade.corner.settlement == "settlement":
-                if player_facade.player.game_piece_bank.cities > 0:
+                if player_facade.player.game_piece_bank.game_pieces[2] > 0:
                     player_facade.player.resource_bank.spend_resources([0, 0, 2, 0, 3])
                     self.board.resource_bank.collect_resources([0, 0, 2, 0, 3])
                     transaction_valid = player_facade.player.resource_bank.validate_transaction()
                     if transaction_valid:
                         self.board.resource_bank.validate_transaction()
                         corner_facade.update(player_facade.player)
-                        player_facade.player.game_piece_bank.cities -= 1
-                        player_facade.player.game_piece_bank.settlements += 1
+                        player_facade.player.game_piece_bank.place_city()
                     else:
                         print("Insufficient resources to build a city!")
                 else:
