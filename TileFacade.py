@@ -1,7 +1,6 @@
 from Tile import Tile
 import pygame
 import math
-import pdb
 
 
 class TileFacade:

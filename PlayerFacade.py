@@ -103,7 +103,8 @@ class PlayerFacade:
                                                  self.center[1] + y),
                                                 (16, 20)), 0)
             development_card_image = pygame.image.load(self.development_card_icon_order[i])
-            development_card_texture = pygame.transform.scale(development_card_image, development_card_rect.size)
+            development_card_texture = pygame.transform.scale(development_card_image,
+                                                              development_card_rect.size)
             x += shift_x
             self.screen.blit(development_card_texture, development_card_rect)
             x += shift_x
@@ -121,7 +122,9 @@ class PlayerFacade:
         for i in range(0, len(self.resource_icon_order)):
             resource_rect = pygame.draw.rect(self.screen, (0, 0, 0),
                                              ((x,
-                                               self.center[1]+self.screen.get_height()*0.25*(self.player.id-1)+y),
+                                               self.center[1]
+                                               + self.screen.get_height()*0.25*(self.player.id-1)
+                                               + y),
                                              (16, 16)), 0)
             resource_image = pygame.image.load(self.resource_icon_order[i])
             resource_texture = pygame.transform.scale(resource_image, resource_rect.size)
@@ -131,20 +134,25 @@ class PlayerFacade:
                                (x,
                                 self.center[1]+self.screen.get_height()*0.25*(self.player.id-1)+y))
             x += shift_x
-        self.__render_blit(self.player.name_str(), [0, self.center[1]+self.screen.get_height()*0.25*(self.player.id-1)])
+        self.__render_blit(self.player.name_str(),
+                           [0, self.center[1] + self.screen.get_height()*0.25*(self.player.id-1)])
         x = 2
         y += shift_y
         for i in range(0, len(self.public_development_card_icon_order)):
             development_card_rect = pygame.draw.rect(self.screen, (0, 0, 0),
-                                             ((x,
-                                               self.center[1]+self.screen.get_height()*0.25*(self.player.id-1)+y),
+                                                     ((x, self.center[1] +
+                                                       self.screen.get_height()*0.25
+                                                       * (self.player.id-1) + y),
                                              (16, 20)), 0)
             development_card_image = pygame.image.load(self.public_development_card_icon_order[i])
-            development_card_texture = pygame.transform.scale(development_card_image, development_card_rect.size)
+            development_card_texture = pygame.transform.scale(development_card_image,
+                                                              development_card_rect.size)
             self.screen.blit(development_card_texture, development_card_rect)
             x += shift_x
             x += shift_x
-        self.__render_blit(self.player.name_str(), [0, self.center[1]+self.screen.get_height()*0.25*(self.player.id-1)])
+        self.__render_blit(self.player.name_str(), [0, self.center[1]
+                                                    + self.screen.get_height()*0.25
+                                                    * (self.player.id-1)])
 
     def gather(self, res_dict):
         self.player.num_wool += res_dict["wool"]	
@@ -152,9 +160,19 @@ class PlayerFacade:
         self.player.num_brick += res_dict["brick"]	
         self.player.num_ore += res_dict["ore"]	
         self.player.num_lumber += res_dict["lumber"]
-        print(self.player.str())	
+        print(self.player.str())
 
     def __render_blit(self, string, point):
         font = pygame.font.Font(None, 24)
         text = font.render(string, 1, (10, 10, 10))
         self.screen.blit(text, point)
+
+    '''
+    TO-DO: Make a separate function to reduce duplication coming from
+    the loops responsible for generating icons and quantities associated
+    with them.
+    Note: Can ONLY be done once Development Cards are implemented. Inconsistencies between
+    development card icons and all other icons makes it difficult to implement this function
+    for the time being.
+    '''
+    # def render_inventory(self, rect, inventory_mapping, shift_x):

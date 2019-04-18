@@ -24,8 +24,10 @@ class Catan:
                          0)
         self.roll_dice_button = RollButton((int(self.screen.get_width()*0.9), 275), "Roll Dice",
                                            self.screen)
-        self.end_turn_button = Button((int(self.screen.get_width()*0.9), 425), "End Turn", self.screen)
-        self.next_phase_button = NextPhaseButton((self.screen.get_width()*0.5, self.screen.get_height()*0.95), "", self.screen)
+        self.end_turn_button = Button((int(self.screen.get_width()*0.9), 425), "End Turn",
+                                      self.screen)
+        self.next_phase_button = NextPhaseButton((self.screen.get_width()*0.5,
+                                                  self.screen.get_height()*0.95), "", self.screen)
         self.clock = pygame.time.Clock()
         self.num_players = 4
         self.player_facades = []

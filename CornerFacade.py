@@ -2,7 +2,6 @@ from Corner import Corner
 from Button import Button
 import math
 import pygame
-import pdb
 
 
 class CornerFacade(Button):
