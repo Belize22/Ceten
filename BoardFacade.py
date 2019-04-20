@@ -192,6 +192,11 @@ class BoardFacade:
             if tf.rect.collidepoint(pos):
                 return tf
 
+    def find_corner_at(self, pos):
+        for cf in self.corner_facades:
+            if cf.circle.collidepoint(pos):
+                return cf
+
     def in_boundaries(self, pos):
         if self.find_tile_at(pos) is not None:
             return True

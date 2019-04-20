@@ -65,14 +65,14 @@ class Catan:
         mouse_pos = pygame.mouse.get_pos()
         
         if self.active_building:
-            for cf in self.board_facade.corner_facades:
-                if cf.in_boundaries(mouse_pos):
-                    self.board_facade.place_settlement(cf, 
-                                                       self.player_facades[
-                                                        self.current-1])
-                    print("Clicked Corner: " + cf.corner.relational_id,
-                          "Settlement: " + cf.corner.settlement,
-                          "Ownership: " + str(cf.corner.ownership))
+            cf = self.board_facade.find_corner_at(mouse_pos)
+            if cf is not None:
+                self.board_facade.place_settlement(cf,
+                                                   self.player_facades[
+                                                    self.current-1])
+                print("Clicked Corner: " + cf.corner.relational_id,
+                      "Settlement: " + cf.corner.settlement,
+                      "Ownership: " + str(cf.corner.ownership))
 
         if (self.roll_dice_button.in_boundaries(mouse_pos) and
                 not self.active_robber and not self.has_rolled):
