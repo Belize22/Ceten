@@ -54,15 +54,15 @@ class Board:
                 self.tiles.append(tile)
                 Board.resources[resource] -= 1
                 continue
-            (activation_value, 
-             activation_value_count) = random.choice(list
-                                                     (Board.activation_values.items()))
-            if activation_value_count < 1:
-                Board.activation_values.pop(activation_value)
-                continue
-            self.tiles.append(Tile(resource, activation_value))
+            #(activation_value,
+             #activation_value_count) = random.choice(list
+             #                                        (Board.activation_values.items()))
+            #if activation_value_count < 1:
+            #    Board.activation_values.pop(activation_value)
+            #    continue
+            self.tiles.append(Tile(resource, 0))
             Board.resources[resource] -= 1
-            Board.activation_values[activation_value] -= 1
+            #Board.activation_values[activation_value] -= 1
         port_types = ["grain", "ore", "standard", "wool", "standard",
                       "standard", "brick", "lumber", "standard"]
         current_direction = 1
@@ -73,6 +73,8 @@ class Board:
             else:
                 t = Tile("water", 0)
             self.tiles.append(t)
+        self.connect_board()
+        self.place_tokens()
                 
     def connect_board(self):
         num_circles = 2
@@ -214,6 +216,31 @@ class Board:
                 t.physical_id = self.relational_to_physical_id_mapping[
                                 int(t.relational_id)]
         self.tile_info()
+
+    def place_tokens(self):
+        tiles_to_place_tokens_on = []
+        rejected_tiles_for_6_and_8_placement = []
+        for t in self.tiles:
+            if "water" not in t.resource and "port" not in t.resource and "desert" not in t.resource:
+                tiles_to_place_tokens_on.append(t.relational_id)
+        while self.activation_values.get("6") > 0 or self.activation_values.get("8") > 0:
+            token_value = "6"
+            if self.activation_values.get("6") == 0:
+                token_value = "8"
+            #print(self.activation_values.get(token_value))
+            tile_to_place_token_on = self.tiles[int(tiles_to_place_tokens_on[random.randint(0, (len(tiles_to_place_tokens_on)-1))])]
+            print(tile_to_place_token_on.relational_id)
+            self.tiles[int(tile_to_place_token_on.relational_id)].activation_value = int(token_value)
+            tiles_to_place_tokens_on.remove(tile_to_place_token_on.relational_id)
+            for e in tile_to_place_token_on.edges:
+                for t in e.tiles:
+                    if tile_to_place_token_on != t:
+                        if t.relational_id in tiles_to_place_tokens_on:
+                            rejected_tiles_for_6_and_8_placement.append(t.relational_id)
+                            tiles_to_place_tokens_on.remove(t.relational_id)
+            self.activation_values[token_value] -= 1
+         #while len(rejected_tiles_for_6_and_8_placement) > 0:
+
 
     def tile_info(self):
         for t in self.tiles:
