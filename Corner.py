@@ -16,22 +16,20 @@ class Corner:
             self.ownership = ownership
             self.settlement = "settlement"
 
-    def can_settlement_be_placed(self, ownership):
-        can_settlement_be_placed = True
+    def does_corner_belong_to_a_player(self, ownership):
+        does_corner_have_ownership = False
         if ownership == self.ownership or self.ownership == 0:
-            is_an_adjacent_corner_settled = False
-            for e in self.edges:
-                for c in e.corners:
-                    if c != self:
-                        if c.ownership != 0:
-                            is_an_adjacent_corner_settled = True
-                            can_settlement_be_placed = False
-            if is_an_adjacent_corner_settled:
-                print("Neighboring corners have settlements!")
-        else:
-            can_settlement_be_placed = False
-            print("You don't own this " + self.settlement + "!")
-        return can_settlement_be_placed
+            does_corner_have_ownership = True
+        return does_corner_have_ownership
+
+    def are_neighboring_corners_settled(self):
+        is_an_adjacent_corner_settled = False
+        for e in self.edges:
+            for c in e.corners:
+                if c != self:
+                    if c.ownership != 0:
+                        is_an_adjacent_corner_settled = True
+        return is_an_adjacent_corner_settled
 
     def str(self):
         return "Corner Settlement: " + self.settlement \
