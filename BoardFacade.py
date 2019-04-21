@@ -2,6 +2,7 @@ from Board import Board
 from Tile import Tile
 from TileFacade import TileFacade
 from CornerFacade import CornerFacade
+from NotificationPanel import NotificationPanel
 import pygame
 import math
 import random
@@ -54,8 +55,11 @@ class BoardFacade:
         self.tile_facades = []
         self.corner_facades = []
         self.generate_facades()
+        self.phase_panel = NotificationPanel((self.screen.get_width()*0.5, 0), self.screen)
+        self.feedback_panel = NotificationPanel((self.screen.get_width()*0.5,
+                                                 self.screen.get_height()*0.95), self.screen)
         
-    def generate_facades(self, start=[340.0, 340.0], size=50.0):
+    def generate_facades(self, start=[400.0, 290.0], size=40.0):
         tile_count = 0
         offset_y = 0
         offset_x = 0
@@ -81,12 +85,12 @@ class BoardFacade:
             s = -q - r
             tile_facade = TileFacade(current_tile, 
                                      self.screen, 
-                                     [start[0]+s * size
+                                     [self.screen.get_width()*0.5+s * size
                                       * math.sqrt(3.0)+offset_x, 
-                                      start[1]+1.5 * q * size+offset_y], 
+                                      self.screen.get_height()*0.5+1.5 * q * size+offset_y],
                                      size,
                                      current_direction)
-            print (tile_facade.str())
+            print(tile_facade.str())
             index = 0
             for tf in self.tile_facades:
                 if (int(tf.tile.relational_id) < 
@@ -157,41 +161,51 @@ class BoardFacade:
                 return tf
 
     def place_settlement(self, corner_facade, player_facade):
-        if corner_facade.corner.can_settlement_be_placed(player_facade.player.id):
-            if corner_facade.corner.settlement == "none":
-                if player_facade.player.game_piece_bank.settlements > 0:
-                    player_facade.player.resource_bank.spend_resources([1, 1, 1, 1, 0])
-                    self.board.resource_bank.collect_resources([1, 1, 1, 1, 0])
-                    transaction_valid = player_facade.player.resource_bank.validate_transaction()
-                    if transaction_valid:
-                        self.board.resource_bank.validate_transaction()
-                        corner_facade.update(player_facade.player)
-                        player_facade.player.game_piece_bank.settlements -= 1
+        if corner_facade.corner.does_corner_belong_to_a_player(player_facade.player.id):
+            if not corner_facade.corner.are_neighboring_corners_settled():
+                if corner_facade.corner.settlement == "none":
+                    if player_facade.player.game_piece_bank.game_pieces[1] > 0:
+                        player_facade.player.resource_bank.spend_resources([1, 1, 1, 1, 0])
+                        self.board.resource_bank.collect_resources([1, 1, 1, 1, 0])
+                        transaction_valid = player_facade.player.resource_bank.validate_transaction()
+                        if transaction_valid:
+                            self.board.resource_bank.validate_transaction()
+                            corner_facade.update(player_facade.player)
+                            player_facade.player.game_piece_bank.place_settlement()
+                        else:
+                            self.feedback_panel.update("Insufficient resources to build a settlement!")
                     else:
-                        print("Insufficient resources to build a settlement!")
-                else:
-                    print("You have no more settlements in your inventory!")
-            elif corner_facade.corner.settlement == "settlement":
-                if player_facade.player.game_piece_bank.cities > 0:
-                    player_facade.player.resource_bank.spend_resources([0, 0, 2, 0, 3])
-                    self.board.resource_bank.collect_resources([0, 0, 2, 0, 3])
-                    transaction_valid = player_facade.player.resource_bank.validate_transaction()
-                    if transaction_valid:
-                        self.board.resource_bank.validate_transaction()
-                        corner_facade.update(player_facade.player)
-                        player_facade.player.game_piece_bank.cities -= 1
-                        player_facade.player.game_piece_bank.settlements += 1
+                        self.feedback_panel.update("You have no more settlements in your inventory!")
+                elif corner_facade.corner.settlement == "settlement":
+                    if player_facade.player.game_piece_bank.game_pieces[2] > 0:
+                        player_facade.player.resource_bank.spend_resources([0, 0, 2, 0, 3])
+                        self.board.resource_bank.collect_resources([0, 0, 2, 0, 3])
+                        transaction_valid = player_facade.player.resource_bank.validate_transaction()
+                        if transaction_valid:
+                            self.board.resource_bank.validate_transaction()
+                            corner_facade.update(player_facade.player)
+                            player_facade.player.game_piece_bank.place_city()
+                        else:
+                            self.feedback_panel.update("Insufficient resources to build a city!")
                     else:
-                        print("Insufficient resources to build a city!")
+                        self.feedback_panel.update("You have no more cities in your inventory!")
                 else:
-                    print("You have no more cities in your inventory!")
+                    self.feedback_panel.update("Cities cannot be upgraded further!")
             else:
-                print("Cities cannot be upgraded further!")
+                self.feedback_panel.update("Neighboring corners have settlements!")
+        else:
+            self.feedback_panel.update("You don't own this "
+                                       + corner_facade.corner.settlement + "!")
 
     def find_tile_at(self, pos):
         for tf in self.tile_facades:
             if tf.rect.collidepoint(pos):
                 return tf
+
+    def find_corner_at(self, pos):
+        for cf in self.corner_facades:
+            if cf.circle.collidepoint(pos):
+                return cf
 
     def in_boundaries(self, pos):
         if self.find_tile_at(pos) is not None:
@@ -199,6 +213,8 @@ class BoardFacade:
         return False	
 
     def draw(self):
+        self.phase_panel.draw()
+        self.feedback_panel.draw()
         for tf in self.tile_facades:
             tf.draw()
         for cf in self.corner_facades:

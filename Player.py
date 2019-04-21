@@ -29,9 +29,10 @@ class Player:
         return resource_info
 
     def piece_str_list(self):
-        return ["Settlements: " + str(self.game_piece_bank.settlements),
-                "Cities: " + str(self.game_piece_bank.cities),
-                "Roads: " + str(self.game_piece_bank.roads)]
+        resource_info = ["Roads: ", "Settlements: ", "Cities: "]
+        for i in range(len(self.game_piece_bank.game_pieces)):
+            resource_info[i] += str(self.game_piece_bank.game_pieces[i])
+        return resource_info
 
 
 

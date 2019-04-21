@@ -5,7 +5,6 @@ from Player import Player
 from ResourceBank import ResourceBank
 import random
 import re
-import pdb
 
 
 class Board:
