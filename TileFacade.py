@@ -61,7 +61,7 @@ class TileFacade:
             color = (228, 205, 180)
             if self.tile.robber:
                 color = (27, 50, 75)
-            pygame.draw.circle(self.screen, color, self.centre, 20, 0)
+            pygame.draw.circle(self.screen, color, self.centre, 15, 0)
             self.screen.blit(self.text, [self.centre[0] - 11,
                                          self.centre[1] - 8])
 
@@ -75,10 +75,14 @@ class TileFacade:
         return ret
 
     def set_activation_value(self, activation_value):
-        font = pygame.font.Font(None, 36)
+        font = pygame.font.Font(None, 24)
+        color = (10, 10, 10)
+        if activation_value == "6" or activation_value == "8":
+            color = (255, 0, 0)
         if self.tile.robber:
             activation_value = "R"
-        return font.render(activation_value, 1, (10, 10, 10))
+            color = (255, 255, 255)
+        return font.render(activation_value, 1, color)
 
     def set_colour(self, resource):
         if "lumber" in resource:
