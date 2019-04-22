@@ -54,15 +54,8 @@ class Board:
                 self.tiles.append(tile)
                 Board.resources[resource] -= 1
                 continue
-            #(activation_value,
-             #activation_value_count) = random.choice(list
-             #                                        (Board.activation_values.items()))
-            #if activation_value_count < 1:
-            #    Board.activation_values.pop(activation_value)
-            #    continue
             self.tiles.append(Tile(resource, 0))
             Board.resources[resource] -= 1
-            #Board.activation_values[activation_value] -= 1
         port_types = ["grain", "ore", "standard", "wool", "standard",
                       "standard", "brick", "lumber", "standard"]
         current_direction = 1
@@ -217,28 +210,33 @@ class Board:
                                 int(t.relational_id)]
         self.tile_info()
 
-    '''
-    place_tokens:
-    Places tokens on land tiles. These tokens have an activation value that represents the total
-    dice value required for the tile to give the adjacent settlements and cities resources. This
-    algorithm was designed so that tokens with values 6 and 8 are not adjacent to each other.
-    '''
+    """place_tokens:
+    Places tokens on land tiles. These tokens have an activation value
+    that represents the total dice value required for the tile to give
+    the adjacent settlements and cities resources. This algorithm was 
+    designed so that tokens with values 6 and 8 are not adjacent to 
+    each other.
+    """
     def place_tokens(self):
         active_activation_values = self.activation_values
         tiles_to_place_tokens_on = []
         rejected_tiles_for_6_and_8_placement = []
         # Only land tiles get tokens on them.
         for t in self.tiles:
-            if "water" not in t.resource and "port" not in t.resource and "desert" not in t.resource:
+            if ("water" not in t.resource and "port" not in t.resource
+                    and "desert" not in t.resource):
                 tiles_to_place_tokens_on.append(t.relational_id)
         # Place 6's first, then 8's after.
-        while active_activation_values.get("6") > 0 or active_activation_values.get("8") > 0:
+        while (active_activation_values.get("6") > 0
+                or active_activation_values.get("8")) > 0:
             token_value = "6"
             if active_activation_values.get("6") == 0:
                 token_value = "8"
-            tile_to_place_token_on = self.tiles[int(tiles_to_place_tokens_on[random.randint(0, (len(tiles_to_place_tokens_on)-1))])]
-            print(tile_to_place_token_on.relational_id)
-            self.tiles[int(tile_to_place_token_on.relational_id)].activation_value = int(token_value)
+            tile_to_place_token_on = self.tiles[int(tiles_to_place_tokens_on
+                                                    [random.randint
+                                                     (0, (len(tiles_to_place_tokens_on) - 1))])]
+            self.tiles[int(
+                tile_to_place_token_on.relational_id)].activation_value = int(token_value)
             tiles_to_place_tokens_on.remove(tile_to_place_token_on.relational_id)
             # Reject surrounding tiles as future candidates for 6's and 8's.
             for e in tile_to_place_token_on.edges:
@@ -254,7 +252,9 @@ class Board:
         # Place the rest of the tokens on the land tiles.
         for activation_value, amount in active_activation_values.items():
             while amount > 0:
-                self.tiles[int(tiles_to_place_tokens_on.pop(random.randint(0, (len(tiles_to_place_tokens_on)-1))))].activation_value = activation_value
+                self.tiles[int(tiles_to_place_tokens_on.pop(
+                    random.randint(0, (len(
+                        tiles_to_place_tokens_on)-1))))].activation_value = activation_value
                 amount -= 1
 
     def tile_info(self):
