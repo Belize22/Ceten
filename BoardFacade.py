@@ -55,9 +55,11 @@ class BoardFacade:
         self.tile_facades = []
         self.corner_facades = []
         self.generate_facades()
-        self.phase_panel = NotificationPanel((self.screen.get_width()*0.5, 0), self.screen)
-        self.feedback_panel = NotificationPanel((self.screen.get_width()*0.5,
-                                                 self.screen.get_height()*0.95), self.screen)
+        self.phase_panel = NotificationPanel(
+            (self.screen.get_width() * 0.5, 0), self.screen)
+        self.feedback_panel = NotificationPanel(
+            (self.screen.get_width() * 0.5, self.screen.get_height() * 0.95),
+            self.screen)
         
     def generate_facades(self, start=[400.0, 290.0], size=40.0):
         tile_count = 0
@@ -81,15 +83,14 @@ class BoardFacade:
                 if int(current_tile.relational_id) > 34:
                     current_direction = 5
             else:
-                tile_direction = -1
+                current_direction = -1
             s = -q - r
-            tile_facade = TileFacade(current_tile, 
-                                     self.screen, 
-                                     [self.screen.get_width()*0.5+s * size
-                                      * math.sqrt(3.0)+offset_x, 
-                                      self.screen.get_height()*0.5+1.5 * q * size+offset_y],
-                                     size,
-                                     current_direction)
+            tile_facade = TileFacade(
+                current_tile, self.screen,
+                [self.screen.get_width()*0.5+s * size
+                 * math.sqrt(3.0)+offset_x,
+                 self.screen.get_height()*0.5+1.5 * q * size+offset_y], size,
+                 current_direction)
             print(tile_facade.str())
             index = 0
             for tf in self.tile_facades:
@@ -137,9 +138,8 @@ class BoardFacade:
                 for tfrp in tile_facade_reference_points:
                     center_x += tfrp.centre[0]/3
                     center_y += tfrp.centre[1]/3
-                corner_facade = CornerFacade([round(center_x),
-                                              round(center_y)],
-                                             c, self.screen)			
+                corner_facade = CornerFacade(
+                    [round(center_x), round(center_y)], c, self.screen)
                 insert_facade = True
                 for cf in self.corner_facades:
                     if cf.center == corner_facade.center:
@@ -161,38 +161,53 @@ class BoardFacade:
                 return tf
 
     def place_settlement(self, corner_facade, player_facade):
-        if corner_facade.corner.does_corner_belong_to_a_player(player_facade.player.id):
+        if corner_facade.corner.does_corner_belong_to_a_player(
+                player_facade.player.id):
             if not corner_facade.corner.are_neighboring_corners_settled():
                 if corner_facade.corner.settlement == "none":
                     if player_facade.player.game_piece_bank.game_pieces[1] > 0:
-                        player_facade.player.resource_bank.spend_resources([1, 1, 1, 1, 0])
-                        self.board.resource_bank.collect_resources([1, 1, 1, 1, 0])
-                        transaction_valid = player_facade.player.resource_bank.validate_transaction()
+                        player_facade.player.resource_bank.spend_resources(
+                            [1, 1, 1, 1, 0])
+                        self.board.resource_bank.collect_resources(
+                            [1, 1, 1, 1, 0])
+                        transaction_valid = player_facade.player\
+                            .resource_bank.validate_transaction()
                         if transaction_valid:
                             self.board.resource_bank.validate_transaction()
                             corner_facade.update(player_facade.player)
-                            player_facade.player.game_piece_bank.place_settlement()
+                            player_facade.player.game_piece_bank\
+                                .place_settlement()
                         else:
-                            self.feedback_panel.update("Insufficient resources to build a settlement!")
+                            self.feedback_panel.update(
+                                "Insufficient resources to build a settlement!"
+                            )
                     else:
-                        self.feedback_panel.update("No more settlements in your inventory!")
+                        self.feedback_panel.update(
+                            "No more settlements in your inventory!")
                 elif corner_facade.corner.settlement == "settlement":
                     if player_facade.player.game_piece_bank.game_pieces[2] > 0:
-                        player_facade.player.resource_bank.spend_resources([0, 0, 2, 0, 3])
-                        self.board.resource_bank.collect_resources([0, 0, 2, 0, 3])
-                        transaction_valid = player_facade.player.resource_bank.validate_transaction()
+                        player_facade.player.resource_bank.spend_resources(
+                            [0, 0, 2, 0, 3])
+                        self.board.resource_bank.collect_resources(
+                            [0, 0, 2, 0, 3])
+                        transaction_valid = player_facade.player.\
+                            resource_bank.validate_transaction()
                         if transaction_valid:
                             self.board.resource_bank.validate_transaction()
                             corner_facade.update(player_facade.player)
                             player_facade.player.game_piece_bank.place_city()
                         else:
-                            self.feedback_panel.update("Insufficient resources to build a city!")
+                            self.feedback_panel.update(
+                                "Insufficient resources to build a city!")
                     else:
-                        self.feedback_panel.update("No more cities in your inventory!")
+                        self.feedback_panel.update(
+                            "No more cities in your inventory!")
                 else:
-                    self.feedback_panel.update("Cities cannot be upgraded further!")
+                    self.feedback_panel.update(
+                        "Cities cannot be upgraded further!")
             else:
-                self.feedback_panel.update("Neighboring corners have settlements!")
+                self.feedback_panel.update(
+                    "Neighboring corners have settlements!")
         else:
             self.feedback_panel.update("You don't own this "
                                        + corner_facade.corner.settlement + "!")

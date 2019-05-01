@@ -59,10 +59,10 @@ class Board:
             current_resources[resource] -= 1
         port_types = ["grain", "ore", "standard", "wool", "standard",
                       "standard", "brick", "lumber", "standard"]
-        current_direction = 1
         for i in range(19, 37):
             if i % 2 == 0:
-                t = Tile(port_types.pop(random.randint(0, len(port_types)-1))
+                t = Tile(port_types.pop(
+                          random.randint(0, len(port_types)-1))
                          + "_port", 0)
             else:
                 t = Tile("water", 0)
@@ -87,17 +87,20 @@ class Board:
                     if nth_tile_being_iterated == 1:
                         first_corner = Corner()
                         final_corner = first_corner
-                    set_edges([self.tiles[val], self.tiles[val-1]],
-                                  [first_corner, second_corner])
+                    set_edges(
+                        [self.tiles[val], self.tiles[val-1]],
+                        [first_corner, second_corner])
                     if nth_tile_being_iterated == 6*level:
                         third_corner = final_corner
                     if nth_tile_being_iterated > 1:
-                        set_edges([self.tiles[val], self.tiles[0]],
-                                      [first_corner, third_corner])
+                        set_edges(
+                            [self.tiles[val], self.tiles[0]],
+                            [first_corner, third_corner])
                     if nth_tile_being_iterated == 6*level:
                         bridge_corner = Corner()
-                        set_edges([self.tiles[val], self.tiles[1]],
-                                      [third_corner, bridge_corner])
+                        set_edges(
+                            [self.tiles[val], self.tiles[1]],
+                            [third_corner, bridge_corner])
                     if nth_tile_being_iterated == 1:
                         first_corner = second_corner
                     else:
@@ -114,8 +117,9 @@ class Board:
                     print("THE VALUE IS: " + str(val))
                     second_corner = Corner()
                     third_corner = Corner()
-                    set_edges([self.tiles[val], self.tiles[val-1]],
-                              [first_corner, second_corner])
+                    set_edges(
+                        [self.tiles[val], self.tiles[val-1]],
+                        [first_corner, second_corner])
                     if val == 18:
                         third_corner = final_corner
                     if val > 7 and nth_tile_being_iterated % 2 == 1:
@@ -128,9 +132,10 @@ class Board:
                                     .num_edges_connected_to_corner(c) == 1
                                         and c != first_corner):
                                     third_corner = c
-                    set_edges([self.tiles[val],
-                               self.tiles[adjacent_tile_of_previous_level]],
-                              [first_corner, third_corner])
+                    set_edges(
+                        [self.tiles[val],
+                         self.tiles[adjacent_tile_of_previous_level]],
+                        [first_corner, third_corner])
                     if val == 7:
                         final_corner = second_corner
                     if val == 12:
@@ -138,18 +143,18 @@ class Board:
                     if val > 7 and nth_tile_being_iterated % 2 == 1:
                         fourth_corner = Corner()
                         adjacent_tile_of_previous_level += 1
-                        set_edges([self.tiles[val],
-                                   self.tiles[
-                                       adjacent_tile_of_previous_level]],
-                                  [third_corner, fourth_corner])
+                        set_edges(
+                            [self.tiles[val], self.tiles[
+                             adjacent_tile_of_previous_level]],
+                            [third_corner, fourth_corner])
                         first_corner = fourth_corner
                     else:
                         first_corner = third_corner
                     if nth_tile_being_iterated == 6*level:
                         fourth_corner = Corner()
-                        set_edges([self.tiles[val], 
-                                   self.tiles[val - 6*level + 1]],
-                                  [third_corner, fourth_corner])
+                        set_edges(
+                            [self.tiles[val], self.tiles[val - 6*level + 1]],
+                            [third_corner, fourth_corner])
                         if val == 18:
                             bridge_corner = fourth_corner                  
                     lone_edges_to_generate = 3 - (nth_tile_being_iterated % 2)
@@ -162,18 +167,20 @@ class Board:
                 while nth_tile_being_iterated < total_tile_quantity:
                     second_corner = Corner()
                     self.tiles[val].relational_id = str(val)
-                    set_edges([self.tiles[nth_tile_being_iterated],
-                               self.tiles[val]],
-                              [first_corner, second_corner])
+                    set_edges(
+                        [self.tiles[nth_tile_being_iterated],
+                         self.tiles[val]],
+                        [first_corner, second_corner])
                     val += 1
                     if nth_tile_being_iterated % 2 == 1:
                         second_to_last_corner = second_corner
                     else:
                         third_corner = Corner()
                         self.tiles[val].relational_id = str(val)
-                        set_edges([self.tiles[nth_tile_being_iterated],
-                                   self.tiles[val]],
-                                  [second_corner, third_corner])
+                        set_edges(
+                            [self.tiles[nth_tile_being_iterated],
+                             self.tiles[val]],
+                            [second_corner, third_corner])
                         second_to_last_corner = third_corner
                         val += 1
                     if nth_tile_being_iterated == 18:
@@ -184,19 +191,17 @@ class Board:
                         next_index = nth_tile_being_iterated+1                        
                         for e in self.tiles[next_index].edges:
                             for c in e.corners:
-                                has_current_tile = re.search("([0-9]+-"
-                                                             + str(nth_tile_being_iterated)
-                                                             + ")|("
-                                                             + str(nth_tile_being_iterated)
-                                                             + "[0-9]+)",
-                                                             e.relational_id)
+                                has_current_tile = re.search(
+                                    "([0-9]+-" + str(nth_tile_being_iterated)
+                                    + ")|(" + str(nth_tile_being_iterated)
+                                    + "[0-9]+)", e.relational_id)
                                 if has_current_tile:
-                                    two_corners_only = re.search("(^[0-9]+-"
-                                                                 + str(nth_tile_being_iterated)
-                                                                 + "$)|(^"
-                                                                 + str(nth_tile_being_iterated)
-                                                                 + "[0-9]+)$", 
-                                                                 c.relational_id)
+                                    two_corners_only = re.search(
+                                        "(^[0-9]+-"
+                                        + str(nth_tile_being_iterated)
+                                        + "$)|(^"
+                                        + str(nth_tile_being_iterated)
+                                        + "[0-9]+)$", c.relational_id)
                                     if two_corners_only:
                                         last_corner = c 
                     self.tiles[val].relational_id = str(val)           
@@ -222,7 +227,7 @@ class Board:
     def place_tokens(self):
         active_activation_values = self.activation_values.copy()
         tiles_to_place_tokens_on = []
-        rejected_tiles_for_6_and_8_placement = []
+        rejected_tiles_for_reds = []      # 6's and 8's referred to as reds.
         # Only land tiles get tokens on them.
         for t in self.tiles:
             if ("water" not in t.resource and "port" not in t.resource
@@ -234,29 +239,34 @@ class Board:
             token_value = "6"
             if active_activation_values.get("6") == 0:
                 token_value = "8"
-            tile_to_place_token_on = self.tiles[int(tiles_to_place_tokens_on
-                                                    [random.randint
-                                                     (0, (len(tiles_to_place_tokens_on) - 1))])]
+            tile_to_place_token_on = self.tiles[
+                                      int(tiles_to_place_tokens_on
+                                          [random.randint
+                                           (0, (len(tiles_to_place_tokens_on)
+                                            - 1))])]
             self.tiles[int(
-                tile_to_place_token_on.relational_id)].activation_value = int(token_value)
-            tiles_to_place_tokens_on.remove(tile_to_place_token_on.relational_id)
-            # Reject surrounding tiles as future candidates for 6's and 8's.
+                tile_to_place_token_on.relational_id)
+                ].activation_value = int(token_value)
+            tiles_to_place_tokens_on.remove(
+                tile_to_place_token_on.relational_id)
+            # Reject surrounding tiles as future candidates for reds.
             for e in tile_to_place_token_on.edges:
                 for t in e.tiles:
                     if tile_to_place_token_on != t:
                         if t.relational_id in tiles_to_place_tokens_on:
-                            rejected_tiles_for_6_and_8_placement.append(t.relational_id)
+                            rejected_tiles_for_reds.append(t.relational_id)
                             tiles_to_place_tokens_on.remove(t.relational_id)
             active_activation_values[token_value] -= 1
         # Rejected tiles are now considered for the rest of the tokens.
-        while len(rejected_tiles_for_6_and_8_placement) > 0:
-            tiles_to_place_tokens_on.append(rejected_tiles_for_6_and_8_placement.pop(0))
+        while len(rejected_tiles_for_reds) > 0:
+            tiles_to_place_tokens_on.append(rejected_tiles_for_reds.pop(0))
         # Place the rest of the tokens on the land tiles.
         for activation_value, amount in active_activation_values.items():
             while amount > 0:
                 self.tiles[int(tiles_to_place_tokens_on.pop(
                     random.randint(0, (len(
-                        tiles_to_place_tokens_on)-1))))].activation_value = activation_value
+                        tiles_to_place_tokens_on)
+                        - 1))))].activation_value = activation_value
                 amount -= 1
 
     def tile_info(self):
@@ -289,7 +299,7 @@ class Board:
 
     def board_str(self):
         ret = ""
-        count = 1;
+        count = 1
         for t in self.tiles:
             print("TILE #" + str(count))
             ret += ("TILE #" + str(count) + t.str())

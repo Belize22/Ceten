@@ -11,10 +11,11 @@ class NotificationPanel:
         self.dialog = dialog
 
     def draw(self):
-        pygame.draw.rect(self.screen, (205, 228, 205),
-                         ((self.screen.get_width()*0.2, self.center[1]),
-                          (self.screen.get_width()*0.6,
-                           self.screen.get_height()*0.05)))
+        pygame.draw.rect(
+            self.screen, (205, 228, 205),
+            ((self.screen.get_width()*0.2, self.center[1]),
+             (self.screen.get_width()*0.6,
+              self.screen.get_height()*0.05)))
         font = pygame.font.Font(None, 36)
         text = font.render(str(self.dialog), 1, (10, 10, 10))
         font_width, font_height = font.size(str(self.dialog))

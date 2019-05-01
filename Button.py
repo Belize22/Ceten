@@ -19,9 +19,8 @@ class Button:
 
     def update(self, dialog):
         self.dialog = dialog
-        (self.text_surf,
-         self.text_box) = self.text_objects(dialog,
-                                            pygame.font.Font(None, 36))
+        (self.text_surf, self.text_box) = self.text_objects(
+            dialog, pygame.font.Font(None, 36))
         self.text_box.center = self.position
         self.screen.blit(self.text_surf, self.text_box)
 

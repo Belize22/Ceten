@@ -49,10 +49,10 @@ class TileFacade:
         self.rect = None
 
     def draw(self):
-        pygame.draw.polygon(self.screen, (0, 0, 0), self.border_points,
-                            0)
-        self.rect = pygame.draw.polygon(self.screen, self.colour, self.points,
-                                        0)
+        pygame.draw.polygon(
+            self.screen, (0, 0, 0), self.border_points, 0)
+        self.rect = pygame.draw.polygon(
+            self.screen, self.colour, self.points, 0)
         self.texture = pygame.transform.scale(self.texture, self.rect.size)
         self.screen.blit(self.texture, self.rect)
         self.text = self.set_activation_value(str(self.tile.activation_value))
@@ -62,16 +62,17 @@ class TileFacade:
             if self.tile.robber:
                 color = (27, 50, 75)
             pygame.draw.circle(self.screen, color, self.centre, 15, 0)
-            self.screen.blit(self.text, [self.centre[0] - 11,
-                                         self.centre[1] - 8])
+            self.screen.blit(
+                self.text, [self.centre[0] - 11, self.centre[1] - 8])
 
     def hex_pointlist_generator(self, scale, centre):
         ret = []
         for i in range(6):
             deg = 60.0 * i - 30.0
             rad = math.pi / 180.0 * deg
-            ret.append([centre[0] + scale*math.cos(rad),
-                        centre[1] + scale*math.sin(rad)])
+            ret.append(
+                [centre[0] + scale*math.cos(rad),
+                 centre[1] + scale*math.sin(rad)])
         return ret
 
     def set_activation_value(self, activation_value):
@@ -103,46 +104,46 @@ class TileFacade:
     def set_texture(self, resource):
         if "lumber" in resource:
             if "port" in resource:
-                return pygame.image.load(TileFacade.texture
-                                         ["specialized_port_"
-                                          + str(self.port_direction)])
+                return pygame.image.load(
+                    TileFacade.texture[
+                        "specialized_port_" + str(self.port_direction)])
             else:
                 return pygame.image.load(TileFacade.texture["lumber"])
         elif "brick" in resource:
             if "port" in resource:
-                return pygame.image.load(TileFacade.texture
-                                         ["specialized_port_"
-                                          + str(self.port_direction)])
+                return pygame.image.load(
+                    TileFacade.texture[
+                        "specialized_port_" + str(self.port_direction)])
             else:
                 return pygame.image.load(TileFacade.texture["brick"])
         elif "ore" in resource:
             if "port" in resource:
-                return pygame.image.load(TileFacade.texture
-                                         ["specialized_port_"
-                                          + str(self.port_direction)])
+                return pygame.image.load(
+                    TileFacade.texture[
+                        "specialized_port_" + str(self.port_direction)])
             else:
                 return pygame.image.load(TileFacade.texture["ore"])
         elif "wool" in resource:
             if "port" in resource:
-                return pygame.image.load(TileFacade.texture
-                                         ["specialized_port_"
-                                          + str(self.port_direction)])
+                return pygame.image.load(
+                    TileFacade.texture[
+                        "specialized_port_" + str(self.port_direction)])
             else:
                 return pygame.image.load(TileFacade.texture["wool"])
         elif "grain" in resource:
             if "port" in resource:
-                return pygame.image.load(TileFacade.texture
-                                         ["specialized_port_"
-                                          + str(self.port_direction)])
+                return pygame.image.load(
+                    TileFacade.texture[
+                        "specialized_port_" + str(self.port_direction)])
             else:
                 return pygame.image.load(TileFacade.texture["grain"])
         elif resource == "desert":
             return pygame.image.load(TileFacade.texture["desert"])
         else:
             if "port" in resource:
-                return pygame.image.load(TileFacade.texture
-                                         ["standard_port_"
-                                          + str(self.port_direction)])
+                return pygame.image.load(
+                    TileFacade.texture[
+                        "standard_port_" + str(self.port_direction)])
             else:
                 return pygame.image.load(TileFacade.texture["water"])
 

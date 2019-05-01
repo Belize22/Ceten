@@ -31,20 +31,20 @@ class Catan:
     def start_game(self):
         self.board = Board()
         self.board_facade = BoardFacade(self.board, self.screen)
-        pygame.draw.rect(self.screen, (178, 155, 130),
-                         ((self.screen.get_width()*0.8, self.screen.get_height()*0.5),
-                          (self.screen.get_width()*0.2,
-                           self.screen.get_height()*0.5)),
-                         0)
-        self.roll_dice_button = RollButton((int(self.screen.get_width()*0.9), 275), "Roll Dice",
-                                           self.screen)
-        self.end_turn_button = Button((int(self.screen.get_width()*0.9), 425), "End Turn",
-                                      self.screen)
+        pygame.draw.rect(
+            self.screen, (178, 155, 130),
+            ((self.screen.get_width()*0.8, self.screen.get_height()*0.5),
+             (self.screen.get_width()*0.2, self.screen.get_height()*0.5)), 0)
+        self.roll_dice_button = RollButton(
+            (int(self.screen.get_width()*0.9), 275), "Roll Dice", self.screen)
+        self.end_turn_button = Button(
+            (int(self.screen.get_width()*0.9), 425), "End Turn", self.screen)
         self.num_players = 4
         self.player_facades = []
         for i in range(1, self.num_players+1):
-            self.player_facades.append(PlayerFacade(Player(i, "Player" + str(i)),
-                                       (340, 0), self.screen))
+            self.player_facades.append(
+                PlayerFacade(
+                    Player(i, "Player" + str(i)), (340, 0), self.screen))
         for pf in self.player_facades:
             self.board_facade.board.players.append(pf.player)
         self.board_facade.phase_panel.update("Roll the Dice!")
@@ -82,14 +82,15 @@ class Catan:
         if self.active_building:
             cf = self.board_facade.find_corner_at(mouse_pos)
             if cf is not None:
-                self.board_facade.place_settlement(cf,
-                                                   self.player_facades[
-                                                    self.current-1])
-                if self.player_facades[self.current-1].player.retrieve_victory_points() >= 10:
+                self.board_facade.place_settlement(
+                    cf, self.player_facades[self.current-1])
+                if (self.player_facades[self.current-1].player
+                        .retrieve_victory_points() >= 10):
                     self.winner_present = True
-                print("Clicked Corner: " + cf.corner.relational_id,
-                      "Settlement: " + cf.corner.settlement,
-                      "Ownership: " + str(cf.corner.ownership))
+                print(
+                    "Clicked Corner: " + cf.corner.relational_id,
+                    "Settlement: " + cf.corner.settlement,
+                    "Ownership: " + str(cf.corner.ownership))
 
         if (self.roll_dice_button.in_boundaries(mouse_pos) and
                 not self.active_robber and not self.has_rolled):
@@ -99,9 +100,11 @@ class Catan:
                 self.board_facade.produce_resources(self.roll_dice_button.roll)
                 for pf in self.player_facades:
                     print(pf.player.str())            
-                self.board_facade.phase_panel.update("Build something from your Inventory")
+                self.board_facade.phase_panel.update(
+                    "Build something from your Inventory")
             else:
-                self.board_facade.phase_panel.update("Move the robber and rob a nearby settlement")
+                self.board_facade.phase_panel.update(
+                    "Move the robber and rob a nearby settlement")
             self.has_rolled = True
 
         if self.board_facade.in_boundaries(mouse_pos) and self.active_robber:
@@ -113,31 +116,35 @@ class Catan:
                 rtf.set_robber(False)
                 tf.set_robber(True)
                 self.active_robber = False  
-                self.board_facade.phase_panel.update("Build something from your Inventory")
+                self.board_facade.phase_panel.update(
+                    "Build something from your Inventory")
 
         if self.has_rolled and not self.active_robber:
             self.active_building = True
 
-        if self.end_turn_button.in_boundaries(mouse_pos) and self.active_building:
-            pygame.draw.rect(self.screen, (178, 155, 130),
-                             ((self.screen.get_width() * 0.8, self.screen.get_height() * 0.5),
-                              (self.screen.get_width() * 0.2,
-                               self.screen.get_height() * 0.5)),
-                             0)
+        if (self.end_turn_button.in_boundaries(mouse_pos)
+                and self.active_building):
+            pygame.draw.rect(
+                self.screen, (178, 155, 130),
+                ((self.screen.get_width() * 0.8,
+                  self.screen.get_height() * 0.5),
+                 (self.screen.get_width() * 0.2,
+                  self.screen.get_height() * 0.5)), 0)
             self.roll_dice_button.update("Roll Dice!")
             self.end_turn_button.update("End Turn")
             if self.start_new_game:
                 self.start_game()
             elif self.winner_present:
-                pygame.draw.rect(self.screen, (178, 155, 130),
-                                 ((self.screen.get_width() * 0.8, self.screen.get_height() * 0.5),
-                                  (self.screen.get_width() * 0.2,
-                                   self.screen.get_height() * 0.5)),
-                                 0)
+                pygame.draw.rect(
+                    self.screen, (178, 155, 130),
+                    ((self.screen.get_width() * 0.8,
+                      self.screen.get_height() * 0.5),
+                     (self.screen.get_width() * 0.2,
+                      self.screen.get_height() * 0.5)), 0)
                 self.board_facade.phase_panel.update("Game Over!")
-                self.board_facade.feedback_panel.update(self.player_facades[
-                                                                self.current-1].player.name
-                                                            + " has won Catan!")
+                self.board_facade.feedback_panel.update(
+                    self.player_facades[self.current-1].player.name
+                    + " has won Catan!")
                 self.end_turn_button.update("New Game")
                 self.start_new_game = True
             else:
