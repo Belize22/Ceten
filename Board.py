@@ -42,20 +42,21 @@ class Board:
         self.tiles = []
         self.players = []
         self.resource_bank = ResourceBank(19)
-        while len(Board.resources) > 0 and len(Board.activation_values) > 0:
+        current_resources = Board.resources.copy()
+        while len(current_resources) > 0:
             (resource, resource_count) = random.choice(
-                                         list(Board.resources.items()))
+                                         list(current_resources.items()))
             if resource_count < 1:
-                Board.resources.pop(resource)
+                current_resources.pop(resource)
                 continue
             if resource == "desert":
                 tile = Tile(resource, 0)
                 tile.robber = True
                 self.tiles.append(tile)
-                Board.resources[resource] -= 1
+                current_resources[resource] -= 1
                 continue
             self.tiles.append(Tile(resource, 0))
-            Board.resources[resource] -= 1
+            current_resources[resource] -= 1
         port_types = ["grain", "ore", "standard", "wool", "standard",
                       "standard", "brick", "lumber", "standard"]
         current_direction = 1
@@ -110,6 +111,7 @@ class Board:
                 tiles_on_current_level_iterated = 0
                 while nth_tile_being_iterated < 6*level+1:
                     self.tiles[val].relational_id = str(val)
+                    print("THE VALUE IS: " + str(val))
                     second_corner = Corner()
                     third_corner = Corner()
                     set_edges([self.tiles[val], self.tiles[val-1]],
@@ -218,7 +220,7 @@ class Board:
     each other.
     """
     def place_tokens(self):
-        active_activation_values = self.activation_values
+        active_activation_values = self.activation_values.copy()
         tiles_to_place_tokens_on = []
         rejected_tiles_for_6_and_8_placement = []
         # Only land tiles get tokens on them.

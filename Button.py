@@ -6,6 +6,8 @@ class Button:
         self.screen = screen
         self.position = position
         self.dialog = ""
+        self.text_surf = None
+        self.text_box = None
         self.update(dialog)
 
     def text_objects(self, text, font):

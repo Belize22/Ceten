@@ -2,7 +2,9 @@ from Die import Die
 
 
 class DieRoller:
-    def __init__(self, num_dice=2, dice=[]):
+    def __init__(self, num_dice=2, dice=None):
+        if dice is None:
+            dice = []
         self.dice = dice
         for i in range(num_dice):
             self.dice.append(Die(6))
