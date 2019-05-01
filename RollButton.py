@@ -15,6 +15,9 @@ class RollButton(Button):
 		self.roll = self.__roll_dice()
 		self.draw()
 
+	def update(self, dialog):
+		super().update(dialog)
+
 	def on_roll(self):
 		if self.roll == 7:
 			return True

@@ -38,6 +38,7 @@ class Catan:
         self.active_building = False
         self.has_rolled = False
         self.current = 1
+        self.winner_present = False
 
     def run(self):
         running = True
@@ -68,6 +69,8 @@ class Catan:
                 self.board_facade.place_settlement(cf,
                                                    self.player_facades[
                                                     self.current-1])
+                if self.player_facades[self.current-1].player.retrieve_victory_points() >= 10:
+                    self.winner_present = True
                 print("Clicked Corner: " + cf.corner.relational_id,
                       "Settlement: " + cf.corner.settlement,
                       "Ownership: " + str(cf.corner.ownership))
@@ -100,12 +103,25 @@ class Catan:
             self.active_building = True
 
         if self.end_turn_button.in_boundaries(mouse_pos) and self.active_building:
-            self.current += 1
-            if self.current > self.num_players:
-                self.current = 1
-            self.has_rolled = False
-            self.active_building = False
-            self.board_facade.phase_panel.update("Roll the Dice!")
+            pygame.draw.rect(self.screen, (178, 155, 130),
+                             ((self.screen.get_width() * 0.8, self.screen.get_height() * 0.5),
+                              (self.screen.get_width() * 0.2,
+                               self.screen.get_height() * 0.5)),
+                             0)
+            self.roll_dice_button.update("Roll Dice!")
+            if self.winner_present:
+                self.board_facade.phase_panel.update("Game Over!")
+                self.board_facade.feedback_panel.update(self.player_facades[
+                                                                self.current-1].player.name
+                                                            + " has won Catan!")
+                self.end_turn_button.update("New Game")
+            else:
+                self.current += 1
+                if self.current > self.num_players:
+                    self.current = 1
+                self.has_rolled = False
+                self.active_building = False
+                self.board_facade.phase_panel.update("Roll the Dice!")
 
 
 game = Catan()
