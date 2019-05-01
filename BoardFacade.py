@@ -175,7 +175,7 @@ class BoardFacade:
                         else:
                             self.feedback_panel.update("Insufficient resources to build a settlement!")
                     else:
-                        self.feedback_panel.update("You have no more settlements in your inventory!")
+                        self.feedback_panel.update("No more settlements in your inventory!")
                 elif corner_facade.corner.settlement == "settlement":
                     if player_facade.player.game_piece_bank.game_pieces[2] > 0:
                         player_facade.player.resource_bank.spend_resources([0, 0, 2, 0, 3])
@@ -188,7 +188,7 @@ class BoardFacade:
                         else:
                             self.feedback_panel.update("Insufficient resources to build a city!")
                     else:
-                        self.feedback_panel.update("You have no more cities in your inventory!")
+                        self.feedback_panel.update("No more cities in your inventory!")
                 else:
                     self.feedback_panel.update("Cities cannot be upgraded further!")
             else:
