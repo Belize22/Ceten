@@ -34,7 +34,6 @@ class PlayerFacade:
                                 colour.get("YELLOW"),
                                 colour.get("BLUE"),
                                 colour.get("RED")]
-
     resource_icon_order = [resource_icons.get("lumber"),
                            resource_icons.get("wool"),
                            resource_icons.get("grain"),
@@ -57,6 +56,7 @@ class PlayerFacade:
         self.screen = screen
     
     def draw(self):
+        print(self.player.name + "'s VPs: " + str(self.player.retrieve_victory_points()))
         pygame.draw.rect(self.screen, (228, 205, 180),
                          ((self.screen.get_width()*0.8, self.center[1]),
                           (self.screen.get_width()*0.2,

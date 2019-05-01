@@ -9,6 +9,12 @@ class Player:
         self.resource_bank = ResourceBank()
         self.game_piece_bank = GamePieceBank()
         self.dev_cards = []
+
+    def retrieve_victory_points(self):
+        victory_points = 0
+        victory_points += (5-self.game_piece_bank.game_pieces[1])
+        victory_points += (4-self.game_piece_bank.game_pieces[2])*2
+        return victory_points
             
     def str(self):
         ret = self.name_str() + "\n"
