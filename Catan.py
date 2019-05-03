@@ -5,6 +5,7 @@ from Button import Button
 from RollButton import RollButton
 from PlayerFacade import PlayerFacade
 import pygame
+import random
 
 
 class Catan:
@@ -45,6 +46,7 @@ class Catan:
             self.player_facades.append(
                 PlayerFacade(
                     Player(i, "Player" + str(i)), (340, 0), self.screen))
+        self.player_facades = self.randomize_turn_order(self.player_facades)
         for pf in self.player_facades:
             self.board_facade.board.players.append(pf.player)
         self.board_facade.phase_panel.update("Roll the Dice!")
@@ -154,6 +156,17 @@ class Catan:
                 self.has_rolled = False
                 self.active_building = False
                 self.board_facade.phase_panel.update("Roll the Dice!")
+
+    def randomize_turn_order(self, player_facades):
+        for i in range(0, len(player_facades)-1):
+            random_index = random.randint(0, len(player_facades)-1)
+            player_facades[i].player.turn_priority, \
+                player_facades[random_index].player.turn_priority = \
+                player_facades[random_index].player.turn_priority, \
+                player_facades[i].player.turn_priority
+            player_facades[i], player_facades[random_index] = \
+                player_facades[random_index], player_facades[i]
+        return player_facades
 
 
 game = Catan()
