@@ -40,7 +40,6 @@ class Board:
 
     def __init__(self, tile_count=37):
         self.tiles = []
-        self.players = []
         self.resource_bank = ResourceBank(19)
         current_resources = Board.resources.copy()
         while len(current_resources) > 0:
@@ -305,7 +304,14 @@ class Board:
             ret += ("TILE #" + str(count) + t.str())
             count += 1
 
-    def produce_resources(self, roll):
+    """produce_resources:
+    roll - Tiles with an activation value of this dice roll are the
+           tiles involved with this procedure.
+    Gives resources to the settlements adjacent to tiles with 
+    activation value "roll". Settlements receive 1 of the tile's
+    resource while cities receive 2.
+    """
+    def produce_resources(self, roll, players):
         productive_tiles = []
         for t in self.tiles:
             if str(t.activation_value) == str(roll) and not t.robber:
@@ -316,7 +322,7 @@ class Board:
             starting_corner = pt.edges[0].corners[0]
             current_edge = starting_edge
             current_corner = starting_corner
-            self.gather_resource_with_settlement(pt, current_corner)
+            self.gather_resource_with_settlement(pt, current_corner, players)
             for c in current_edge.corners:
                 if c != current_corner:
                     current_corner = c
@@ -326,18 +332,38 @@ class Board:
                     if pt in e.tiles and e != current_edge:
                         current_edge = e
                         break
-                self.gather_resource_with_settlement(pt, current_corner)
+                self.gather_resource_with_settlement(
+                    pt, current_corner, players)
                 for c in current_edge.corners:
                     if c != current_corner:
                         current_corner = c
                         break
             valid_transaction = self.resource_bank.validate_transaction()
             if valid_transaction:
-                for p in self.players:
+                for p in players:
                     p.resource_bank.validate_transaction()
             else:
-                for p in self.players:
+                for p in players:
                     p.resource_bank.cancel_transaction()
+
+    """produce_initial_resources:
+    corner - the settlement that the player has placed.
+    player - the player that receives the resources.
+    Handles the scenario for resource collection upon placement of the
+    second settlement during the setup phase. Gathers 1 resource for
+    each tile adjacent to the placed settlement.
+    """
+    def produce_initial_resources(self, corner, player):
+        adjacent_tiles = []
+        for e in corner.edges:
+            for t in e.tiles:
+                if t not in adjacent_tiles:
+                    adjacent_tiles.append(t)
+        for at in adjacent_tiles:
+            if ("desert" not in at.resource and "water" not in at.resource and
+                    "port" not in at.resource):
+                player.resource_bank.deposit_resource(at.resource, 1)
+                player.resource_bank.validate_transaction()
 
     def __random_tile(self):
         return self.tiles[random.randint(0, len(self.tiles) - 1)]
@@ -356,7 +382,7 @@ class Board:
             if t.robber:
                 return t
     
-    def gather_resource_with_settlement(self, tile, corner):
+    def gather_resource_with_settlement(self, tile, corner, players):
         resource = tile.resource
         if corner.settlement == "city": 
             quantity = 2
@@ -365,20 +391,14 @@ class Board:
         else:
             quantity = 0
         if corner.ownership != 0:
-            owner = self.players[corner.ownership-1]
+            for p in players:
+                if p.id == corner.ownership:
+                    owner = p
             owner.resource_bank.deposit_resource(resource, quantity)
             self.resource_bank.withdraw_resource(resource, quantity)
 
-    def simulate_starting_phase(self):
-        self.tiles[9].edges[2].corners[1].settlement = "settlement"
-        self.tiles[9].edges[2].corners[1].ownership = 1
-        self.tiles[7].edges[0].corners[1].settlement = "settlement"
-        self.tiles[7].edges[0].corners[1].ownership = 2
-        self.tiles[15].edges[2].corners[1].settlement = "settlement"
-        self.tiles[15].edges[2].corners[1].ownership = 3
-        self.tiles[12].edges[1].corners[1].settlement = "settlement"
-        self.tiles[12].edges[1].corners[1].ownership = 4
-        for p in self.players:
+    def start_off_with_extra_resources(self, players):
+        for p in players:
             p.game_piece_bank.place_settlement()
             p.resource_bank.collect_resources([3, 3, 3, 3, 3])
             p.resource_bank.validate_transaction()
