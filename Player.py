@@ -5,6 +5,7 @@ from GamePieceBank import GamePieceBank
 class Player:
     def __init__(self, id, name):
         self.id = id
+        self.turn_priority = id
         self.name = name
         self.resource_bank = ResourceBank()
         self.game_piece_bank = GamePieceBank()

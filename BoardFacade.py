@@ -148,8 +148,11 @@ class BoardFacade:
                 if insert_facade:
                     self.corner_facades.append(corner_facade)
 
-    def produce_resources(self, roll):
-        return self.board.produce_resources(roll)
+    def produce_initial_resources(self, corner, player):
+        self.board.produce_initial_resources(corner, player)
+
+    def produce_resources(self, roll, players):
+        self.board.produce_resources(roll, players)
 
     # will always return at least one robber
     def find_robber(self):

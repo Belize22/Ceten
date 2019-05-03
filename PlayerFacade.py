@@ -121,8 +121,9 @@ class PlayerFacade:
 
     def draw_public(self):
         pygame.draw.rect(
-            self.screen, self.player_to_colour_mapping[self.player.id-1],
-            ((0, self.screen.get_height()*0.25*(self.player.id-1)),
+            self.screen,
+            self.player_to_colour_mapping[self.player.id-1],
+            ((0, self.screen.get_height()*0.25*(self.player.turn_priority-1)),
              (self.screen.get_width()*0.2,
               self.screen.get_height()*0.25)), 0)
         shift_x = 17.5
@@ -133,7 +134,8 @@ class PlayerFacade:
             resource_rect = pygame.draw.rect(
                 self.screen, (0, 0, 0),
                 ((x, self.center[1]
-                  + self.screen.get_height()*0.25*(self.player.id-1) + y),
+                  + self.screen.get_height()*0.25*(self.player.turn_priority-1)
+                  + y),
                  (16, 16)), 0)
             resource_image = pygame.image.load(self.resource_icon_order[i])
             resource_texture = pygame.transform.scale(
@@ -144,19 +146,20 @@ class PlayerFacade:
                 str(self.player.resource_bank.resources[i]),
                 (x,
                  self.center[1]
-                 + self.screen.get_height()*0.25*(self.player.id-1) + y))
+                 + self.screen.get_height()*0.25*(self.player.turn_priority-1)
+                 + y))
             x += shift_x
         self.__render_blit(
             self.player.name_str(),
             [0, self.center[1]
-             + self.screen.get_height()*0.25*(self.player.id-1)])
+             + self.screen.get_height()*0.25*(self.player.turn_priority-1)])
         x = 2
         y += shift_y
         for i in range(0, len(self.public_development_card_icon_order)):
             development_card_rect = pygame.draw.rect(
                 self.screen, (0, 0, 0),
                 ((x, self.center[1] + self.screen.get_height()*0.25
-                 * (self.player.id-1) + y), (16, 20)), 0)
+                 * (self.player.turn_priority-1) + y), (16, 20)), 0)
             development_card_image = pygame.image.load(
                 self.public_development_card_icon_order[i])
             development_card_texture = pygame.transform.scale(
@@ -167,7 +170,7 @@ class PlayerFacade:
         self.__render_blit(
             self.player.name_str(),
             [0, self.center[1]
-             + self.screen.get_height()*0.25 * (self.player.id-1)])
+             + self.screen.get_height()*0.25 * (self.player.turn_priority-1)])
 
     def gather(self, res_dict):
         self.player.num_wool += res_dict["wool"]	
