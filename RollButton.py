@@ -4,6 +4,8 @@ from DieRoller import DieRoller
 
 
 class RollButton(Button):
+	ROBBER_ACTIVATION_VALUE = 7
+
 	def __init__(self, position, dialog, screen, num_dice=2):
 		super().__init__(position, dialog, screen)
 		self.dice_roller = DieRoller(num_dice)
@@ -18,8 +20,8 @@ class RollButton(Button):
 	def update(self, dialog):
 		super().update(dialog)
 
-	def on_roll(self):
-		if self.roll == 7:
+	def robber_invoked(self):
+		if self.roll == self.ROBBER_ACTIVATION_VALUE:
 			return True
 		return False
 

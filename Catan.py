@@ -151,7 +151,7 @@ class Catan:
 
     def roll_dice(self):
         self.roll_dice_button.on_click()
-        self.active_robber = self.roll_dice_button.on_roll()
+        self.active_robber = self.roll_dice_button.robber_invoked()
         if not self.active_robber:
             player_list = []
             for i in range(0, len(self.player_facades)):

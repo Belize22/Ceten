@@ -13,8 +13,12 @@ class Player:
 
     def retrieve_victory_points(self):
         victory_points = 0
-        victory_points += (5-self.game_piece_bank.game_pieces[1])
-        victory_points += (4-self.game_piece_bank.game_pieces[2])*2
+        victory_points += (
+                self.game_piece_bank.SETTLEMENT_QUANTITY
+                - self.game_piece_bank.game_pieces[1])
+        victory_points += (
+                self.game_piece_bank.CITY_QUANTITY
+                - self.game_piece_bank.game_pieces[2])*2
         return victory_points
             
     def str(self):
