@@ -199,7 +199,7 @@ class Catan:
               self.screen.get_height() * 0.5),
              (self.screen.get_width() * 0.2,
               self.screen.get_height() * 0.5)), 0)
-        self.roll_dice_button.update("Roll Dice!")
+        self.roll_dice_button.update("Roll Dice")
         self.end_turn_button.update("End Turn")
         if self.start_new_game:
             self.start_game()
