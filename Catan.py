@@ -1,7 +1,7 @@
 from Board import Board
 from Player import Player
 from BoardFacade import BoardFacade
-from Button import Button
+from SubmitButton import SubmitButton
 from RollButton import RollButton
 from PlayerFacade import PlayerFacade
 import pygame
@@ -40,8 +40,8 @@ class Catan:
              (self.screen.get_width()*0.2, self.screen.get_height()*0.5)), 0)
         self.roll_dice_button = RollButton(
             (int(self.screen.get_width()*0.9), 275), "Roll Dice", self.screen)
-        self.end_turn_button = Button(
-            (int(self.screen.get_width()*0.9), 425), "End Turn", self.screen)
+        self.end_turn_button = SubmitButton(
+            self.screen, (int(self.screen.get_width()*0.9), 425), "End Turn")
         self.num_players = 4
         self.player_facades = []
         for i in range(1, self.num_players+1):
