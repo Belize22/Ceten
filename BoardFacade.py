@@ -61,7 +61,11 @@ class BoardFacade:
             (self.screen.get_width() * 0.5, self.screen.get_height() * 0.95),
             self.screen)
         
-    def generate_facades(self, start=[400.0, 290.0], size=40.0):
+    def generate_facades(self, start=[400.0, 290.0], size=42.5):
+        self.generate_tile_facades(size)
+        self.generate_corner_facades(size/5)
+
+    def generate_tile_facades(self, size):
         tile_count = 0
         offset_y = 0
         offset_x = 0
@@ -94,7 +98,7 @@ class BoardFacade:
             print(tile_facade.str())
             index = 0
             for tf in self.tile_facades:
-                if (int(tf.tile.relational_id) < 
+                if (int(tf.tile.relational_id) <
                    int(tile_facade.tile.relational_id)):
                     index += 1
                 else:
@@ -116,6 +120,8 @@ class BoardFacade:
                 offset_x = size * 2.6
             else:
                 offset_x -= size * math.sqrt(3.0)/2.0
+
+    def generate_corner_facades(self, radius):
         corners_of_tile = []
         for tf in self.tile_facades:
             for e in tf.tile.edges:
@@ -139,7 +145,7 @@ class BoardFacade:
                     center_x += tfrp.centre[0]/3
                     center_y += tfrp.centre[1]/3
                 corner_facade = CornerFacade(
-                    [round(center_x), round(center_y)], c, self.screen)
+                    [round(center_x), round(center_y)], c, self.screen, radius)
                 insert_facade = True
                 for cf in self.corner_facades:
                     if cf.center == corner_facade.center:
