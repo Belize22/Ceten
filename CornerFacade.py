@@ -18,11 +18,11 @@ class CornerFacade:
         colour.get("BLUE"),
         colour.get("RED")]
 
-    def __init__(self, position, corner, screen):
+    def __init__(self, position, corner, screen, radius):
         self.center = position
         self.corner = corner
         self.screen = screen
-        self.radius = 10
+        self.radius = int(radius)
         self.circle = None
         self.draw()
 

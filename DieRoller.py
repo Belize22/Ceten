@@ -1,21 +1,23 @@
-from Die import Die
+from Dice import Dice
 
 
 class DieRoller:
+    DICE_FACES = 6
+
     def __init__(self, num_dice=2, dice=None):
         if dice is None:
             dice = []
         self.dice = dice
         for i in range(num_dice):
-            self.dice.append(Die(6))
+            self.dice.append(Dice(self.DICE_FACES))
 
     def roll_dice(self):
-        ret = 0
+        total = 0
         for d in self.dice:
-            ret += d.roll()
-        return ret
+            total += d.roll()
+        return total
         
     def test(self):
-        for x in range(6):
+        for x in range(self.DICE_FACES):
             print(str(self.roll_dice()))
 

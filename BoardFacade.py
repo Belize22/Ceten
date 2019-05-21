@@ -1,5 +1,7 @@
 from Board import Board
 from Tile import Tile
+from DieRoller import DieRoller
+from SubmitButton import SubmitButton
 from TileFacade import TileFacade
 from CornerFacade import CornerFacade
 from NotificationPanel import NotificationPanel
@@ -9,6 +11,7 @@ import random
 
 
 class BoardFacade:
+    NUM_DICE = 2
     grid_coordinates = [
         (0, -3),
         (-1, -2),
@@ -54,14 +57,24 @@ class BoardFacade:
         self.screen = screen
         self.tile_facades = []
         self.corner_facades = []
-        self.generate_facades()
+        self.die_roller = DieRoller(self.NUM_DICE)
+        self.roll_dice_button = SubmitButton(
+            self.screen, (int(self.screen.get_width()*0.9), 275), "Roll Dice")
+        self.end_turn_button = SubmitButton(
+            self.screen, (int(self.screen.get_width()*0.9), 425), "End Turn")
+        self.dice_value_position = (int(self.screen.get_width()*0.9), 275 + 60)
         self.phase_panel = NotificationPanel(
             (self.screen.get_width() * 0.5, 0), self.screen)
         self.feedback_panel = NotificationPanel(
             (self.screen.get_width() * 0.5, self.screen.get_height() * 0.95),
             self.screen)
+        self.generate_facades()
         
-    def generate_facades(self, start=[400.0, 290.0], size=40.0):
+    def generate_facades(self, start=[400.0, 290.0], size=42.5):
+        self.generate_tile_facades(size)
+        self.generate_corner_facades(size/5)
+
+    def generate_tile_facades(self, size):
         tile_count = 0
         offset_y = 0
         offset_x = 0
@@ -94,7 +107,7 @@ class BoardFacade:
             print(tile_facade.str())
             index = 0
             for tf in self.tile_facades:
-                if (int(tf.tile.relational_id) < 
+                if (int(tf.tile.relational_id) <
                    int(tile_facade.tile.relational_id)):
                     index += 1
                 else:
@@ -116,6 +129,8 @@ class BoardFacade:
                 offset_x = size * 2.6
             else:
                 offset_x -= size * math.sqrt(3.0)/2.0
+
+    def generate_corner_facades(self, radius):
         corners_of_tile = []
         for tf in self.tile_facades:
             for e in tf.tile.edges:
@@ -139,7 +154,7 @@ class BoardFacade:
                     center_x += tfrp.centre[0]/3
                     center_y += tfrp.centre[1]/3
                 corner_facade = CornerFacade(
-                    [round(center_x), round(center_y)], c, self.screen)
+                    [round(center_x), round(center_y)], c, self.screen, radius)
                 insert_facade = True
                 for cf in self.corner_facades:
                     if cf.center == corner_facade.center:
@@ -153,6 +168,28 @@ class BoardFacade:
 
     def produce_resources(self, roll, players):
         self.board.produce_resources(roll, players)
+
+    def render_control_menu(self):
+        pygame.draw.rect(
+            self.screen, (178, 155, 130),
+            ((self.screen.get_width()*0.8, self.screen.get_height()*0.5),
+             (self.screen.get_width()*0.2, self.screen.get_height()*0.5)), 0)
+        self.roll_dice_button.draw()
+        self.end_turn_button.draw()
+
+    def roll_dice(self):
+        roll = self.die_roller.roll_dice()
+        pygame.draw.circle(
+            self.screen, (228, 205, 180), self.dice_value_position, 30, 0)
+        font = pygame.font.Font(None, 36)
+        text = font.render(str(roll), 1, (10, 10, 10))
+        self.screen.blit(
+            text, [self.dice_value_position[0] - 11,
+                   self.dice_value_position[1] - 8])
+        print("Current Roll " + str(roll))
+        if roll == 7:
+            self.board.active_robber = True
+        return roll
 
     # will always return at least one robber
     def find_robber(self):
