@@ -38,7 +38,8 @@ class Catan:
                 PlayerFacade(
                     Player(i, "Player" + str(i)), (340, 0), self.screen))
         self.player_facades = self.randomize_turn_order(self.player_facades)
-        self.active_building = False
+        for pf in self.player_facades:
+            pf.initialize_public_panels()
         self.has_rolled = False
         self.current = 1
         self.winner_present = False
