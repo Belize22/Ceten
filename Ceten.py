@@ -6,7 +6,7 @@ import pygame
 import random
 
 
-class Catan:
+class Ceten:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption("Pilgrims of Ceten (Catan Clone)")
@@ -213,5 +213,5 @@ class Catan:
         return player_facades
 
 
-game = Catan()
+game = Ceten()
 game.run()
