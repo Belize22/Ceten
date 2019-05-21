@@ -41,6 +41,7 @@ class Board:
     def __init__(self, tile_count=37):
         self.tiles = []
         self.resource_bank = ResourceBank(19)
+        self.active_robber = False
         current_resources = Board.resources.copy()
         while len(current_resources) > 0:
             (resource, resource_count) = random.choice(

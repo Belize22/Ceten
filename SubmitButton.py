@@ -15,11 +15,11 @@ class SubmitButton:
         self.font = pygame.font.Font(None, 36)
         self.update(dialog)
 
-    def update(self, dialog):
-        self.dialog = dialog
-        (self.text_surf, self.text_box) = self.text_objects(dialog, self.font)
+    def draw(self):
+        (self.text_surf, self.text_box) = self.text_objects(
+            self.dialog, self.font)
         self.text_box.center = self.position
-        font_size = self.font.size(dialog)
+        font_size = self.font.size(self.dialog)
         pygame.draw.rect(
             self.screen, self.BUTTON_COLOR,
             ((self.position[0]-font_size[0]/2,
@@ -29,6 +29,10 @@ class SubmitButton:
             ((self.position[0]-font_size[0]/2,
               self.position[1]-font_size[1]/2), font_size), 2)
         self.screen.blit(self.text_surf, self.text_box)
+
+    def update(self, dialog):
+        self.dialog = dialog
+        self.draw()
 
     def in_boundaries(self, position):
         return self.text_box.collidepoint(position)

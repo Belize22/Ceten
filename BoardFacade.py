@@ -1,5 +1,7 @@
 from Board import Board
 from Tile import Tile
+from DieRoller import DieRoller
+from SubmitButton import SubmitButton
 from TileFacade import TileFacade
 from CornerFacade import CornerFacade
 from NotificationPanel import NotificationPanel
@@ -9,6 +11,7 @@ import random
 
 
 class BoardFacade:
+    NUM_DICE = 2
     grid_coordinates = [
         (0, -3),
         (-1, -2),
@@ -54,12 +57,18 @@ class BoardFacade:
         self.screen = screen
         self.tile_facades = []
         self.corner_facades = []
-        self.generate_facades()
+        self.die_roller = DieRoller(self.NUM_DICE)
+        self.roll_dice_button = SubmitButton(
+            self.screen, (int(self.screen.get_width()*0.9), 275), "Roll Dice")
+        self.end_turn_button = SubmitButton(
+            self.screen, (int(self.screen.get_width()*0.9), 425), "End Turn")
+        self.dice_value_position = (int(self.screen.get_width()*0.9), 275 + 60)
         self.phase_panel = NotificationPanel(
             (self.screen.get_width() * 0.5, 0), self.screen)
         self.feedback_panel = NotificationPanel(
             (self.screen.get_width() * 0.5, self.screen.get_height() * 0.95),
             self.screen)
+        self.generate_facades()
         
     def generate_facades(self, start=[400.0, 290.0], size=42.5):
         self.generate_tile_facades(size)
@@ -159,6 +168,28 @@ class BoardFacade:
 
     def produce_resources(self, roll, players):
         self.board.produce_resources(roll, players)
+
+    def render_control_menu(self):
+        pygame.draw.rect(
+            self.screen, (178, 155, 130),
+            ((self.screen.get_width()*0.8, self.screen.get_height()*0.5),
+             (self.screen.get_width()*0.2, self.screen.get_height()*0.5)), 0)
+        self.roll_dice_button.draw()
+        self.end_turn_button.draw()
+
+    def roll_dice(self):
+        roll = self.die_roller.roll_dice()
+        pygame.draw.circle(
+            self.screen, (228, 205, 180), self.dice_value_position, 30, 0)
+        font = pygame.font.Font(None, 36)
+        text = font.render(str(roll), 1, (10, 10, 10))
+        self.screen.blit(
+            text, [self.dice_value_position[0] - 11,
+                   self.dice_value_position[1] - 8])
+        print("Current Roll " + str(roll))
+        if roll == 7:
+            self.board.active_robber = True
+        return roll
 
     # will always return at least one robber
     def find_robber(self):
