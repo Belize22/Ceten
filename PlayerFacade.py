@@ -1,4 +1,5 @@
 from Player import Player
+from InventoryPanel import InventoryPanel
 import pygame
 
 
@@ -59,7 +60,11 @@ class PlayerFacade:
         self.player = player
         self.center = center
         self.screen = screen
-    
+        self.private_resource_panel = InventoryPanel(
+            (self.screen.get_width()*0.8 + 2, self.center[1] + 25),
+            self.screen, self.player.resource_bank.resources,
+            self.resource_icon_order, (16, 16))
+
     def draw(self):
         pygame.draw.rect(
             self.screen, (228, 205, 180),
@@ -72,21 +77,7 @@ class PlayerFacade:
         shift_y = 25
         x = 2
         y = 25
-        for i in range(0, len(self.resource_icon_order)):
-            resource_rect = pygame.draw.rect(
-                self.screen, (0, 0, 0),
-                ((self.screen.get_width()*0.8 + x,
-                 self.center[1] + y), (16, 16)), 0)
-            resource_image = pygame.image.load(self.resource_icon_order[i])
-            resource_texture = pygame.transform.scale(
-                resource_image, resource_rect.size)
-            self.screen.blit(resource_texture, resource_rect)
-            x += shift_x
-            self.__render_blit(
-                str(self.player.resource_bank.resources[i]),
-                (self.screen.get_width() * 0.8 + x,
-                 self.center[1] + y))
-            x += shift_x
+        self.private_resource_panel.draw()
         x = 2
         y += shift_y
         for i in range(0, len(self.game_piece_icon_order)):
