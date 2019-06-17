@@ -17,12 +17,11 @@ class InventoryButton:
             degree = math.pi/2
         else:
             degree = 3*math.pi/2
-        for i in range(0,3):
-            self.triangle_pointlist.add(
-                [self.position+self.line_length*math.cos(degree),
-                 self.position+self.line_length*math.sin(degree)])
+        for i in range(0, 3):
+            self.triangle_pointlist.append(
+                [self.position[0]+int(self.line_length*math.cos(degree)),
+                 self.position[1]+int(self.line_length*-math.sin(degree))])
             degree += 2*math.pi/3
-        self.draw()
 
     def switch_enabled_state(self):
         self.enabled = not self.enabled
@@ -35,7 +34,7 @@ class InventoryButton:
             current_color_scheme = DISABLED_COLOR_SCHEME
         pygame.draw.circle(
             self.screen, current_color_scheme[1], self.position,
-            self.line_length*2)
+            int(self.line_length*2))
         pygame.draw.polygon(
             self.screen, current_color_scheme[0], self.triangle_pointlist, 0)
 

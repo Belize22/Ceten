@@ -1,5 +1,6 @@
 from Player import Player
 from InventoryPanel import InventoryPanel
+from InventoryButton import InventoryButton
 import pygame
 
 
@@ -79,6 +80,9 @@ class PlayerFacade:
             self.screen, [0, 0, 0, 0, 0],
             self.development_card_icon_order, self.CARD_ICON_SIZE)
         self.public_development_card_panel = None
+        self.inventory_button_test = InventoryButton(
+            self.screen,
+            (int(self.screen.get_width()*0.8) + 2, self.center[1] + 75), "up")
 
     def initialize_public_panels(self):
         self.public_resource_panel = InventoryPanel(
@@ -107,6 +111,7 @@ class PlayerFacade:
         self.private_resource_panel.draw()
         self.game_piece_panel.draw()
         self.development_card_panel.draw()
+        self.inventory_button_test.draw()
 
     def draw_public(self):
         pygame.draw.rect(
