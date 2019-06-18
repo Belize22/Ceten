@@ -2,6 +2,7 @@ from Player import Player
 from InventoryPanel import InventoryPanel
 from InventoryButtonPanel import InventoryButtonPanel
 from InventoryButton import InventoryButton
+from SubmitButton import SubmitButton
 import pygame
 
 
@@ -79,19 +80,21 @@ class PlayerFacade:
             len(self.resource_icon_order), "down")
         self.public_resource_panel = None
         self.game_piece_panel = InventoryPanel(
-            (self.screen.get_width()*0.8 + 2, self.center[1] + 100),
+            (self.screen.get_width()*0.8 + 2, self.center[1] + 150),
             self.screen, self.player.game_piece_bank.game_pieces,
             self.game_piece_icon_order, self.INVENTORY_ICON_SIZE)
         '''TO-DO: Give development card bank as parameter 
         once Development card bank is implemented.'''
         self.development_card_panel = InventoryPanel(
-            (self.screen.get_width()*0.8 + 2, self.center[1] + 125),
+            (self.screen.get_width()*0.8 + 2, self.center[1] + 175),
             self.screen, [0, 0, 0, 0, 0],
             self.development_card_icon_order, self.CARD_ICON_SIZE)
         self.public_development_card_panel = None
         self.inventory_button_test = InventoryButton(
             self.screen,
             (int(self.screen.get_width()*0.8) + 45, self.center[1] + 35), "up")
+        self.resource_submit_button = SubmitButton(
+            self.screen, (int(self.screen.get_width()*0.9), 115), "Submit")
 
     def initialize_public_panels(self):
         self.public_resource_panel = InventoryPanel(
@@ -122,6 +125,7 @@ class PlayerFacade:
         self.private_resource_panel.draw()
         self.game_piece_panel.draw()
         self.development_card_panel.draw()
+        self.resource_submit_button.draw()
 
     def draw_public(self):
         pygame.draw.rect(

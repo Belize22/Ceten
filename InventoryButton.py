@@ -11,7 +11,7 @@ class InventoryButton:
         self.screen = screen
         self.position = position
         self.triangle_pointlist = []
-        self.enabled = True
+        self.enabled = False
         self.line_length = 5
         if orientation == "up":
             degree = math.pi/2

@@ -90,6 +90,11 @@ class Ceten:
             print(self.player_facades[self.current - 1].player.name
                   + " clicked decrement button #" + str(button_num))
 
+        if (self.player_facades[self.current-1].resource_submit_button.
+                in_boundaries(mouse_pos)):
+            print(self.player_facades[self.current - 1].player.name
+                  + " submitted resource content!")
+
         if self.setup_phase_active:
             self.setup_phase(mouse_pos)
         else:
