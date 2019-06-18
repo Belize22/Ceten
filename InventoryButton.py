@@ -2,8 +2,8 @@ import pygame
 import math
 
 # Triangle, then circle respectively.
-DISABLED_COLOR_SCHEME = [(100, 100, 100), (180, 180, 180)]
-ENABLED_COLOR_SCHEME = [(0, 0, 0), (180, 210, 210)]
+DISABLED_COLOR_SCHEME = [(80, 80, 80), (150, 150, 150)]
+ENABLED_COLOR_SCHEME = [(0, 0, 0), (180, 180, 180)]
 
 
 class InventoryButton:
@@ -11,7 +11,7 @@ class InventoryButton:
         self.screen = screen
         self.position = position
         self.triangle_pointlist = []
-        self.enabled = False
+        self.enabled = True
         self.line_length = 5
         if orientation == "up":
             degree = math.pi/2

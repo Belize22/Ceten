@@ -78,6 +78,18 @@ class Ceten:
         print("Is the Robber Active? " + str(self.board_facade.board.active_robber))
         mouse_pos = pygame.mouse.get_pos()
 
+        button_num = self.player_facades[self.current-1].\
+            private_resource_incrementers.toggle_button_in_boundary(mouse_pos)
+        if button_num != -1:
+            print(self.player_facades[self.current-1].player.name
+                  + " clicked increment button #" + str(button_num))
+        button_num = self.player_facades[self.current - 1]. \
+            private_resource_decrementers.toggle_button_in_boundary(
+            mouse_pos)
+        if button_num != -1:
+            print(self.player_facades[self.current - 1].player.name
+                  + " clicked decrement button #" + str(button_num))
+
         if self.setup_phase_active:
             self.setup_phase(mouse_pos)
         else:
