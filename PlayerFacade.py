@@ -118,7 +118,7 @@ class PlayerFacade:
             ((self.screen.get_width()*0.8, self.center[1]),
              (self.screen.get_width()*0.2, self.screen.get_height()*0.5)), 0)
         self.__render_blit(
-            self.player.name_str(),
+            self.player.retrieve_player_name(),
             [self.screen.get_width()*0.8, self.center[1]])
         self.private_resource_incrementers.draw()
         self.private_resource_decrementers.draw()
@@ -135,19 +135,11 @@ class PlayerFacade:
              (self.screen.get_width()*0.2,
               self.screen.get_height()*0.25)), 0)
         self.__render_blit(
-            self.player.name_str(),
+            self.player.retrieve_player_name(),
             [0, self.center[1]
              + self.screen.get_height()*0.25*(self.player.turn_priority-1)])
         self.public_resource_panel.draw()
         self.public_development_card_panel.draw()
-
-    def gather(self, res_dict):
-        self.player.num_wool += res_dict["wool"]	
-        self.player.num_grain += res_dict["grain"]	
-        self.player.num_brick += res_dict["brick"]	
-        self.player.num_ore += res_dict["ore"]	
-        self.player.num_lumber += res_dict["lumber"]
-        print(self.player.str())
 
     def __render_blit(self, string, point):
         font = pygame.font.Font(None, 24)

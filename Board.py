@@ -114,7 +114,6 @@ class Board:
                 tiles_on_current_level_iterated = 0
                 while nth_tile_being_iterated < 6*level+1:
                     self.tiles[val].relational_id = str(val)
-                    print("THE VALUE IS: " + str(val))
                     second_corner = Corner()
                     third_corner = Corner()
                     set_edges(
@@ -290,20 +289,6 @@ class Board:
                 else:
                     corner_id_string += (", " + str(c))
             corners_of_current_tile = set(corners_of_edges)
-            info = "Tile #" + t.relational_id + ": " \
-                   + "Edge Relationships - {" + edge_ids + "}, " + ": " \
-                   + "Corner Relationships - {" + corner_id_string + "}, " \
-                   + str(len(corners_of_current_tile)) \
-                   + " corners, Resource: " + t.resource
-            print(info)
-
-    def board_str(self):
-        ret = ""
-        count = 1
-        for t in self.tiles:
-            print("TILE #" + str(count))
-            ret += ("TILE #" + str(count) + t.str())
-            count += 1
 
     """produce_resources:
     roll - Tiles with an activation value of this dice roll are the
@@ -318,7 +303,6 @@ class Board:
             if str(t.activation_value) == str(roll) and not t.robber:
                 productive_tiles.append(t)
         for pt in productive_tiles:
-            print("Traversing Tile #" + pt.relational_id)
             starting_edge = pt.edges[0]
             starting_corner = pt.edges[0].corners[0]
             current_edge = starting_edge
@@ -405,12 +389,6 @@ class Board:
             p.resource_bank.validate_transaction()
             self.resource_bank.spend_resources([3, 3, 3, 3, 3])
             self.resource_bank.validate_transaction()
-            
-    def str(self):
-        ret = "Board has the Following Tiles:\n"
-        for t in self.tiles:
-            ret += t.str() + "\n"
-        return ret
 
 
 def get_product_sum(num):

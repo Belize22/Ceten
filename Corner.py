@@ -9,6 +9,7 @@ class Corner:
         if edge not in self.edges:
             self.edges.append(edge)
 
+    # TODO: Replace logic with increment by implementing enum
     def update(self, ownership):
         if self.settlement == "settlement":
             self.settlement = "city"
@@ -30,7 +31,3 @@ class Corner:
                     if c.ownership != 0:
                         is_an_adjacent_corner_settled = True
         return is_an_adjacent_corner_settled
-
-    def str(self):
-        return "Corner Settlement: " + self.settlement \
-                + ", Owned By:" + str(self.ownership)

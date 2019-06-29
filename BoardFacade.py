@@ -104,7 +104,6 @@ class BoardFacade:
                  * math.sqrt(3.0)+offset_x,
                  self.screen.get_height()*0.5+1.5 * q * size+offset_y], size,
                  current_direction)
-            print(tile_facade.str())
             index = 0
             for tf in self.tile_facades:
                 if (int(tf.tile.relational_id) <
@@ -186,7 +185,6 @@ class BoardFacade:
         self.screen.blit(
             text, [self.dice_value_position[0] - 11,
                    self.dice_value_position[1] - 8])
-        print("Current Roll " + str(roll))
         if roll == 7:
             self.board.active_robber = True
         return roll
@@ -194,10 +192,8 @@ class BoardFacade:
     # will always return at least one robber
     def find_robber(self):
         tile = self.board.find_robber()
-        print("Robber Found! " + tile.str())
         for tf in self.tile_facades:
             if tf.tile == tile:
-                print("Robber Facade Found! " + str(tf))
                 return tf
 
     def place_settlement(self, corner_facade, player_facade):

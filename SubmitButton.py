@@ -40,6 +40,3 @@ class SubmitButton:
     def text_objects(self, text, font):
         text_surface = font.render(text, 1, self.TEXT_COLOR)
         return text_surface, text_surface.get_rect()
-
-    def on_click(self):
-        print("Ping!")

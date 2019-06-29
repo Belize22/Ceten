@@ -75,7 +75,6 @@ class Ceten:
 
     def handle_mouse(self):
         self.board_facade.feedback_panel.update("")
-        print("Is the Robber Active? " + str(self.board_facade.board.active_robber))
         mouse_pos = pygame.mouse.get_pos()
 
         button_num = self.player_facades[self.current-1].\
@@ -164,8 +163,6 @@ class Ceten:
             for i in range(0, len(self.player_facades)):
                 player_list.append(self.player_facades[i].player)
             self.board_facade.produce_resources(roll, player_list)
-            for pf in self.player_facades:
-                print(pf.player.str())
             self.board_facade.phase_panel.update(
                 "Build something from your Inventory")
         else:
@@ -176,9 +173,7 @@ class Ceten:
     def place_robber(self, mouse_pos):
         tf = self.board_facade.find_tile_at(mouse_pos)
         if int(tf.tile.relational_id) < 19:
-            print("I got the tile!")
             rtf = self.board_facade.find_robber()
-            print(str(type(rtf)))
             rtf.set_robber(False)
             tf.set_robber(True)
             self.board_facade.board.active_robber = False
@@ -193,10 +188,6 @@ class Ceten:
             if (self.player_facades[self.current - 1].player
                     .retrieve_victory_points() >= 10):
                 self.winner_present = True
-            print(
-                "Clicked Corner: " + cf.corner.relational_id,
-                "Settlement: " + cf.corner.settlement,
-                "Ownership: " + str(cf.corner.ownership))
 
     def end_turn(self):
         self.board_facade.render_control_menu()

@@ -9,41 +9,19 @@ class Player:
         self.name = name
         self.resource_bank = ResourceBank()
         self.game_piece_bank = GamePieceBank()
-        self.dev_cards = []
 
     def retrieve_victory_points(self):
         victory_points = 0
         victory_points += (
-                self.game_piece_bank.SETTLEMENT_QUANTITY
+                self.game_piece_bank.STARTING_QUANTITIES[1]
                 - self.game_piece_bank.game_pieces[1])
         victory_points += (
-                self.game_piece_bank.CITY_QUANTITY
+                self.game_piece_bank.STARTING_QUANTITIES[2]
                 - self.game_piece_bank.game_pieces[2])*2
         return victory_points
-            
-    def str(self):
-        ret = self.name_str() + "\n"
-        for s in self.res_str_list():
-            ret += s + "\n"
-        for s in self.piece_str_list():
-            ret += s + "\n"
-        return ret
     
-    def name_str(self):
+    def retrieve_player_name(self):
         return str(self.name)
-    
-    def res_str_list(self):
-        resource_info = ["Lumber: ", "Wool: ", "Grain: ", "Brick: ",
-                         "Ore: "]
-        for i in range(len(self.resource_bank.resources)):
-            resource_info[i] += str(self.resource_bank.resources[i])
-        return resource_info
-
-    def piece_str_list(self):
-        resource_info = ["Roads: ", "Settlements: ", "Cities: "]
-        for i in range(len(self.game_piece_bank.game_pieces)):
-            resource_info[i] += str(self.game_piece_bank.game_pieces[i])
-        return resource_info
 
 
 

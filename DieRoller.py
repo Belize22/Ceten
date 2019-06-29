@@ -16,8 +16,3 @@ class DieRoller:
         for d in self.dice:
             total += d.roll()
         return total
-        
-    def test(self):
-        for x in range(self.DICE_FACES):
-            print(str(self.roll_dice()))
-
