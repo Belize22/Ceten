@@ -1,7 +1,5 @@
-from Player import Player
 from InventoryPanel import InventoryPanel
 from InventoryButtonPanel import InventoryButtonPanel
-from InventoryButton import InventoryButton
 from SubmitButton import SubmitButton
 import pygame
 
@@ -90,9 +88,6 @@ class PlayerFacade:
             self.screen, [0, 0, 0, 0, 0],
             self.development_card_icon_order, self.CARD_ICON_SIZE)
         self.public_development_card_panel = None
-        self.inventory_button_test = InventoryButton(
-            self.screen,
-            (int(self.screen.get_width()*0.8) + 45, self.center[1] + 35), "up")
         self.resource_submit_button = SubmitButton(
             self.screen, (int(self.screen.get_width()*0.9), 115), "Submit")
 

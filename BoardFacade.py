@@ -52,8 +52,8 @@ class BoardFacade:
         (0, 3)
     ]
 
-    def __init__(self, board, screen):
-        self.board = board
+    def __init__(self, screen, num_players):
+        self.board = Board(num_players)
         self.screen = screen
         self.tile_facades = []
         self.corner_facades = []
@@ -70,7 +70,7 @@ class BoardFacade:
             self.screen)
         self.generate_facades()
         
-    def generate_facades(self, start=[400.0, 290.0], size=42.5):
+    def generate_facades(self, size=42.5):
         self.generate_tile_facades(size)
         self.generate_corner_facades(size/5)
 
@@ -261,7 +261,10 @@ class BoardFacade:
     def in_boundaries(self, pos):
         if self.find_tile_at(pos) is not None:
             return True
-        return False	
+        return False
+
+    def retrieve_players(self):
+        return self.board.retrieve_players()
 
     def draw(self):
         self.phase_panel.draw()

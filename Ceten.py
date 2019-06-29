@@ -10,10 +10,9 @@ class Ceten:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption("Pilgrims of Ceten (Catan Clone)")
-        self.board = None
         self.screen = pygame.display.set_mode((900, 525))
-        self.board_facade = None
         self.screen.fill((91, 146, 176))
+        self.board_facade = None
         self.clock = pygame.time.Clock()
         self.roll_dice_button = None
         self.num_players = None
@@ -28,16 +27,14 @@ class Ceten:
         self.start_game()
 
     def start_game(self):
-        self.board = Board()
-        self.board_facade = BoardFacade(self.board, self.screen)
-        self.board_facade.render_control_menu()
         self.num_players = 4
+        self.board_facade = BoardFacade(self.screen, self.num_players)
+        self.board_facade.render_control_menu()
+        players = self.board_facade.retrieve_players()
         self.player_facades = []
-        for i in range(1, self.num_players+1):
+        for player in players:
             self.player_facades.append(
-                PlayerFacade(
-                    Player(i, "Player" + str(i)), (340, 0), self.screen))
-        self.player_facades = self.randomize_turn_order(self.player_facades)
+                PlayerFacade(player, (340, 0), self.screen))
         for pf in self.player_facades:
             pf.initialize_public_panels()
         self.has_rolled = False
@@ -129,7 +126,7 @@ class Ceten:
                 if (cf.corner.ownership ==
                         self.player_facades[self.current - 1].player.id
                         and cf.corner.ownership != past_ownership):
-                    self.board.produce_initial_resources(
+                    self.board_facade.board.produce_initial_resources(
                         cf.corner,
                         self.player_facades[self.current - 1].player)
                     self.current -= 1
@@ -208,17 +205,6 @@ class Ceten:
             self.has_rolled = False
             self.active_building = False
             self.board_facade.phase_panel.update("Roll the Dice!")
-
-    def randomize_turn_order(self, player_facades):
-        for i in range(0, len(player_facades)-1):
-            random_index = random.randint(0, len(player_facades)-1)
-            player_facades[i].player.turn_priority, \
-                player_facades[random_index].player.turn_priority = \
-                player_facades[random_index].player.turn_priority, \
-                player_facades[i].player.turn_priority
-            player_facades[i], player_facades[random_index] = \
-                player_facades[random_index], player_facades[i]
-        return player_facades
 
 
 game = Ceten()

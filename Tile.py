@@ -19,7 +19,3 @@ class Tile:
             if e.has_corner(corner):
                 count += 1
         return count
-                
-    def str(self):
-        return "Tile: Resource - " + self.resource \
-               + ", ID - " + self.relational_id

@@ -38,14 +38,19 @@ class Board:
         "36", "19", "20", "21"
     ]
 
-    def __init__(self, tile_count=37):
+    def __init__(self, num_players):
         self.tiles = []
+        self.players = []
         self.resource_bank = ResourceBank(19)
         self.active_robber = False
         current_resources = Board.resources.copy()
+        for i in range(1, num_players + 1):
+            self.players.append(
+                    Player(i, "Player" + str(i)))
+        self.randomize_turn_order()
         while len(current_resources) > 0:
             (resource, resource_count) = random.choice(
-                                         list(current_resources.items()))
+                list(current_resources.items()))
             if resource_count < 1:
                 current_resources.pop(resource)
                 continue
@@ -214,7 +219,7 @@ class Board:
             if t.relational_id != '' and int(t.relational_id) < 19:
                 t.physical_id = self.relational_to_physical_id_mapping[
                                 int(t.relational_id)]
-        self.tile_info()
+
 
     """place_tokens:
     Places tokens on land tiles. These tokens have an activation value
@@ -267,28 +272,6 @@ class Board:
                         tiles_to_place_tokens_on)
                         - 1))))].activation_value = activation_value
                 amount -= 1
-
-    def tile_info(self):
-        for t in self.tiles:
-            corners_of_edges = []
-            edge_ids = ""
-            corner_ids = []
-            for e in t.edges:
-                if edge_ids == "":
-                    edge_ids += e.relational_id
-                else:
-                    edge_ids += (", " + e.relational_id)
-                for c in e.corners:
-                    corners_of_edges.append(c)
-                    corner_ids.append(c.relational_id)
-            corner_ids = set(corner_ids)
-            corner_id_string = ""
-            for c in corner_ids:
-                if corner_id_string == "":
-                    corner_id_string += str(c)
-                else:
-                    corner_id_string += (", " + str(c))
-            corners_of_current_tile = set(corners_of_edges)
 
     """produce_resources:
     roll - Tiles with an activation value of this dice roll are the
@@ -389,6 +372,20 @@ class Board:
             p.resource_bank.validate_transaction()
             self.resource_bank.spend_resources([3, 3, 3, 3, 3])
             self.resource_bank.validate_transaction()
+
+    def retrieve_players(self):
+        return self.players
+
+    def randomize_turn_order(self):
+        for i in range(0, len(self.players)-1):
+            random_index = random.randint(0, len(self.players)-1)
+            self.players[i].turn_priority, \
+                self.players[random_index].turn_priority = \
+                self.players[random_index].turn_priority, \
+                self.players[i].turn_priority
+            self.players[i], self.players[random_index] = \
+                self.players[random_index], self.players[i]
+        return self.players
 
 
 def get_product_sum(num):
