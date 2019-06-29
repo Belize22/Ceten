@@ -54,7 +54,7 @@ class ResourceBank:
         
     def clear_buffers(self):
         for i in range(len(self.resources)):
-            self.resource_buffers[i] = 0 
+            self.resource_buffers[i] = 0
 
     def string_to_enum(self, resource):
         if resource == "lumber":
