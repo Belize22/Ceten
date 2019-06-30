@@ -112,7 +112,7 @@ class Ceten:
 
             if (self.board_facade.in_boundaries(mouse_pos) and
                     self.board_facade.board.active_robber):
-                self.place_robber(mouse_pos)
+                self.board_facade.place_robber(mouse_pos)
 
             if self.has_rolled and not self.board_facade.board.active_robber:
                 self.active_building = True
@@ -161,37 +161,15 @@ class Ceten:
                     + ", place first settlement!")
 
     def roll_dice(self):
-        roll = self.board_facade.roll_dice()
-        if not self.board_facade.board.active_robber:
-            player_list = []
-            for i in range(0, len(self.public_player_facades)):
-                player_list.append(self.public_player_facades[i].player)
-            self.board_facade.produce_resources(roll, player_list)
-            self.board_facade.phase_panel.update(
-                "Build something from your Inventory")
-        else:
-            self.board_facade.phase_panel.update(
-                "Move the robber and rob a nearby settlement")
+        self.board_facade.roll_dice()
         self.has_rolled = True
 
-    def place_robber(self, mouse_pos):
-        tf = self.board_facade.find_tile_at(mouse_pos)
-        if int(tf.tile.relational_id) < 19:
-            rtf = self.board_facade.find_robber()
-            rtf.set_robber(False)
-            tf.set_robber(True)
-            self.board_facade.board.active_robber = False
-            self.board_facade.phase_panel.update(
-                "Build something from your Inventory")
-
     def build_component(self, mouse_pos):
-        cf = self.board_facade.find_corner_at(mouse_pos)
-        if cf is not None:
-            self.board_facade.place_settlement(
-                cf, self.private_player_facade)
-            if (self.private_player_facade.player
-                    .retrieve_victory_points() >= 10):
-                self.winner_present = True
+        player = self.private_player_facade.get_player()
+        self.board_facade.build_component(mouse_pos, player)
+        if (self.private_player_facade.player
+                .retrieve_victory_points() >= 10):
+            self.winner_present = True
 
     def end_turn(self):
         self.board_facade.render_control_menu()

@@ -165,8 +165,8 @@ class BoardFacade:
     def produce_initial_resources(self, corner, player):
         self.board.produce_initial_resources(corner, player)
 
-    def produce_resources(self, roll, players):
-        self.board.produce_resources(roll, players)
+    def produce_resources(self, roll):
+        self.board.produce_resources(roll)
 
     def render_control_menu(self):
         pygame.draw.rect(
@@ -187,7 +187,28 @@ class BoardFacade:
                    self.dice_value_position[1] - 8])
         if roll == 7:
             self.board.active_robber = True
-        return roll
+        if not self.board.active_robber:
+            self.produce_resources(roll)
+            self.phase_panel.update(
+                "Build something from your Inventory")
+        else:
+            self.phase_panel.update(
+                "Move the robber and rob a nearby settlement")
+
+    def place_robber(self, mouse_pos):
+        tile_facade = self.find_tile_at(mouse_pos)
+        if int(tile_facade.tile.relational_id) < 19:
+            robber_tile_facade = self.find_robber()
+            robber_tile_facade.set_robber(False)
+            tile_facade.set_robber(True)
+            self.board.active_robber = False
+            self.phase_panel.update(
+                "Build something from your Inventory")
+
+    def build_component(self, mouse_pos, player):
+        cf = self.find_corner_at(mouse_pos)
+        if cf is not None:
+            self.place_settlement(cf, player)
 
     # will always return at least one robber
     def find_robber(self):
@@ -196,57 +217,11 @@ class BoardFacade:
             if tf.tile == tile:
                 return tf
 
-    def place_settlement(self, corner_facade, player_facade):
-        if corner_facade.corner.does_corner_belong_to_a_player(
-                player_facade.player.id):
-            if not corner_facade.corner.are_neighboring_corners_settled():
-                if corner_facade.corner.settlement == "none":
-                    if player_facade.player.game_piece_bank.game_pieces[1] > 0:
-                        player_facade.player.resource_bank.spend_resources(
-                            [1, 1, 1, 1, 0])
-                        self.board.resource_bank.collect_resources(
-                            [1, 1, 1, 1, 0])
-                        transaction_valid = player_facade.player\
-                            .resource_bank.validate_transaction()
-                        if transaction_valid:
-                            self.board.resource_bank.validate_transaction()
-                            corner_facade.update(player_facade.player)
-                            player_facade.player.game_piece_bank\
-                                .place_settlement()
-                        else:
-                            self.feedback_panel.update(
-                                "Insufficient resources to build a settlement!"
-                            )
-                    else:
-                        self.feedback_panel.update(
-                            "No more settlements in your inventory!")
-                elif corner_facade.corner.settlement == "settlement":
-                    if player_facade.player.game_piece_bank.game_pieces[2] > 0:
-                        player_facade.player.resource_bank.spend_resources(
-                            [0, 0, 2, 0, 3])
-                        self.board.resource_bank.collect_resources(
-                            [0, 0, 2, 0, 3])
-                        transaction_valid = player_facade.player.\
-                            resource_bank.validate_transaction()
-                        if transaction_valid:
-                            self.board.resource_bank.validate_transaction()
-                            corner_facade.update(player_facade.player)
-                            player_facade.player.game_piece_bank.place_city()
-                        else:
-                            self.feedback_panel.update(
-                                "Insufficient resources to build a city!")
-                    else:
-                        self.feedback_panel.update(
-                            "No more cities in your inventory!")
-                else:
-                    self.feedback_panel.update(
-                        "Cities cannot be upgraded further!")
-            else:
-                self.feedback_panel.update(
-                    "Neighboring corners have settlements!")
-        else:
-            self.feedback_panel.update("You don't own this "
-                                       + corner_facade.corner.settlement + "!")
+    def place_settlement(self, corner_facade, player):
+        feedback = self.board.place_settlement(corner_facade.corner, player)
+        if feedback == "":
+            corner_facade.update(player)
+        self.feedback_panel.update(feedback)
 
     def find_tile_at(self, pos):
         for tf in self.tile_facades:

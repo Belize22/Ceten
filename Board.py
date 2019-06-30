@@ -282,7 +282,7 @@ class Board:
     activation value "roll". Settlements receive 1 of the tile's
     resource while cities receive 2.
     """
-    def produce_resources(self, roll, players):
+    def produce_resources(self, roll):
         productive_tiles = []
         for t in self.tiles:
             if str(t.activation_value) == str(roll) and not t.robber:
@@ -292,7 +292,8 @@ class Board:
             starting_corner = pt.edges[0].corners[0]
             current_edge = starting_edge
             current_corner = starting_corner
-            self.gather_resource_with_settlement(pt, current_corner, players)
+            self.gather_resource_with_settlement(
+                pt, current_corner, self.players)
             for c in current_edge.corners:
                 if c != current_corner:
                     current_corner = c
@@ -303,17 +304,17 @@ class Board:
                         current_edge = e
                         break
                 self.gather_resource_with_settlement(
-                    pt, current_corner, players)
+                    pt, current_corner, self.players)
                 for c in current_edge.corners:
                     if c != current_corner:
                         current_corner = c
                         break
             valid_transaction = self.resource_bank.validate_transaction()
             if valid_transaction:
-                for p in players:
+                for p in self.players:
                     p.resource_bank.validate_transaction()
             else:
-                for p in players:
+                for p in self.players:
                     p.resource_bank.cancel_transaction()
 
     """produce_initial_resources:
@@ -366,6 +367,50 @@ class Board:
                     owner = p
             owner.resource_bank.deposit_resource(resource, quantity)
             self.resource_bank.withdraw_resource(resource, quantity)
+
+    def place_settlement(self, corner, player):
+        if corner.does_corner_belong_to_a_player(
+                player.id):
+            if not corner.are_neighboring_corners_settled():
+                if corner.settlement == "none":
+                    if player.game_piece_bank.game_pieces[1] > 0:
+                        player.resource_bank.spend_resources(
+                            [1, 1, 1, 1, 0])
+                        self.resource_bank.collect_resources(
+                            [1, 1, 1, 1, 0])
+                        transaction_valid = player\
+                            .resource_bank.validate_transaction()
+                        if transaction_valid:
+                            self.resource_bank.validate_transaction()
+                            player.game_piece_bank.place_settlement()
+                            return ""
+                        else:
+                            return "Insufficient resources to" \
+                                   " build a settlement!"
+                    else:
+                        return "No more settlements in your inventory!"
+                elif corner.settlement == "settlement":
+                    if player.game_piece_bank.game_pieces[2] > 0:
+                        player.resource_bank.spend_resources(
+                            [0, 0, 2, 0, 3])
+                        self.resource_bank.collect_resources(
+                            [0, 0, 2, 0, 3])
+                        transaction_valid = player.\
+                            resource_bank.validate_transaction()
+                        if transaction_valid:
+                            self.resource_bank.validate_transaction()
+                            player.game_piece_bank.place_city()
+                            return ""
+                        else:
+                            return "Insufficient resources to build a city!"
+                    else:
+                        return "No more cities in your inventory!"
+                else:
+                    return "Cities cannot be upgraded further!"
+            else:
+                return "Neighboring corners have settlements!"
+        else:
+            return "You don't own this " + corner.settlement + "!"
 
     def start_off_with_extra_resources(self, players):
         for p in players:

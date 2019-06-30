@@ -74,6 +74,9 @@ class PrivatePlayerFacade(PlayerFacade):
         self.development_card_panel.draw()
         self.resource_submit_button.draw()
 
+    def get_player(self):
+        return self.player
+
     def set_next_player(self, player):
         self.player = player
         self.resource_panel.update(player.resource_bank.resources)
