@@ -185,16 +185,11 @@ class BoardFacade:
         self.screen.blit(
             text, [self.dice_value_position[0] - 11,
                    self.dice_value_position[1] - 8])
-        if roll == 7:
-            self.board.active_robber = True
-        if not self.board.active_robber:
+        self.board.change_game_phase()
+        if roll != 7:
+            self.board.change_game_phase()
             self.produce_resources(roll)
-            self.phase_panel.update(
-                "Build something from your Inventory")
-        else:
-            self.phase_panel.update(
-                "Move the robber and rob a nearby settlement")
-        #self.board.retrieve_phase_title()
+        return self.board.get_current_game_phase()
 
     def place_robber(self, mouse_pos):
         tile_facade = self.find_tile_at(mouse_pos)
@@ -202,9 +197,8 @@ class BoardFacade:
             robber_tile_facade = self.find_robber()
             robber_tile_facade.set_robber(False)
             tile_facade.set_robber(True)
-            self.board.active_robber = False
-            self.phase_panel.update(
-                "Build something from your Inventory")
+            self.board.change_game_phase()
+        return self.board.get_current_game_phase()
 
     def build_component(self, mouse_pos, player):
         cf = self.find_corner_at(mouse_pos)
@@ -215,7 +209,8 @@ class BoardFacade:
         player = self.board.retrieve_current_player()
         player_facade.set_next_player(player)
         self.board.change_current_player(player)
-        self.phase_panel.update("Roll the Dice!")
+        self.board.change_game_phase()
+        return self.board.get_current_game_phase()
 
     # will always return at least one robber
     def find_robber(self):
@@ -247,6 +242,17 @@ class BoardFacade:
 
     def retrieve_players(self):
         return self.board.retrieve_players()
+
+    def update_phase_panel(self):
+        current_game_phase = self.board.get_current_game_phase()
+        message = ""
+        if current_game_phase == 1:
+            message = "Roll Dice"
+        elif current_game_phase == 2:
+            message = "Move the Robber to a new resource tile"
+        elif current_game_phase == 3:
+            message = "Build something from your Inventory"
+        self.phase_panel.update(message)
 
     def draw(self):
         self.phase_panel.draw()

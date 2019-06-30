@@ -15,16 +15,10 @@ class Ceten:
         self.screen.fill((91, 146, 176))
         self.board_facade = None
         self.clock = pygame.time.Clock()
-        self.roll_dice_button = None
         self.num_players = None
         self.public_player_facades = None
         self.private_player_facade = None
-        self.active_building = None
-        self.has_rolled = None
-        self.winner_present = None
-        self.start_new_game = None
-        self.setup_phase_active = None
-        self.reverse_turn_order = None
+        self.current_phase = 1
         self.start_game()
 
     def start_game(self):
@@ -41,21 +35,7 @@ class Ceten:
         self.board_facade.board.change_current_player(players[0])
         self.private_player_facade = PrivatePlayerFacade(
             players[0], (340, 0), self.screen)
-        self.has_rolled = False
-        self.winner_present = False
-        self.start_new_game = False
-        self.setup_phase_active = False
-        self.reverse_turn_order = False
-        # Give each player free resources to place initial settlements.
-        #for i in range(0, len(self.public_player_facades)):
-            #self.public_player_facades[i].player.resource_bank. \
-            #    collect_resources([2, 2, 2, 2, 0])
-            #self.public_player_facades[i].player.resource_bank.\
-            #    validate_transaction()
-        self.board_facade.phase_panel.update("Setup Phase!")
-        self.board_facade.feedback_panel.update(
-            self.public_player_facades[0].player.name
-            + ", place first settlement!")
+        self.board_facade.update_phase_panel()
 
     def run(self):
         running = True
@@ -78,48 +58,23 @@ class Ceten:
     def handle_mouse(self):
         self.board_facade.feedback_panel.update("")
         mouse_pos = pygame.mouse.get_pos()
+        if (self.board_facade.roll_dice_button.
+                in_boundaries(mouse_pos)
+                and self.current_phase == 1):
+            self.current_phase = self.roll_dice()
 
-        '''
-        button_num = self.public_player_facades[self.current - 1].\
-            private_resource_incrementers.toggle_button_in_boundary(mouse_pos)
-        if button_num != -1:
-            print(self.public_player_facades[self.current - 1].player.name
-                  + " clicked increment button #" + str(button_num))
-        button_num = self.public_player_facades[self.current - 1]. \
-            private_resource_decrementers.toggle_button_in_boundary(
-            mouse_pos)
-        if button_num != -1:
-            print(self.public_player_facades[self.current - 1].player.name
-                  + " clicked decrement button #" + str(button_num))
+        if (self.board_facade.in_boundaries(mouse_pos) and
+                self.current_phase == 2):
+            self.current_phase = self.board_facade.place_robber(mouse_pos)
 
-        if (self.public_player_facades[self.current - 1].resource_submit_button.
-                in_boundaries(mouse_pos)):
-            print(self.public_player_facades[self.current - 1].player.name
-                  + " submitted resource content!")
-        '''
+        if (self.board_facade.end_turn_button.in_boundaries(mouse_pos)
+                and self.current_phase == 3):
+            self.current_phase = self.end_turn()
 
-        if self.setup_phase_active:
-            self.setup_phase(mouse_pos)
-        else:
-            if self.active_building:
-                self.build_component(mouse_pos)
+        if self.current_phase == 3:
+            self.build_component(mouse_pos)
 
-            if (self.board_facade.roll_dice_button.
-                    in_boundaries(mouse_pos)
-                    and not self.board_facade.board.active_robber
-                    and not self.has_rolled):
-                self.roll_dice()
-
-            if (self.board_facade.in_boundaries(mouse_pos) and
-                    self.board_facade.board.active_robber):
-                self.board_facade.place_robber(mouse_pos)
-
-            if self.has_rolled and not self.board_facade.board.active_robber:
-                self.active_building = True
-
-            if (self.board_facade.end_turn_button.in_boundaries(mouse_pos)
-                    and self.active_building):
-                self.end_turn()
+        self.board_facade.update_phase_panel()
 
     def setup_phase(self, mouse_pos):
         cf = self.board_facade.find_corner_at(mouse_pos)
@@ -161,32 +116,15 @@ class Ceten:
                     + ", place first settlement!")
 
     def roll_dice(self):
-        self.board_facade.roll_dice()
-        self.has_rolled = True
+        return self.board_facade.roll_dice()
 
     def build_component(self, mouse_pos):
         player = self.private_player_facade.get_player()
         self.board_facade.build_component(mouse_pos, player)
-        if (self.private_player_facade.player
-                .retrieve_victory_points() >= 10):
-            self.winner_present = True
 
     def end_turn(self):
         self.board_facade.render_control_menu()
-        if self.start_new_game:
-            self.start_game()
-        elif self.winner_present:
-            self.board_facade.render_control_menu()
-            self.board_facade.phase_panel.update("Game Over!")
-            self.board_facade.feedback_panel.update(
-                self.public_player_facades[self.current - 1].player.name
-                + " has won Catan!")
-            self.board_facade.end_turn_button.update("New Game")
-            self.start_new_game = True
-        else:
-            self.board_facade.end_turn(self.private_player_facade)
-            self.has_rolled = False
-            self.active_building = False
+        return self.board_facade.end_turn(self.private_player_facade)
 
 
 game = Ceten()

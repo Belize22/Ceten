@@ -276,8 +276,13 @@ class Board:
                         - 1))))].activation_value = activation_value
                 amount -= 1
 
-    #def change_phase(self):
+    def get_current_game_phase(self):
+        return self.current_game_phase
 
+    def change_game_phase(self):
+        self.current_game_phase += 1
+        if self.current_game_phase > 3:
+            self.current_game_phase = 1
 
     """produce_resources:
     roll - Tiles with an activation value of this dice roll are the
