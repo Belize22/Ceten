@@ -206,8 +206,6 @@ class Ceten:
             self.board_facade.end_turn_button.update("New Game")
             self.start_new_game = True
         else:
-            self.board_facade.board.change_current_player(
-                self.private_player_facade.player)
             player = self.board_facade.board.retrieve_current_player()
             self.private_player_facade.set_next_player(player)
             self.board_facade.board.change_current_player(player)

@@ -376,7 +376,7 @@ class Board:
             self.resource_bank.validate_transaction()
 
     def change_current_player(self, player):
-        for i in range(0, len(self.players)-1):  # Go to next player's turn
+        for i in range(0, len(self.players)):  # Go to next player's turn
             if self.players[i] is player:
                 if i == len(self.players)-1:
                     self.current_player = self.players[0]

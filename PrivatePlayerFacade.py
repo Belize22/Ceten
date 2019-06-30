@@ -76,3 +76,5 @@ class PrivatePlayerFacade(PlayerFacade):
 
     def set_next_player(self, player):
         self.player = player
+        self.resource_panel.update(player.resource_bank.resources)
+        self.game_piece_panel.update(player.game_piece_bank.game_pieces)
