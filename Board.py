@@ -41,6 +41,7 @@ class Board:
     def __init__(self, num_players):
         self.tiles = []
         self.players = []
+        self.current_player = None
         self.resource_bank = ResourceBank(19)
         self.active_robber = False
         current_resources = Board.resources.copy()
@@ -74,6 +75,7 @@ class Board:
             self.tiles.append(t)
         self.connect_board()
         self.place_tokens()
+        self.start_off_with_extra_resources(self.players)
                 
     def connect_board(self):
         num_circles = 2
@@ -372,6 +374,19 @@ class Board:
             p.resource_bank.validate_transaction()
             self.resource_bank.spend_resources([3, 3, 3, 3, 3])
             self.resource_bank.validate_transaction()
+
+    def change_current_player(self, player):
+        for i in range(0, len(self.players)-1):  # Go to next player's turn
+            if self.players[i] is player:
+                if i == len(self.players)-1:
+                    self.current_player = self.players[0]
+                else:
+                    self.current_player = self.players[i+1]
+        if self.current_player is None:
+            self.current_player = self.players[0]
+
+    def retrieve_current_player(self):
+        return self.current_player
 
     def retrieve_players(self):
         return self.players
