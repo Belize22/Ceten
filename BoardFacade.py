@@ -194,6 +194,7 @@ class BoardFacade:
         else:
             self.phase_panel.update(
                 "Move the robber and rob a nearby settlement")
+        #self.board.retrieve_phase_title()
 
     def place_robber(self, mouse_pos):
         tile_facade = self.find_tile_at(mouse_pos)
@@ -209,6 +210,12 @@ class BoardFacade:
         cf = self.find_corner_at(mouse_pos)
         if cf is not None:
             self.place_settlement(cf, player)
+
+    def end_turn(self, player_facade):
+        player = self.board.retrieve_current_player()
+        player_facade.set_next_player(player)
+        self.board.change_current_player(player)
+        self.phase_panel.update("Roll the Dice!")
 
     # will always return at least one robber
     def find_robber(self):

@@ -184,12 +184,9 @@ class Ceten:
             self.board_facade.end_turn_button.update("New Game")
             self.start_new_game = True
         else:
-            player = self.board_facade.board.retrieve_current_player()
-            self.private_player_facade.set_next_player(player)
-            self.board_facade.board.change_current_player(player)
+            self.board_facade.end_turn(self.private_player_facade)
             self.has_rolled = False
             self.active_building = False
-            self.board_facade.phase_panel.update("Roll the Dice!")
 
 
 game = Ceten()

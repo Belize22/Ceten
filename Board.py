@@ -43,6 +43,7 @@ class Board:
         self.players = []
         self.current_player = None
         self.resource_bank = ResourceBank(19)
+        self.current_game_phase = 1
         self.active_robber = False
         current_resources = Board.resources.copy()
         for i in range(1, num_players + 1):
@@ -274,6 +275,9 @@ class Board:
                         tiles_to_place_tokens_on)
                         - 1))))].activation_value = activation_value
                 amount -= 1
+
+    #def change_phase(self):
+
 
     """produce_resources:
     roll - Tiles with an activation value of this dice roll are the
