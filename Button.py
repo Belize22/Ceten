@@ -6,6 +6,7 @@ class Button(ABC):
         self.screen = screen
         self.position = position
         self.enabled = False
+        super().__init__()
 
     @abstractmethod
     def draw(self):

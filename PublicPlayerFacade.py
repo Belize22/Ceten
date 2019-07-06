@@ -33,19 +33,18 @@ class PublicPlayerFacade(PlayerFacade):
 
     def initialize_panels(self):
         self.resource_panel = InventoryPanel(
-                (2, self.center[1]
-                 + self.screen.get_height()*0.25
-                 * (self.player.turn_priority - 1) + 25), self.screen,
-                self.player.resource_bank.resources,
-                self.resource_icon_order, self.INVENTORY_ICON_SIZE)
+            self.screen,
+            (2, self.center[1] + self.screen.get_height()*0.25
+             * (self.player.turn_priority - 1) + 25),
+            self.player.resource_bank.resources, self.resource_icon_order,
+            self.INVENTORY_ICON_SIZE)
         '''TO-DO: Give development card bank as parameter 
         once Development card bank is implemented.'''
         self.development_card_panel = InventoryPanel(
-                (107, self.center[1]
-                 + self.screen.get_height()*0.25
-                 * (self.player.turn_priority - 1)), self.screen,
-                [0, 0],
-                self.development_card_icon_order, self.CARD_ICON_SIZE)
+            self.screen,
+            (107, self.center[1] + self.screen.get_height()*0.25
+             * (self.player.turn_priority - 1)), [0, 0],
+            self.development_card_icon_order, self.CARD_ICON_SIZE)
 
     def draw(self):
         pygame.draw.rect(
@@ -55,7 +54,7 @@ class PublicPlayerFacade(PlayerFacade):
                         self.player.turn_priority - 1)),
              (self.screen.get_width()*0.2,
               self.screen.get_height()*0.25)), 0)
-        self.render_blit(
+        self.render_text(
             self.player.retrieve_player_name(),
             [0, self.center[1]
              + self.screen.get_height()*0.25*(

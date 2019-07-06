@@ -59,10 +59,11 @@ class BoardFacade:
             self.screen, (int(self.screen.get_width()*0.9), 425), "End Turn")
         self.dice_value_position = (int(self.screen.get_width()*0.9), 275 + 60)
         self.phase_panel = NotificationPanel(
-            (self.screen.get_width() * 0.5, 0), self.screen)
+            self.screen,
+            (self.screen.get_width() * 0.5, 0))
         self.feedback_panel = NotificationPanel(
-            (self.screen.get_width() * 0.5, self.screen.get_height() * 0.95),
-            self.screen)
+            self.screen,
+            (self.screen.get_width() * 0.5, self.screen.get_height() * 0.95))
         self.current_feedback = ""
         self.generate_facades()
         
@@ -202,13 +203,13 @@ class BoardFacade:
             self.place_settlement(cf, player_facade)
 
     def end_turn(self, player_facade):
-        if player_facade.player.retrieve_victory_points() >= 3:
+        if player_facade.player.retrieve_victory_points() >= 10:
             self.board.change_phase()
         current_phase_before = self.board.get_current_phase()
         if current_phase_before == 3:
             self.end_turn_button.update("New Game")
             self.current_feedback = player_facade.player. \
-               retrieve_player_name() + "has won Ceten."
+                retrieve_player_name() + " has won Ceten."
         else:
             player = self.board.retrieve_current_player()
             self.board.change_current_player(player)

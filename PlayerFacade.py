@@ -32,7 +32,7 @@ class PlayerFacade(ABC):
     def draw(self):
         pass
 
-    def render_blit(self, string, point):
+    def render_text(self, string, point):
         font = pygame.font.Font(None, 24)
         text = font.render(string, 1, (10, 10, 10))
         self.screen.blit(text, point)

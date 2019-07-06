@@ -35,9 +35,10 @@ class PrivatePlayerFacade(PlayerFacade):
     def __init__(self, player, center, screen):
         super().__init__(player, center, screen)
         self.resource_panel = InventoryPanel(
+            self.screen,
             (self.screen.get_width()*0.8 + 2, self.center[1] + 50),
-            self.screen, self.player.resource_bank.resources,
-            self.resource_icon_order, self.INVENTORY_ICON_SIZE)
+            self.player.resource_bank.resources, self.resource_icon_order,
+            self.INVENTORY_ICON_SIZE)
         self.resource_incrementers = InventoryButtonPanel(
             self.screen,
             (self.screen.get_width()*0.8 + 2, self.center[1] + 35),
@@ -47,14 +48,16 @@ class PrivatePlayerFacade(PlayerFacade):
             (self.screen.get_width()*0.8 + 2, self.center[1] + 80),
             len(self.resource_icon_order), "down")
         self.game_piece_panel = InventoryPanel(
+            self.screen,
             (self.screen.get_width()*0.8 + 2, self.center[1] + 150),
-            self.screen, self.player.game_piece_bank.game_pieces,
+            self.player.game_piece_bank.game_pieces,
             self.game_piece_icon_order, self.INVENTORY_ICON_SIZE)
         '''TO-DO: Give development card bank as parameter 
         once Development card bank is implemented.'''
         self.development_card_panel = InventoryPanel(
+            self.screen,
             (self.screen.get_width()*0.8 + 2, self.center[1] + 175),
-            self.screen, [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
             self.development_card_icon_order, self.CARD_ICON_SIZE)
         self.resource_submit_button = SubmitButton(
             self.screen, (int(self.screen.get_width()*0.9), 115), "Submit")
@@ -64,7 +67,7 @@ class PrivatePlayerFacade(PlayerFacade):
             self.screen, (228, 205, 180),
             ((self.screen.get_width()*0.8, self.center[1]),
              (self.screen.get_width()*0.2, self.screen.get_height()*0.5)), 0)
-        self.render_blit(
+        self.render_text(
             self.player.retrieve_player_name(),
             [self.screen.get_width()*0.8, self.center[1]])
 

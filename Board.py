@@ -82,6 +82,7 @@ class Board:
             self.tiles.append(t)
         self.connect_board()
         self.place_tokens()
+        self.start_off_with_extra_resources(self.players)
                 
     def connect_board(self):
         num_circles = 2
@@ -420,6 +421,10 @@ class Board:
                     if player.game_piece_bank.game_pieces[2] > 0:
                         if self.reverse_turn_order is True:
                             return "Can't build cities during setup phase"
+                        player.resource_bank.spend_resources(
+                            [0, 0, 2, 0, 3])
+                        self.resource_bank.collect_resources(
+                            [0, 0, 2, 0, 3])
                         transaction_valid = player.\
                             resource_bank.validate_transaction()
                         if transaction_valid:
@@ -439,7 +444,6 @@ class Board:
 
     def start_off_with_extra_resources(self, players):
         for p in players:
-            p.game_piece_bank.place_settlement()
             p.resource_bank.collect_resources([3, 3, 3, 3, 3])
             p.resource_bank.validate_transaction()
             self.resource_bank.spend_resources([3, 3, 3, 3, 3])
