@@ -187,9 +187,14 @@ class BoardFacade:
         tile_facade = self.find_tile_at(mouse_pos)
         if int(tile_facade.tile.relational_id) < 19:
             robber_tile_facade = self.find_robber()
-            robber_tile_facade.set_robber(False)
-            tile_facade.set_robber(True)
-            self.board.change_game_phase()
+            if tile_facade == robber_tile_facade:
+                self.current_feedback = \
+                    "Cannot place robber on his current spot!"
+            else:
+                robber_tile_facade.set_robber(False)
+                tile_facade.set_robber(True)
+                self.current_feedback = ""
+                self.board.change_game_phase()
 
     def build_component(self, mouse_pos, player_facade):
         cf = self.find_corner_at(mouse_pos)
