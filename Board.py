@@ -2,12 +2,16 @@ from Tile import Tile
 from Edge import Edge
 from Corner import Corner
 from Player import Player
+from DieRoller import DieRoller
 from ResourceBank import ResourceBank
+
 import random
 import re
 
 
 class Board:
+    NUM_DICE = 2
+
     resources = {
         "ore": 3,
         "desert": 1,
@@ -43,8 +47,10 @@ class Board:
         self.players = []
         self.current_player = None
         self.resource_bank = ResourceBank(19)
+        self.die_roller = DieRoller(self.NUM_DICE)
+        self.current_phase = 1
         self.current_game_phase = 1
-        self.active_robber = False
+        self.reverse_turn_order = False
         current_resources = Board.resources.copy()
         for i in range(1, num_players + 1):
             self.players.append(
@@ -76,7 +82,6 @@ class Board:
             self.tiles.append(t)
         self.connect_board()
         self.place_tokens()
-        self.start_off_with_extra_resources(self.players)
                 
     def connect_board(self):
         num_circles = 2
@@ -276,8 +281,14 @@ class Board:
                         - 1))))].activation_value = activation_value
                 amount -= 1
 
+    def get_current_phase(self):
+        return self.current_phase
+
     def get_current_game_phase(self):
         return self.current_game_phase
+
+    def change_phase(self):
+        self.current_phase += 1
 
     def change_game_phase(self):
         self.current_game_phase += 1
@@ -383,27 +394,32 @@ class Board:
             if not corner.are_neighboring_corners_settled():
                 if corner.settlement == "none":
                     if player.game_piece_bank.game_pieces[1] > 0:
-                        player.resource_bank.spend_resources(
-                            [1, 1, 1, 1, 0])
-                        self.resource_bank.collect_resources(
-                            [1, 1, 1, 1, 0])
-                        transaction_valid = player\
-                            .resource_bank.validate_transaction()
-                        if transaction_valid:
-                            self.resource_bank.validate_transaction()
-                            player.game_piece_bank.place_settlement()
-                            return ""
+                        if self.current_phase == 2:
+                            player.resource_bank.spend_resources(
+                                [1, 1, 1, 1, 0])
+                            self.resource_bank.collect_resources(
+                                [1, 1, 1, 1, 0])
+                            transaction_valid = player\
+                                .resource_bank.validate_transaction()
+                            if transaction_valid:
+                                self.resource_bank.validate_transaction()
+                                player.game_piece_bank.place_settlement()
+                                return ""
+                            else:
+                                return "Insufficient resources to" \
+                                       " build a settlement!"
                         else:
-                            return "Insufficient resources to" \
-                                   " build a settlement!"
+                            player.game_piece_bank.place_settlement()
+                            if self.reverse_turn_order is True:
+                                self.produce_initial_resources(
+                                    corner, player)
+                            return ""
                     else:
                         return "No more settlements in your inventory!"
                 elif corner.settlement == "settlement":
                     if player.game_piece_bank.game_pieces[2] > 0:
-                        player.resource_bank.spend_resources(
-                            [0, 0, 2, 0, 3])
-                        self.resource_bank.collect_resources(
-                            [0, 0, 2, 0, 3])
+                        if self.reverse_turn_order is True:
+                            return "Can't build cities during setup phase"
                         transaction_valid = player.\
                             resource_bank.validate_transaction()
                         if transaction_valid:
@@ -430,14 +446,26 @@ class Board:
             self.resource_bank.validate_transaction()
 
     def change_current_player(self, player):
-        for i in range(0, len(self.players)):  # Go to next player's turn
-            if self.players[i] is player:
-                if i == len(self.players)-1:
-                    self.current_player = self.players[0]
-                else:
-                    self.current_player = self.players[i+1]
         if self.current_player is None:
             self.current_player = self.players[0]
+        else:
+            for i in range(0, len(self.players)):  # Go to next player's turn
+                if self.players[i] is player:
+                    if (i == len(self.players) - 1
+                       and self.reverse_turn_order is not True):
+                        if self.current_phase == 1:
+                            self.reverse_turn_order = True
+                        else:
+                            self.current_player = self.players[0]
+                    elif (self.current_phase == 1
+                          and self.reverse_turn_order is True):
+                        if i == 0:
+                            self.reverse_turn_order = False
+                            self.change_phase()
+                        else:
+                            self.current_player = self.players[i - 1]
+                    else:
+                        self.current_player = self.players[i + 1]
 
     def retrieve_current_player(self):
         return self.current_player
