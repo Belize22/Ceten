@@ -86,8 +86,8 @@ class Board:
             else:
                 t = Tile("water", 0)
             self.tiles.append(t)
-        self.connect_board()
-        self.place_tokens()
+        #self.connect_board()
+        #self.place_tokens()
                 
     def connect_board(self):
         num_circles = 2
@@ -366,13 +366,14 @@ class Board:
         return self.tiles[random.randint(0, len(self.tiles) - 1)]
 
     def get_tiles_ordered_by_physical_id(self):
-        sorted_tiles = []
-        for i in range(len(self.tiles)):
-            for t in self.tiles:
-                if (t.relational_id == 
-                        self.relational_to_physical_id_mapping[i]):
-                    sorted_tiles.append(t)
-        return sorted_tiles
+        #sorted_tiles = []
+        #for i in range(len(self.tiles)):
+        #    for t in self.tiles:
+        #        if (t.relational_id ==
+        #                self.relational_to_physical_id_mapping[i]):
+        #            sorted_tiles.append(t)
+        #return sorted_tiles
+        return self.tiles
 
     def find_robber(self):
         for t in self.tiles:

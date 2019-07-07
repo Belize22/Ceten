@@ -71,8 +71,9 @@ class BoardFacade:
         self.generate_facades()
         
     def generate_facades(self, size=42.5):
-        self.generate_tile_facades(size)
-        self.generate_corner_facades(size/5)
+        pass
+        #self.generate_tile_facades(size)
+        #self.generate_corner_facades(size/5)
 
     def generate_tile_facades(self, size):
         tile_count = 0
