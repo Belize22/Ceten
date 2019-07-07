@@ -1,17 +1,16 @@
 from Board import Board
-from Tile import Tile
-from DieRoller import DieRoller
 from SubmitButton import SubmitButton
 from TileFacade import TileFacade
 from CornerFacade import CornerFacade
 from NotificationPanel import NotificationPanel
+from CurrentPhase import CurrentPhase
+from CurrentGamePhase import CurrentGamePhase
+
 import pygame
 import math
-import random
 
 
 class BoardFacade:
-    NUM_DICE = 2
     grid_coordinates = [
         (0, -3),
         (-1, -2),
@@ -52,25 +51,26 @@ class BoardFacade:
         (0, 3)
     ]
 
-    def __init__(self, board, screen):
-        self.board = board
+    def __init__(self, screen, num_players):
+        self.board = Board(num_players)
         self.screen = screen
         self.tile_facades = []
         self.corner_facades = []
-        self.die_roller = DieRoller(self.NUM_DICE)
         self.roll_dice_button = SubmitButton(
             self.screen, (int(self.screen.get_width()*0.9), 275), "Roll Dice")
         self.end_turn_button = SubmitButton(
             self.screen, (int(self.screen.get_width()*0.9), 425), "End Turn")
         self.dice_value_position = (int(self.screen.get_width()*0.9), 275 + 60)
         self.phase_panel = NotificationPanel(
-            (self.screen.get_width() * 0.5, 0), self.screen)
+            self.screen,
+            (self.screen.get_width() * 0.5, 0))
         self.feedback_panel = NotificationPanel(
-            (self.screen.get_width() * 0.5, self.screen.get_height() * 0.95),
-            self.screen)
+            self.screen,
+            (self.screen.get_width() * 0.5, self.screen.get_height() * 0.95))
+        self.current_feedback = ""
         self.generate_facades()
         
-    def generate_facades(self, start=[400.0, 290.0], size=42.5):
+    def generate_facades(self, size=42.5):
         self.generate_tile_facades(size)
         self.generate_corner_facades(size/5)
 
@@ -104,7 +104,6 @@ class BoardFacade:
                  * math.sqrt(3.0)+offset_x,
                  self.screen.get_height()*0.5+1.5 * q * size+offset_y], size,
                  current_direction)
-            print(tile_facade.str())
             index = 0
             for tf in self.tile_facades:
                 if (int(tf.tile.relational_id) <
@@ -163,11 +162,8 @@ class BoardFacade:
                 if insert_facade:
                     self.corner_facades.append(corner_facade)
 
-    def produce_initial_resources(self, corner, player):
-        self.board.produce_initial_resources(corner, player)
-
-    def produce_resources(self, roll, players):
-        self.board.produce_resources(roll, players)
+    def produce_resources(self, roll):
+        self.board.produce_resources(roll)
 
     def render_control_menu(self):
         pygame.draw.rect(
@@ -178,7 +174,7 @@ class BoardFacade:
         self.end_turn_button.draw()
 
     def roll_dice(self):
-        roll = self.die_roller.roll_dice()
+        roll = self.board.die_roller.roll_dice()
         pygame.draw.circle(
             self.screen, (228, 205, 180), self.dice_value_position, 30, 0)
         font = pygame.font.Font(None, 36)
@@ -186,71 +182,69 @@ class BoardFacade:
         self.screen.blit(
             text, [self.dice_value_position[0] - 11,
                    self.dice_value_position[1] - 8])
-        print("Current Roll " + str(roll))
-        if roll == 7:
-            self.board.active_robber = True
-        return roll
+        self.board.change_game_phase()
+        if roll != 7:
+            self.board.change_game_phase()
+            self.produce_resources(roll)
+
+    def place_robber(self, mouse_pos):
+        tile_facade = self.find_tile_at(mouse_pos)
+        if int(tile_facade.tile.relational_id) < 19:
+            robber_tile_facade = self.find_robber()
+            if tile_facade == robber_tile_facade:
+                self.current_feedback = \
+                    "Cannot place robber on his current spot!"
+            else:
+                robber_tile_facade.set_robber(False)
+                tile_facade.set_robber(True)
+                self.current_feedback = ""
+                self.board.change_game_phase()
+
+    def build_component(self, mouse_pos, player_facade):
+        cf = self.find_corner_at(mouse_pos)
+        if cf is not None:
+            self.place_settlement(cf, player_facade)
+
+    def end_turn(self, player_facade):
+        if player_facade.player.has_player_won():
+            self.board.change_phase()
+        current_phase_before = self.board.get_current_phase()
+        if current_phase_before == CurrentPhase.VICTORY_PHASE.value:
+            self.end_turn_button.update("New Game")
+            self.current_feedback = player_facade.player. \
+                retrieve_player_name() + " has won Ceten."
+        else:
+            player = self.board.retrieve_current_player()
+            self.board.change_current_player(player)
+            player = self.board.retrieve_current_player()
+            current_phase_after = self.board.get_current_phase()
+            player_facade.set_next_player(player)
+            if current_phase_before != CurrentPhase.SETUP_PHASE.value:
+                self.board.change_game_phase()
+                self.current_feedback = ""
+            else:
+                if current_phase_after == CurrentPhase.SETUP_PHASE.value:
+                    self.current_feedback = player_facade.player.\
+                        retrieve_player_name() + ", place a settlement."
+                else:
+                    self.current_feedback = ""
 
     # will always return at least one robber
     def find_robber(self):
         tile = self.board.find_robber()
-        print("Robber Found! " + tile.str())
         for tf in self.tile_facades:
             if tf.tile == tile:
-                print("Robber Facade Found! " + str(tf))
                 return tf
 
     def place_settlement(self, corner_facade, player_facade):
-        if corner_facade.corner.does_corner_belong_to_a_player(
-                player_facade.player.id):
-            if not corner_facade.corner.are_neighboring_corners_settled():
-                if corner_facade.corner.settlement == "none":
-                    if player_facade.player.game_piece_bank.game_pieces[1] > 0:
-                        player_facade.player.resource_bank.spend_resources(
-                            [1, 1, 1, 1, 0])
-                        self.board.resource_bank.collect_resources(
-                            [1, 1, 1, 1, 0])
-                        transaction_valid = player_facade.player\
-                            .resource_bank.validate_transaction()
-                        if transaction_valid:
-                            self.board.resource_bank.validate_transaction()
-                            corner_facade.update(player_facade.player)
-                            player_facade.player.game_piece_bank\
-                                .place_settlement()
-                        else:
-                            self.feedback_panel.update(
-                                "Insufficient resources to build a settlement!"
-                            )
-                    else:
-                        self.feedback_panel.update(
-                            "No more settlements in your inventory!")
-                elif corner_facade.corner.settlement == "settlement":
-                    if player_facade.player.game_piece_bank.game_pieces[2] > 0:
-                        player_facade.player.resource_bank.spend_resources(
-                            [0, 0, 2, 0, 3])
-                        self.board.resource_bank.collect_resources(
-                            [0, 0, 2, 0, 3])
-                        transaction_valid = player_facade.player.\
-                            resource_bank.validate_transaction()
-                        if transaction_valid:
-                            self.board.resource_bank.validate_transaction()
-                            corner_facade.update(player_facade.player)
-                            player_facade.player.game_piece_bank.place_city()
-                        else:
-                            self.feedback_panel.update(
-                                "Insufficient resources to build a city!")
-                    else:
-                        self.feedback_panel.update(
-                            "No more cities in your inventory!")
-                else:
-                    self.feedback_panel.update(
-                        "Cities cannot be upgraded further!")
-            else:
-                self.feedback_panel.update(
-                    "Neighboring corners have settlements!")
-        else:
-            self.feedback_panel.update("You don't own this "
-                                       + corner_facade.corner.settlement + "!")
+        feedback = self.board.place_settlement(
+            corner_facade.corner, player_facade.player)
+        self.current_feedback = feedback
+        if feedback == "":
+            corner_facade.update(player_facade.player)
+            current_phase = self.board.get_current_phase()
+            if current_phase == CurrentPhase.SETUP_PHASE.value:
+                self.end_turn(player_facade)
 
     def find_tile_at(self, pos):
         for tf in self.tile_facades:
@@ -265,7 +259,39 @@ class BoardFacade:
     def in_boundaries(self, pos):
         if self.find_tile_at(pos) is not None:
             return True
-        return False	
+        return False
+
+    def retrieve_players(self):
+        return self.board.retrieve_players()
+
+    def get_current_phases(self):
+        return self.board.get_current_phase(), \
+               self.board.get_current_game_phase()
+
+    def update_phase_panel(self):
+        current_phase = self.board.get_current_phase()
+        current_game_phase = self.board.get_current_game_phase()
+        message = ""
+        if current_phase == CurrentPhase.SETUP_PHASE.value:
+            message = "Setup Phase"
+        elif current_phase == CurrentPhase.VICTORY_PHASE.value:
+            message = "Game Over!"
+        else:
+            if current_game_phase == CurrentGamePhase.ROLL_DICE.value:
+                message = "Roll Dice"
+            elif current_game_phase == CurrentGamePhase.ROBBER.value:
+                message = "Move the Robber to a new resource tile"
+            elif current_game_phase == CurrentGamePhase.BUILDING.value:
+                message = "Build something from your Inventory"
+        self.phase_panel.update(message)
+
+    def update_feedback_panel(self):
+        self.feedback_panel.update(self.current_feedback)
+
+    def set_initial_feedback_message(self, player_facade):
+        self.current_feedback = player_facade.player.retrieve_player_name() \
+            + ", place a settlement."
+        self.feedback_panel.update(self.current_feedback)
 
     def draw(self):
         self.phase_panel.draw()

@@ -149,7 +149,3 @@ class TileFacade:
 
     def set_robber(self, flag):
         self.tile.robber = flag
-
-    def str(self):
-        return "TileFacade with Points: " + str(self.points) + "\n" \
-               + self.tile.str()

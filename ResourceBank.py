@@ -1,12 +1,4 @@
-from enum import Enum
-
-
-class ResourceType(Enum):
-    LUMBER = 0
-    WOOL = 1
-    GRAIN = 2
-    BRICK = 3
-    ORE = 4
+from ResourceType import ResourceType
 
 
 class ResourceBank:
@@ -18,6 +10,7 @@ class ResourceBank:
             self.resources.append(starting_quantity)
             self.resource_buffers.append(0)
 
+    # TODO: Pass the resource as enum instead of string.
     def deposit_resource(self, resource, quantity):
         enum_resource = self.string_to_enum(resource)
         self.resource_buffers[enum_resource.value] += quantity
@@ -54,7 +47,7 @@ class ResourceBank:
         
     def clear_buffers(self):
         for i in range(len(self.resources)):
-            self.resource_buffers[i] = 0 
+            self.resource_buffers[i] = 0
 
     def string_to_enum(self, resource):
         if resource == "lumber":

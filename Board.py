@@ -2,12 +2,22 @@ from Tile import Tile
 from Edge import Edge
 from Corner import Corner
 from Player import Player
+from DieRoller import DieRoller
 from ResourceBank import ResourceBank
+from GamePieceType import GamePieceType
+from CurrentPhase import CurrentPhase
+from CurrentGamePhase import CurrentGamePhase
+
 import random
 import re
 
 
 class Board:
+    NUM_DICE = 2
+    SETTLEMENT_COST = [1, 1, 1, 1, 0]
+    CITY_COST = [0, 0, 2, 0, 3]
+    EXTRA_RESOURCE_QUANTITIES = [3, 3, 3, 3, 3]
+
     resources = {
         "ore": 3,
         "desert": 1,
@@ -38,14 +48,23 @@ class Board:
         "36", "19", "20", "21"
     ]
 
-    def __init__(self, tile_count=37):
+    def __init__(self, num_players):
         self.tiles = []
+        self.players = []
+        self.current_player = None
         self.resource_bank = ResourceBank(19)
-        self.active_robber = False
+        self.die_roller = DieRoller(self.NUM_DICE)
+        self.current_phase = CurrentPhase.SETUP_PHASE.value
+        self.current_game_phase = CurrentGamePhase.ROLL_DICE.value
+        self.reverse_turn_order = False
         current_resources = Board.resources.copy()
+        for i in range(1, num_players + 1):
+            self.players.append(
+                    Player(i, "Player" + str(i)))
+        self.randomize_turn_order()
         while len(current_resources) > 0:
             (resource, resource_count) = random.choice(
-                                         list(current_resources.items()))
+                list(current_resources.items()))
             if resource_count < 1:
                 current_resources.pop(resource)
                 continue
@@ -114,7 +133,6 @@ class Board:
                 tiles_on_current_level_iterated = 0
                 while nth_tile_being_iterated < 6*level+1:
                     self.tiles[val].relational_id = str(val)
-                    print("THE VALUE IS: " + str(val))
                     second_corner = Corner()
                     third_corner = Corner()
                     set_edges(
@@ -215,7 +233,7 @@ class Board:
             if t.relational_id != '' and int(t.relational_id) < 19:
                 t.physical_id = self.relational_to_physical_id_mapping[
                                 int(t.relational_id)]
-        self.tile_info()
+
 
     """place_tokens:
     Places tokens on land tiles. These tokens have an activation value
@@ -269,41 +287,19 @@ class Board:
                         - 1))))].activation_value = activation_value
                 amount -= 1
 
-    def tile_info(self):
-        for t in self.tiles:
-            corners_of_edges = []
-            edge_ids = ""
-            corner_ids = []
-            for e in t.edges:
-                if edge_ids == "":
-                    edge_ids += e.relational_id
-                else:
-                    edge_ids += (", " + e.relational_id)
-                for c in e.corners:
-                    corners_of_edges.append(c)
-                    corner_ids.append(c.relational_id)
-            corner_ids = set(corner_ids)
-            corner_id_string = ""
-            for c in corner_ids:
-                if corner_id_string == "":
-                    corner_id_string += str(c)
-                else:
-                    corner_id_string += (", " + str(c))
-            corners_of_current_tile = set(corners_of_edges)
-            info = "Tile #" + t.relational_id + ": " \
-                   + "Edge Relationships - {" + edge_ids + "}, " + ": " \
-                   + "Corner Relationships - {" + corner_id_string + "}, " \
-                   + str(len(corners_of_current_tile)) \
-                   + " corners, Resource: " + t.resource
-            print(info)
+    def get_current_phase(self):
+        return self.current_phase
 
-    def board_str(self):
-        ret = ""
-        count = 1
-        for t in self.tiles:
-            print("TILE #" + str(count))
-            ret += ("TILE #" + str(count) + t.str())
-            count += 1
+    def get_current_game_phase(self):
+        return self.current_game_phase
+
+    def change_phase(self):
+        self.current_phase += 1
+
+    def change_game_phase(self):
+        self.current_game_phase += 1
+        if self.current_game_phase > len(CurrentGamePhase):
+            self.current_game_phase = CurrentGamePhase.ROLL_DICE.value
 
     """produce_resources:
     roll - Tiles with an activation value of this dice roll are the
@@ -312,18 +308,18 @@ class Board:
     activation value "roll". Settlements receive 1 of the tile's
     resource while cities receive 2.
     """
-    def produce_resources(self, roll, players):
+    def produce_resources(self, roll):
         productive_tiles = []
         for t in self.tiles:
             if str(t.activation_value) == str(roll) and not t.robber:
                 productive_tiles.append(t)
         for pt in productive_tiles:
-            print("Traversing Tile #" + pt.relational_id)
             starting_edge = pt.edges[0]
             starting_corner = pt.edges[0].corners[0]
             current_edge = starting_edge
             current_corner = starting_corner
-            self.gather_resource_with_settlement(pt, current_corner, players)
+            self.gather_resource_with_settlement(
+                pt, current_corner, self.players)
             for c in current_edge.corners:
                 if c != current_corner:
                     current_corner = c
@@ -334,17 +330,17 @@ class Board:
                         current_edge = e
                         break
                 self.gather_resource_with_settlement(
-                    pt, current_corner, players)
+                    pt, current_corner, self.players)
                 for c in current_edge.corners:
                     if c != current_corner:
                         current_corner = c
                         break
             valid_transaction = self.resource_bank.validate_transaction()
             if valid_transaction:
-                for p in players:
+                for p in self.players:
                     p.resource_bank.validate_transaction()
             else:
-                for p in players:
+                for p in self.players:
                     p.resource_bank.cancel_transaction()
 
     """produce_initial_resources:
@@ -398,19 +394,105 @@ class Board:
             owner.resource_bank.deposit_resource(resource, quantity)
             self.resource_bank.withdraw_resource(resource, quantity)
 
+    def place_settlement(self, corner, player):
+        if corner.does_corner_belong_to_a_player(
+                player.id):
+            if not corner.are_neighboring_corners_settled():
+                if corner.settlement == "none":
+                    if (player.game_piece_bank.game_pieces[
+                         GamePieceType.SETTLEMENT.value] > 0):
+                        if self.current_phase == CurrentPhase.GAME_PHASE.value:
+                            player.resource_bank.spend_resources(
+                                self.SETTLEMENT_COST)
+                            self.resource_bank.collect_resources(
+                                self.SETTLEMENT_COST)
+                            transaction_valid = player\
+                                .resource_bank.validate_transaction()
+                            if transaction_valid:
+                                self.resource_bank.validate_transaction()
+                                player.game_piece_bank.place_settlement()
+                                return ""
+                            else:
+                                return "Insufficient resources to" \
+                                       " build a settlement!"
+                        else:
+                            player.game_piece_bank.place_settlement()
+                            if self.reverse_turn_order is True:
+                                self.produce_initial_resources(
+                                    corner, player)
+                            return ""
+                    else:
+                        return "No more settlements in your inventory!"
+                elif corner.settlement == "settlement":
+                    if (player.game_piece_bank.game_pieces[
+                         GamePieceType.CITY.value] > 0):
+                        if self.reverse_turn_order is True:
+                            return "Can't build cities during setup phase!"
+                        player.resource_bank.spend_resources(self.CITY_COST)
+                        self.resource_bank.collect_resources(self.CITY_COST)
+                        transaction_valid = player.\
+                            resource_bank.validate_transaction()
+                        if transaction_valid:
+                            self.resource_bank.validate_transaction()
+                            player.game_piece_bank.place_city()
+                            return ""
+                        else:
+                            return "Insufficient resources to build a city!"
+                    else:
+                        return "No more cities in your inventory!"
+                else:
+                    return "Cities cannot be upgraded further!"
+            else:
+                return "Neighboring corners have settlements!"
+        else:
+            return "You don't own this " + corner.settlement + "!"
+
     def start_off_with_extra_resources(self, players):
         for p in players:
-            p.game_piece_bank.place_settlement()
-            p.resource_bank.collect_resources([3, 3, 3, 3, 3])
+            p.resource_bank.collect_resources(self.EXTRA_RESOURCE_QUANTITIES)
             p.resource_bank.validate_transaction()
-            self.resource_bank.spend_resources([3, 3, 3, 3, 3])
+            self.resource_bank.spend_resources(self.EXTRA_RESOURCE_QUANTITIES)
             self.resource_bank.validate_transaction()
-            
-    def str(self):
-        ret = "Board has the Following Tiles:\n"
-        for t in self.tiles:
-            ret += t.str() + "\n"
-        return ret
+
+    def change_current_player(self, player):
+        if self.current_player is None:
+            self.current_player = self.players[0]
+        else:
+            for i in range(0, len(self.players)):  # Go to next player's turn
+                if self.players[i] is player:
+                    if (i == len(self.players) - 1
+                       and self.reverse_turn_order is not True):
+                        if (self.current_phase ==
+                                CurrentPhase.SETUP_PHASE.value):
+                            self.reverse_turn_order = True
+                        else:
+                            self.current_player = self.players[0]
+                    elif (self.current_phase == CurrentPhase.SETUP_PHASE.value
+                          and self.reverse_turn_order is True):
+                        if i == 0:
+                            self.reverse_turn_order = False
+                            self.change_phase()
+                        else:
+                            self.current_player = self.players[i - 1]
+                    else:
+                        self.current_player = self.players[i + 1]
+
+    def retrieve_current_player(self):
+        return self.current_player
+
+    def retrieve_players(self):
+        return self.players
+
+    def randomize_turn_order(self):
+        for i in range(0, len(self.players)-1):
+            random_index = random.randint(0, len(self.players)-1)
+            self.players[i].turn_priority, \
+                self.players[random_index].turn_priority = \
+                self.players[random_index].turn_priority, \
+                self.players[i].turn_priority
+            self.players[i], self.players[random_index] = \
+                self.players[random_index], self.players[i]
+        return self.players
 
 
 def get_product_sum(num):

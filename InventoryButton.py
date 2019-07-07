@@ -1,17 +1,17 @@
+from Button import Button
+
 import pygame
 import math
 
-# Triangle, then circle respectively.
-DISABLED_COLOR_SCHEME = [(80, 80, 80), (150, 150, 150)]
-ENABLED_COLOR_SCHEME = [(0, 0, 0), (180, 180, 180)]
 
+class InventoryButton(Button):
+    # Triangle, then circle respectively.
+    DISABLED_COLOR_SCHEME = [(80, 80, 80), (150, 150, 150)]
+    ENABLED_COLOR_SCHEME = [(0, 0, 0), (180, 180, 180)]
 
-class InventoryButton:
     def __init__(self, screen, position, orientation):
-        self.screen = screen
-        self.position = position
+        super().__init__(screen, position)
         self.triangle_pointlist = []
-        self.enabled = False
         self.line_length = 5
         if orientation == "up":
             degree = math.pi/2
@@ -23,15 +23,11 @@ class InventoryButton:
                  self.position[1]+int(self.line_length*-math.sin(degree))])
             degree += 2*math.pi/3
 
-    def switch_enabled_state(self):
-        self.enabled = not self.enabled
-        self.draw()
-
     def draw(self):
         if self.enabled:
-            current_color_scheme = ENABLED_COLOR_SCHEME
+            current_color_scheme = self.ENABLED_COLOR_SCHEME
         else:
-            current_color_scheme = DISABLED_COLOR_SCHEME
+            current_color_scheme = self.DISABLED_COLOR_SCHEME
         pygame.draw.circle(
             self.screen, current_color_scheme[1], self.position,
             int(self.line_length*2))
