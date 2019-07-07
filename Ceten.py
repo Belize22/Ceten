@@ -1,6 +1,8 @@
 from BoardFacade import BoardFacade
 from PublicPlayerFacade import PublicPlayerFacade
 from PrivatePlayerFacade import PrivatePlayerFacade
+from CurrentPhase import CurrentPhase
+from CurrentGamePhase import CurrentGamePhase
 
 import pygame
 
@@ -59,20 +61,21 @@ class Ceten:
         mouse_pos = pygame.mouse.get_pos()
         phase, game_phase = self.board_facade.get_current_phases()
 
-        if phase == 1:
+        if phase == CurrentPhase.SETUP_PHASE.value:
             self.build_component(mouse_pos)
         elif (self.board_facade.end_turn_button.in_boundaries(mouse_pos)
-              and phase == 3):
+              and phase == CurrentPhase.VICTORY_PHASE.value):
             self.start_game()
         elif (self.board_facade.roll_dice_button.in_boundaries(mouse_pos)
-                and game_phase == 1):
+                and game_phase == CurrentGamePhase.ROLL_DICE.value):
             self.roll_dice()
-        elif self.board_facade.in_boundaries(mouse_pos) and game_phase == 2:
+        elif (self.board_facade.in_boundaries(mouse_pos)
+                and game_phase == CurrentGamePhase.ROBBER.value):
             self.board_facade.place_robber(mouse_pos)
         elif (self.board_facade.end_turn_button.in_boundaries(mouse_pos)
-                and game_phase == 3):
+                and game_phase == CurrentGamePhase.BUILDING.value):
             self.end_turn()
-        elif game_phase == 3:
+        elif game_phase == CurrentGamePhase.BUILDING.value:
             self.build_component(mouse_pos)
 
         self.board_facade.update_phase_panel()

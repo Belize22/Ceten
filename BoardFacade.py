@@ -3,6 +3,9 @@ from SubmitButton import SubmitButton
 from TileFacade import TileFacade
 from CornerFacade import CornerFacade
 from NotificationPanel import NotificationPanel
+from CurrentPhase import CurrentPhase
+from CurrentGamePhase import CurrentGamePhase
+
 import pygame
 import math
 
@@ -203,10 +206,10 @@ class BoardFacade:
             self.place_settlement(cf, player_facade)
 
     def end_turn(self, player_facade):
-        if player_facade.player.retrieve_victory_points() >= 10:
+        if player_facade.player.has_player_won():
             self.board.change_phase()
         current_phase_before = self.board.get_current_phase()
-        if current_phase_before == 3:
+        if current_phase_before == CurrentPhase.VICTORY_PHASE.value:
             self.end_turn_button.update("New Game")
             self.current_feedback = player_facade.player. \
                 retrieve_player_name() + " has won Ceten."
@@ -216,11 +219,11 @@ class BoardFacade:
             player = self.board.retrieve_current_player()
             current_phase_after = self.board.get_current_phase()
             player_facade.set_next_player(player)
-            if current_phase_before != 1:
+            if current_phase_before != CurrentPhase.SETUP_PHASE.value:
                 self.board.change_game_phase()
                 self.current_feedback = ""
             else:
-                if current_phase_after == 1:
+                if current_phase_after == CurrentPhase.SETUP_PHASE.value:
                     self.current_feedback = player_facade.player.\
                         retrieve_player_name() + ", place a settlement."
                 else:
@@ -240,7 +243,7 @@ class BoardFacade:
         if feedback == "":
             corner_facade.update(player_facade.player)
             current_phase = self.board.get_current_phase()
-            if current_phase == 1:
+            if current_phase == CurrentPhase.SETUP_PHASE.value:
                 self.end_turn(player_facade)
 
     def find_tile_at(self, pos):
@@ -269,16 +272,16 @@ class BoardFacade:
         current_phase = self.board.get_current_phase()
         current_game_phase = self.board.get_current_game_phase()
         message = ""
-        if current_phase == 1:
+        if current_phase == CurrentPhase.SETUP_PHASE.value:
             message = "Setup Phase"
-        elif current_phase == 3:
+        elif current_phase == CurrentPhase.VICTORY_PHASE.value:
             message = "Game Over!"
         else:
-            if current_game_phase == 1:
+            if current_game_phase == CurrentGamePhase.ROLL_DICE.value:
                 message = "Roll Dice"
-            elif current_game_phase == 2:
+            elif current_game_phase == CurrentGamePhase.ROBBER.value:
                 message = "Move the Robber to a new resource tile"
-            elif current_game_phase == 3:
+            elif current_game_phase == CurrentGamePhase.BUILDING.value:
                 message = "Build something from your Inventory"
         self.phase_panel.update(message)
 
