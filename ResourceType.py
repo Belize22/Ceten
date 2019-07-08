@@ -7,4 +7,5 @@ class ResourceType(Enum):
     GRAIN = 2
     BRICK = 3
     ORE = 4
+    DESERT = 5
 

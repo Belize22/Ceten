@@ -7,50 +7,9 @@ from CurrentPhase import CurrentPhase
 from CurrentGamePhase import CurrentGamePhase
 
 import pygame
-import math
 
 
 class BoardFacade:
-    grid_coordinates = [
-        (0, -3),
-        (-1, -2),
-        (-2, -1),
-        (-3, 0),
-        (1, -3),
-        (0, -2),
-        (-1, -1),
-        (-2, 0),
-        (-3, 1),
-        (2, -3),
-        (1, -2),
-        (0, -1),
-        (-1, 0),
-        (-2, 1),
-        (-3, 2),
-        (3, -3),
-        (2, -2),
-        (1, -1),
-        (0, 0),
-        (-1, 1),
-        (-2, 2),
-        (-3, 3),
-        (3, -2),
-        (2, -1),
-        (1, 0),
-        (0, 1),
-        (-1, 2),
-        (-2, 3),
-        (3, -1),
-        (2, 0),
-        (1, 1),
-        (0, 2),
-        (-1, 3),
-        (3, 0),
-        (2, 1),
-        (1, 2),
-        (0, 3)
-    ]
-
     def __init__(self, screen, num_players):
         self.board = Board(num_players)
         self.screen = screen
@@ -67,68 +26,20 @@ class BoardFacade:
         self.feedback_panel = NotificationPanel(
             self.screen,
             (self.screen.get_width() * 0.5, self.screen.get_height() * 0.95))
+        self.center = [self.screen.get_width() * 0.5,
+                       self.screen.get_height() * 0.5]
         self.current_feedback = ""
         self.generate_facades()
         
     def generate_facades(self, size=42.5):
         pass
-        #self.generate_tile_facades(size)
-        #self.generate_corner_facades(size/5)
+        self.generate_tile_facades(size)
+        # self.generate_corner_facades(size/5)
 
     def generate_tile_facades(self, size):
-        tile_count = 0
-        offset_y = 0
-        offset_x = 0
-        tiles = self.board.get_tiles_ordered_by_physical_id()
-        for q, r in BoardFacade.grid_coordinates:
-            current_tile = tiles.pop(0)
-            if (int(current_tile.relational_id) > 18
-               and int(current_tile.relational_id) % 2 == 0):
-                if int(current_tile.relational_id) > 18:
-                    current_direction = 0
-                if int(current_tile.relational_id) > 22:
-                    current_direction = 1
-                if int(current_tile.relational_id) > 24:
-                    current_direction = 2
-                if int(current_tile.relational_id) > 28:
-                    current_direction = 3
-                if int(current_tile.relational_id) > 30:
-                    current_direction = 4
-                if int(current_tile.relational_id) > 34:
-                    current_direction = 5
-            else:
-                current_direction = -1
-            s = -q - r
-            tile_facade = TileFacade(
-                current_tile, self.screen,
-                [self.screen.get_width()*0.5+s * size
-                 * math.sqrt(3.0)+offset_x,
-                 self.screen.get_height()*0.5+1.5 * q * size+offset_y], size,
-                 current_direction)
-            index = 0
-            for tf in self.tile_facades:
-                if (int(tf.tile.relational_id) <
-                   int(tile_facade.tile.relational_id)):
-                    index += 1
-                else:
-                    break
-            self.tile_facades.insert(index, tile_facade)
-            tile_count += 1
-            # be careful tinkering with this code, it is tempermental
-            if tile_count == 4:
-                offset_x = size * 0.87
-            elif tile_count == 9:
-                offset_x = size * 1.72
-            elif tile_count == 15:
-                offset_x = size * 2.6
-            elif tile_count == 22:
-                offset_x = size * 2.6
-            elif tile_count == 28:
-                offset_x = size * 2.6
-            elif tile_count == 33:
-                offset_x = size * 2.6
-            else:
-                offset_x -= size * math.sqrt(3.0)/2.0
+        tiles = self.board.tiles
+        for i in range(0, len(tiles)):
+            self.tile_facades.append(TileFacade(self.screen, tiles[i], size))
 
     def generate_corner_facades(self, radius):
         corners_of_tile = []
