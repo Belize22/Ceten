@@ -8,4 +8,3 @@ class ResourceType(Enum):
     BRICK = 3
     ORE = 4
     DESERT = 5
-

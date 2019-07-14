@@ -1,3 +1,4 @@
+from Tile import Tile
 from LandTile import LandTile
 from SeaTile import SeaTile
 from Player import Player
@@ -66,15 +67,15 @@ class Board:
             if resource_count - 1 < 1:
                 current_resources.pop(resource)
             self.land_tiles.append(LandTile(current_coordinate, resource))
-            current_coordinate = self.change_coordinate(
+            current_coordinate = Tile.change_coordinate(
                 current_coordinate, directions.pop(0))
 
         for i in range(0, self.SEA_TILE_QUANTITY):
             self.sea_tiles.append(SeaTile(current_coordinate))
             if i < self.SEA_TILE_QUANTITY - 1:
-                current_coordinate = self.change_coordinate(
+                current_coordinate = Tile.change_coordinate(
                     current_coordinate, directions.pop(0))
-        #self.place_tokens()
+        self.place_tokens()
 
     """place_tokens:
     Places tokens on land tiles. These tokens have an activation value
@@ -85,36 +86,30 @@ class Board:
     """
     def place_tokens(self):
         active_activation_values = self.activation_values.copy()
-        tiles_to_place_tokens_on = []
+        tiles_to_place_tokens_on = self.land_tiles
         rejected_tiles_for_reds = []      # 6's and 8's referred to as reds.
-        # Only land tiles get tokens on them.
-        for t in self.tiles:
-            if ("water" not in t.resource and "port" not in t.resource
-                    and "desert" not in t.resource):
-                tiles_to_place_tokens_on.append(t.relational_id)
+        tiles_with_a_token_placed = []
+
+        # Desert tile gets no token
+        for t in tiles_to_place_tokens_on:
+            if t.resource == ResourceType.DESERT.value:
+                tiles_with_a_token_placed.append(t)
+                tiles_to_place_tokens_on.remove(t)
         # Place 6's first, then 8's after.
         while (active_activation_values.get("6") > 0
                 or active_activation_values.get("8")) > 0:
             token_value = "6"
             if active_activation_values.get("6") == 0:
                 token_value = "8"
-            tile_to_place_token_on = self.tiles[
-                                      int(tiles_to_place_tokens_on
-                                          [random.randint
-                                           (0, (len(tiles_to_place_tokens_on)
-                                            - 1))])]
-            self.tiles[int(
-                tile_to_place_token_on.relational_id)
-                ].activation_value = int(token_value)
-            tiles_to_place_tokens_on.remove(
-                tile_to_place_token_on.relational_id)
+            tile_to_place_token_on = tiles_to_place_tokens_on.pop(
+                random.randint(0, (len(tiles_to_place_tokens_on) - 1)))
+            tile_to_place_token_on.activation_value = int(token_value)
+            tiles_with_a_token_placed.append(tile_to_place_token_on)
             # Reject surrounding tiles as future candidates for reds.
-            for e in tile_to_place_token_on.edges:
-                for t in e.tiles:
-                    if tile_to_place_token_on != t:
-                        if t.relational_id in tiles_to_place_tokens_on:
-                            rejected_tiles_for_reds.append(t.relational_id)
-                            tiles_to_place_tokens_on.remove(t.relational_id)
+            for t in tile_to_place_token_on.get_adjacent_land_tiles(
+                    self.land_tiles):
+                tiles_to_place_tokens_on.remove(t)
+                rejected_tiles_for_reds.append(t)
             active_activation_values[token_value] -= 1
         # Rejected tiles are now considered for the rest of the tokens.
         while len(rejected_tiles_for_reds) > 0:
@@ -122,11 +117,12 @@ class Board:
         # Place the rest of the tokens on the land tiles.
         for activation_value, amount in active_activation_values.items():
             while amount > 0:
-                self.tiles[int(tiles_to_place_tokens_on.pop(
-                    random.randint(0, (len(
-                        tiles_to_place_tokens_on)
-                        - 1))))].activation_value = activation_value
+                tile_to_place_token_on = tiles_to_place_tokens_on.pop(
+                    random.randint(0, (len(tiles_to_place_tokens_on) - 1)))
+                tile_to_place_token_on.activation_value = int(activation_value)
+                tiles_with_a_token_placed.append(tile_to_place_token_on)
                 amount -= 1
+        self.land_tiles = tiles_with_a_token_placed
 
     def get_current_phase(self):
         return self.current_phase
@@ -347,41 +343,3 @@ class Board:
                 if j == EdgeCardinality.TOP_RIGHT.value:
                     i += 1
         return directions
-
-    '''
-    change_coordinate:
-    Allows the current coordinate of the map builder to be changed based
-    on the specified direction.
-    '''
-    def change_coordinate(self, current_coordinate, direction):
-        new_coordinate = current_coordinate.copy()
-        # Horizontal Directions. Solely modifies x-coordinate
-        if direction == EdgeCardinality.LEFT.value:
-            new_coordinate[0] -= 1
-        elif direction == EdgeCardinality.RIGHT.value:
-            new_coordinate[0] += 1
-        # Diagonal Directions. Always modifies y-coordinate, may
-        # modify x-coordinate based on direction and parity of the sum
-        # of the parity of the x-coordinate and the parity of the
-        # sum of the x-coordinate and y-coordinate.
-        elif direction == EdgeCardinality.TOP_LEFT.value:
-            new_coordinate[0] -= (
-                    1 - ((current_coordinate[0] + (
-                          current_coordinate[0] + current_coordinate[1])) % 2))
-            new_coordinate[1] -= 1
-        elif direction == EdgeCardinality.TOP_RIGHT.value:
-            new_coordinate[0] += (
-                    (current_coordinate[0] + (
-                     current_coordinate[0] + current_coordinate[1])) % 2)
-            new_coordinate[1] -= 1
-        elif direction == EdgeCardinality.BOTTOM_LEFT.value:
-            new_coordinate[0] -= (
-                    1 - ((current_coordinate[0] + (
-                          current_coordinate[0] + current_coordinate[1])) % 2))
-            new_coordinate[1] += 1
-        else:  # Bottom-Right
-            new_coordinate[0] += (
-                    (current_coordinate[0] + (
-                     current_coordinate[0] + current_coordinate[1])) % 2)
-            new_coordinate[1] += 1
-        return new_coordinate
