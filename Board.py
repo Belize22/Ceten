@@ -42,7 +42,8 @@ class Board:
     }
 
     def __init__(self, num_players):
-        self.tiles = []
+        self.land_tiles = []
+        self.sea_tiles = []
         self.players = []
         self.current_player = None
         self.resource_bank = ResourceBank(19)
@@ -64,12 +65,12 @@ class Board:
             current_resources[resource] -= 1
             if resource_count - 1 < 1:
                 current_resources.pop(resource)
-            self.tiles.append(LandTile(current_coordinate, resource))
+            self.land_tiles.append(LandTile(current_coordinate, resource))
             current_coordinate = self.change_coordinate(
                 current_coordinate, directions.pop(0))
 
         for i in range(0, self.SEA_TILE_QUANTITY):
-            self.tiles.append(SeaTile(current_coordinate))
+            self.sea_tiles.append(SeaTile(current_coordinate))
             if i < self.SEA_TILE_QUANTITY - 1:
                 current_coordinate = self.change_coordinate(
                     current_coordinate, directions.pop(0))

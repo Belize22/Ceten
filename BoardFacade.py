@@ -1,6 +1,7 @@
 from Board import Board
 from SubmitButton import SubmitButton
-from TileFacade import TileFacade
+from LandTileFacade import LandTileFacade
+from SeaTileFacade import SeaTileFacade
 from CornerFacade import CornerFacade
 from NotificationPanel import NotificationPanel
 from CurrentPhase import CurrentPhase
@@ -37,9 +38,12 @@ class BoardFacade:
         # self.generate_corner_facades(size/5)
 
     def generate_tile_facades(self, size):
-        tiles = self.board.tiles
-        for i in range(0, len(tiles)):
-            self.tile_facades.append(TileFacade(self.screen, tiles[i], size))
+        land_tiles = self.board.land_tiles
+        sea_tiles = self.board.sea_tiles
+        for lt in land_tiles:
+            self.tile_facades.append(LandTileFacade(self.screen, lt, size))
+        for st in sea_tiles:
+            self.tile_facades.append(SeaTileFacade(self.screen, st, size))
 
     def generate_corner_facades(self, radius):
         corners_of_tile = []
