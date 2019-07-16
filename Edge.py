@@ -1,12 +1,9 @@
 import re
-from Corner import Corner
 
 
 class Edge:
     def __init__(self, ownership="none", port="none"):
-        self.relational_id = ""
         self.tiles = []
-        self.corners = []
         self.ownership = ownership
         self.port = port
 

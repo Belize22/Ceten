@@ -1,13 +1,8 @@
 class Corner:
     def __init__(self, settlement="none", ownership=0):
-        self.relational_id = ""
-        self.edges = []
+        self.tiles = []
         self.settlement = settlement
         self.ownership = ownership
-
-    def add_edge(self, edge):
-        if edge not in self.edges:
-            self.edges.append(edge)
 
     # TODO: Replace logic with increment by implementing enum
     def update(self, ownership):

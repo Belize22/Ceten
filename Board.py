@@ -66,12 +66,14 @@ class Board:
             current_resources[resource] -= 1
             if resource_count - 1 < 1:
                 current_resources.pop(resource)
-            self.land_tiles.append(LandTile(current_coordinate, resource))
+            self.land_tiles.append(
+                LandTile(current_coordinate, self.land_tiles, resource))
             current_coordinate = Tile.change_coordinate(
                 current_coordinate, directions.pop(0))
 
         for i in range(0, self.SEA_TILE_QUANTITY):
-            self.sea_tiles.append(SeaTile(current_coordinate))
+            self.sea_tiles.append(
+                SeaTile(current_coordinate, self.sea_tiles + self.land_tiles))
             if i < self.SEA_TILE_QUANTITY - 1:
                 current_coordinate = Tile.change_coordinate(
                     current_coordinate, directions.pop(0))
@@ -106,7 +108,7 @@ class Board:
             tile_to_place_token_on.activation_value = int(token_value)
             tiles_with_a_token_placed.append(tile_to_place_token_on)
             # Reject surrounding tiles as future candidates for reds.
-            for t in tile_to_place_token_on.get_adjacent_land_tiles(
+            for t in tile_to_place_token_on.get_adjacent_tiles(
                     self.land_tiles):
                 tiles_to_place_tokens_on.remove(t)
                 rejected_tiles_for_reds.append(t)

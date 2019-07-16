@@ -39,9 +39,9 @@ class TileFacade(ABC):
                   self.screen.get_height()*0.5]
         radius = scale
         apothem = math.sqrt(radius**2 - (radius/2)**2)
-        center[0] += 2*apothem*(self.tile.coordinates[0]) \
-            + apothem*(self.tile.coordinates[1] % 2)
-        center[1] += 1.5*radius*(self.tile.coordinates[1])
+        center[0] += 2*apothem*(self.tile.coordinate[0]) \
+            + apothem*(self.tile.coordinate[1] % 2)
+        center[1] += 1.5*radius*(self.tile.coordinate[1])
         print("Center: " + str(center[0]) + ", " + str(center[1]))
         return [int(center[0]), int(center[1])]
 
