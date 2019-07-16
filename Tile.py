@@ -28,7 +28,8 @@ class Tile(ABC):
             # exist.
             if self.edges[direction.value] is None:
                 self.edges[direction.value] = Edge()
-            self.edges[direction.value].tiles.append(self)
+            if self not in self.edges[direction.value].tiles:
+                self.edges[direction.value].tiles.append(self)
 
     def get_adjacent_tiles(self, tiles):
         base_coordinate = self.coordinate

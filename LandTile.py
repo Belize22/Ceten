@@ -42,8 +42,10 @@ class LandTile(Tile):
                 self.corners[direction.value] = Corner()
             if self.corners[next_direction] is None:
                 self.corners[next_direction] = Corner()
-            self.corners[direction.value].tiles.append(self)
-            self.corners[next_direction].tiles.append(self)
+            if self not in self.corners[direction.value].tiles:
+                self.corners[direction.value].tiles.append(self)
+            if self not in self.corners[next_direction].tiles:
+                self.corners[next_direction].tiles.append(self)
 
 
 

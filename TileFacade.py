@@ -27,7 +27,7 @@ class TileFacade(ABC):
     def hex_pointlist_generator(self, scale, center):
         hex_pointlist = []
         for i in range(6):
-            deg = 60.0 * i - 30.0
+            deg = 150.0 - i*60.0
             rad = math.pi / 180.0 * deg
             hex_pointlist.append(
                 [center[0] + scale*math.cos(rad),
@@ -42,7 +42,6 @@ class TileFacade(ABC):
         center[0] += 2*apothem*(self.tile.coordinate[0]) \
             + apothem*(self.tile.coordinate[1] % 2)
         center[1] += 1.5*radius*(self.tile.coordinate[1])
-        print("Center: " + str(center[0]) + ", " + str(center[1]))
         return [int(center[0]), int(center[1])]
 
     @abstractmethod
