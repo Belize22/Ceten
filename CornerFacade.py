@@ -41,4 +41,4 @@ class CornerFacade:
                     self.screen, self.colour.get("BLACK"), self.center,
                     round(self.radius/2), 1)
         self.circle = pygame.draw.circle(
-            self.screen, self.colour.get("BLACK"), self.center, self.radius, 2)
+            self.screen, self.colour.get("BLACK"), [int(self.center[0]), int(self.center[1])], self.radius, 2)

@@ -1,5 +1,6 @@
 from Board import Board
 from SubmitButton import SubmitButton
+from TileFacade import TileFacade
 from LandTileFacade import LandTileFacade
 from SeaTileFacade import SeaTileFacade
 from CornerFacade import CornerFacade
@@ -14,7 +15,8 @@ class BoardFacade:
     def __init__(self, screen, num_players):
         self.board = Board(num_players)
         self.screen = screen
-        self.tile_facades = []
+        self.land_tile_facades = []
+        self.sea_tile_facades = []
         self.corner_facades = []
         self.roll_dice_button = SubmitButton(
             self.screen, (int(self.screen.get_width()*0.9), 275), "Roll Dice")
@@ -33,50 +35,30 @@ class BoardFacade:
         self.generate_facades()
         
     def generate_facades(self, size=42.5):
-        pass
         self.generate_tile_facades(size)
-        # self.generate_corner_facades(size/5)
+        self.generate_corner_facades(size)
 
     def generate_tile_facades(self, size):
         land_tiles = self.board.land_tiles
         sea_tiles = self.board.sea_tiles
         for lt in land_tiles:
-            self.tile_facades.append(LandTileFacade(self.screen, lt, size))
+            self.land_tile_facades.append(LandTileFacade(self.screen, lt, size))
         for st in sea_tiles:
-            self.tile_facades.append(SeaTileFacade(self.screen, st, size))
+            self.sea_tile_facades.append(SeaTileFacade(self.screen, st, size))
 
-    def generate_corner_facades(self, radius):
-        corners_of_tile = []
-        for tf in self.tile_facades:
-            for e in tf.tile.edges:
-                for c in e.corners:
-                    if c not in corners_of_tile:
-                        corners_of_tile.append(c)
-            for c in corners_of_tile:
-                tiles_of_corner = []
-                for e in c.edges:
-                    for t in e.tiles:
-                        if t not in tiles_of_corner:
-                            tiles_of_corner.append(t)
-                tile_facade_reference_points = []
-                for t in tiles_of_corner:
-                    for tf in self.tile_facades:
-                        if tf.tile == t:
-                            tile_facade_reference_points.append(tf)
-                center_x = 0
-                center_y = 0
-                for tfrp in tile_facade_reference_points:
-                    center_x += tfrp.centre[0]/3
-                    center_y += tfrp.centre[1]/3
-                corner_facade = CornerFacade(
-                    [round(center_x), round(center_y)], c, self.screen, radius)
-                insert_facade = True
-                for cf in self.corner_facades:
-                    if cf.center == corner_facade.center:
-                        insert_facade = False
-                        break
-                if insert_facade:
-                    self.corner_facades.append(corner_facade)
+    def generate_corner_facades(self, size):
+        corner_facade_list = []
+        coordinate_list = []
+        for tf in self.land_tile_facades:
+            hex_pointlist = TileFacade.hex_pointlist_generator(size, tf.center)
+            for i in range(0, len(tf.tile.corners)):
+                if tf.tile.corners[i] not in corner_facade_list:
+                    corner_facade_list.append(tf.tile.corners[i])
+                    coordinate_list.append(hex_pointlist[i])
+        for i in range(0, len(corner_facade_list)):
+            self.corner_facades.append(CornerFacade(
+                coordinate_list[i], corner_facade_list[i], self.screen,
+                int(size/5)))
 
     def produce_resources(self, roll):
         self.board.produce_resources(roll)
@@ -119,7 +101,8 @@ class BoardFacade:
     def build_component(self, mouse_pos, player_facade):
         cf = self.find_corner_at(mouse_pos)
         if cf is not None:
-            self.place_settlement(cf, player_facade)
+            pass
+            #self.place_settlement(cf, player_facade)
 
     def end_turn(self, player_facade):
         if player_facade.player.has_player_won():
@@ -148,7 +131,7 @@ class BoardFacade:
     # will always return at least one robber
     def find_robber(self):
         tile = self.board.find_robber()
-        for tf in self.tile_facades:
+        for tf in self.land_tile_facades:
             if tf.tile == tile:
                 return tf
 
@@ -163,7 +146,7 @@ class BoardFacade:
                 self.end_turn(player_facade)
 
     def find_tile_at(self, pos):
-        for tf in self.tile_facades:
+        for tf in self.land_tile_facades:
             if tf.rect.collidepoint(pos):
                 return tf
 
@@ -212,7 +195,9 @@ class BoardFacade:
     def draw(self):
         self.phase_panel.draw()
         self.feedback_panel.draw()
-        for tf in self.tile_facades:
-            tf.draw()
+        for ltf in self.land_tile_facades:
+            ltf.draw()
+        for stf in self.sea_tile_facades:
+            stf.draw()
         for cf in self.corner_facades:
             cf.draw()
