@@ -12,12 +12,10 @@ class ResourceBank:
 
     # TODO: Pass the resource as enum instead of string.
     def deposit_resource(self, resource, quantity):
-        enum_resource = self.string_to_enum(resource)
-        self.resource_buffers[enum_resource.value] += quantity
+        self.resource_buffers[resource] += quantity
 
     def withdraw_resource(self, resource, quantity):
-        enum_resource = self.string_to_enum(resource)
-        self.resource_buffers[enum_resource.value] -= quantity
+        self.resource_buffers[resource] -= quantity
 
     def collect_resources(self, resources_spent):
         for i in range(len(self.resources)):
@@ -49,14 +47,3 @@ class ResourceBank:
         for i in range(len(self.resources)):
             self.resource_buffers[i] = 0
 
-    def string_to_enum(self, resource):
-        if resource == "lumber":
-            return ResourceType.LUMBER
-        elif resource == "wool":
-            return ResourceType.WOOL
-        elif resource == "grain":
-            return ResourceType.GRAIN
-        elif resource == "brick":
-            return ResourceType.BRICK
-        elif resource == "ore":
-            return ResourceType.ORE

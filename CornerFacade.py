@@ -1,4 +1,5 @@
-from Corner import Corner
+from SettlementLevel import SettlementLevel
+
 import pygame
 
 
@@ -36,7 +37,7 @@ class CornerFacade:
                 self.screen,
                 self.player_to_colour_mapping[self.corner.ownership-1],
                 self.center, self.radius, 0)
-            if self.corner.settlement == "city":
+            if self.corner.settlement == SettlementLevel.CITY.value:
                 self.circle = pygame.draw.circle(
                     self.screen, self.colour.get("BLACK"), self.center,
                     round(self.radius/2), 1)

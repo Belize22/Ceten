@@ -1,21 +1,18 @@
+from CornerCardinality import CornerCardinality
+from SettlementLevel import SettlementLevel
+
+
 class Corner:
-    def __init__(self, settlement="none", ownership=0):
-        self.relational_id = ""
-        self.edges = []
+    def __init__(self, settlement=SettlementLevel.NONE.value, ownership=0):
+        self.tiles = []
         self.settlement = settlement
         self.ownership = ownership
 
-    def add_edge(self, edge):
-        if edge not in self.edges:
-            self.edges.append(edge)
-
-    # TODO: Replace logic with increment by implementing enum
     def update(self, ownership):
-        if self.settlement == "settlement":
-            self.settlement = "city"
-        elif self.settlement == "none":
+        if self.settlement == SettlementLevel.NONE.value:
             self.ownership = ownership
-            self.settlement = "settlement"
+        if self.settlement < len(SettlementLevel):
+            self.settlement += 1
 
     def does_corner_belong_to_a_player(self, ownership):
         does_corner_have_ownership = False
@@ -25,9 +22,18 @@ class Corner:
 
     def are_neighboring_corners_settled(self):
         is_an_adjacent_corner_settled = False
-        for e in self.edges:
-            for c in e.corners:
-                if c != self:
-                    if c.ownership != 0:
-                        is_an_adjacent_corner_settled = True
+        neighboring_corners = []
+        for t in self.tiles:
+            for i in range(0, len(t.corners)):
+                if t.corners[i] == self:
+                    previous_index = (i - 1) % len(CornerCardinality)
+                    next_index = (i + 1) % len(CornerCardinality)
+                    if t.corners[previous_index] not in neighboring_corners:
+                        neighboring_corners.append(t.corners[previous_index])
+                    if t.corners[next_index] not in neighboring_corners:
+                        neighboring_corners.append(t.corners[next_index])
+        for nc in neighboring_corners:
+            if nc != self and nc.ownership != 0:
+                is_an_adjacent_corner_settled = True
+                break
         return is_an_adjacent_corner_settled
