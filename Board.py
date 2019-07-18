@@ -5,6 +5,7 @@ from Player import Player
 from DieRoller import DieRoller
 from ResourceBank import ResourceBank
 from ResourceType import ResourceType
+from PortType import PortType
 from GamePieceType import GamePieceType
 from CurrentPhase import CurrentPhase
 from CurrentGamePhase import CurrentGamePhase
@@ -60,6 +61,8 @@ class Board:
         self.randomize_turn_order()
         current_coordinate = [0, 0]
         directions = self.retrieve_map_builder_directions()
+        port_directions = self.retrieve_port_edge_directions()
+        port_types = self.retrieve_randomized_port_list()
 
         for i in range(0, self.LAND_TILE_QUANTITY):
             (resource, resource_count) = random.choice(
@@ -73,13 +76,19 @@ class Board:
                 current_coordinate, directions.pop(0))
 
         for i in range(0, self.SEA_TILE_QUANTITY):
+            port_type = None
+            port_direction = None
+            if i % 2 == 0:
+                port_type = port_types.pop(0)
+                port_direction = port_directions.pop(0)
             self.sea_tiles.append(
-                SeaTile(current_coordinate, self.sea_tiles + self.land_tiles))
+                SeaTile(
+                    current_coordinate, self.sea_tiles + self.land_tiles,
+                    port_type, port_direction))
             if i < self.SEA_TILE_QUANTITY - 1:
                 current_coordinate = Tile.change_coordinate(
                     current_coordinate, directions.pop(0))
         self.place_tokens()
-        self.start_off_with_extra_resources(self.players)
 
     """place_tokens:
     Places tokens on land tiles. These tokens have an activation value
@@ -312,7 +321,8 @@ class Board:
     Top-right is appended one time less than the other directions.
     This builds the base map for a 3-4 player Ceten game.
     '''
-    def retrieve_map_builder_directions(self):
+    @staticmethod
+    def retrieve_map_builder_directions():
         directions = []
         for i in range(1, 4):
             for j in range(EdgeCardinality.TOP_LEFT.value,
@@ -326,3 +336,50 @@ class Board:
                 if j == EdgeCardinality.TOP_RIGHT.value:
                     i += 1
         return directions
+
+    '''
+    retrieve_port_edge_directions:
+    This logic dictates the sequence of directions the map builder will
+    place edges for sea tiles. This is intended to be used with the
+    map builder that builds the base board, where ports are placed every
+    odd sea tile (in comparison to when the first sea tile is placed.
+    '''
+    @staticmethod
+    def retrieve_port_edge_directions():
+        directions = []
+        for i in range(EdgeCardinality.TOP_LEFT.value,
+                       EdgeCardinality.LEFT.value + 2):
+            # First port faces rightwards.
+            true_direction = i + 2 % len(EdgeCardinality)
+            directions.append(true_direction % len(EdgeCardinality))
+            # Direction that you start and end off with are only applied once.
+            if (i % 2 != 0 and true_direction != EdgeCardinality.RIGHT.value
+                    and true_direction != EdgeCardinality.RIGHT.value):
+                directions.append(true_direction % len(EdgeCardinality))
+        return directions
+
+    '''
+    retrieve_randomized_port_list:
+    This function gives the list of port types that will be used for the
+    base version of Ceten. 4 standard ports and 5 specialized ports for
+    each resource type are used.
+    '''
+    @staticmethod
+    def retrieve_randomized_port_list():
+        NUM_STANDARD_PORTS = 5
+        port_types = []
+        for i in range(0, NUM_STANDARD_PORTS):
+            port_types.append(PortType.STANDARD.value)
+        port_types.append(PortType.LUMBER.value)
+        port_types.append(PortType.WOOL.value)
+        port_types.append(PortType.GRAIN.value)
+        port_types.append(PortType.BRICK.value)
+        port_types.append(PortType.ORE.value)
+        for i in range(0, len(port_types)):
+            random_index = random.randint(0, len(port_types)-1)
+            port_types[i], port_types[random_index] = \
+                port_types[random_index], port_types[i]
+        return port_types
+
+
+

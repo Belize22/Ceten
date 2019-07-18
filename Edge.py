@@ -1,6 +1,6 @@
 class Edge:
-    def __init__(self, ownership="none", port="none"):
+    def __init__(self, ownership=0):
         self.tiles = []
         self.ownership = ownership
-        self.port = port
+        self.port = None
 

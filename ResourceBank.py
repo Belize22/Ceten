@@ -47,14 +47,3 @@ class ResourceBank:
         for i in range(len(self.resources)):
             self.resource_buffers[i] = 0
 
-    def string_to_enum(self, resource):
-        if resource == "lumber":
-            return ResourceType.LUMBER
-        elif resource == "wool":
-            return ResourceType.WOOL
-        elif resource == "grain":
-            return ResourceType.GRAIN
-        elif resource == "brick":
-            return ResourceType.BRICK
-        elif resource == "ore":
-            return ResourceType.ORE
