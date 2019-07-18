@@ -57,8 +57,8 @@ class BoardFacade:
                     coordinate_list.append(hex_pointlist[i])
         for i in range(0, len(corner_facade_list)):
             self.corner_facades.append(CornerFacade(
-                coordinate_list[i], corner_facade_list[i], self.screen,
-                int(size/5)))
+                [int(coordinate_list[i][0]), int(coordinate_list[i][1])],
+                corner_facade_list[i], self.screen, int(size/5)))
 
     def produce_resources(self, roll):
         self.board.produce_resources(roll)
@@ -87,7 +87,7 @@ class BoardFacade:
 
     def place_robber(self, mouse_pos):
         tile_facade = self.find_tile_at(mouse_pos)
-        if int(tile_facade.tile.relational_id) < 19:
+        if tile_facade is not None:
             robber_tile_facade = self.find_robber()
             if tile_facade == robber_tile_facade:
                 self.current_feedback = \
@@ -101,8 +101,7 @@ class BoardFacade:
     def build_component(self, mouse_pos, player_facade):
         cf = self.find_corner_at(mouse_pos)
         if cf is not None:
-            pass
-            #self.place_settlement(cf, player_facade)
+            self.place_settlement(cf, player_facade)
 
     def end_turn(self, player_facade):
         if player_facade.player.has_player_won():
@@ -147,7 +146,7 @@ class BoardFacade:
 
     def find_tile_at(self, pos):
         for tf in self.land_tile_facades:
-            if tf.rect.collidepoint(pos):
+            if tf.hex.collidepoint(pos):
                 return tf
 
     def find_corner_at(self, pos):

@@ -9,6 +9,7 @@ from GamePieceType import GamePieceType
 from CurrentPhase import CurrentPhase
 from CurrentGamePhase import CurrentGamePhase
 from EdgeCardinality import EdgeCardinality
+from SettlementLevel import SettlementLevel
 
 import random
 
@@ -78,6 +79,7 @@ class Board:
                 current_coordinate = Tile.change_coordinate(
                     current_coordinate, directions.pop(0))
         self.place_tokens()
+        self.start_off_with_extra_resources(self.players)
 
     """place_tokens:
     Places tokens on land tiles. These tokens have an activation value
@@ -147,32 +149,13 @@ class Board:
     """
     def produce_resources(self, roll):
         productive_tiles = []
-        for t in self.tiles:
-            if str(t.activation_value) == str(roll) and not t.robber:
-                productive_tiles.append(t)
+        for lt in self.land_tiles:
+            if str(lt.activation_value) == str(roll) and not lt.robber:
+                productive_tiles.append(lt)
         for pt in productive_tiles:
-            starting_edge = pt.edges[0]
-            starting_corner = pt.edges[0].corners[0]
-            current_edge = starting_edge
-            current_corner = starting_corner
-            self.gather_resource_with_settlement(
-                pt, current_corner, self.players)
-            for c in current_edge.corners:
-                if c != current_corner:
-                    current_corner = c
-                    break
-            while c != starting_corner:
-                for e in current_corner.edges:
-                    if pt in e.tiles and e != current_edge:
-                        current_edge = e
-                        break
-                self.gather_resource_with_settlement(
-                    pt, current_corner, self.players)
-                for c in current_edge.corners:
-                    if c != current_corner:
-                        current_corner = c
-                        break
-            valid_transaction = self.resource_bank.validate_transaction()
+            for c in pt.corners:
+                self.gather_resource_with_settlement(pt, c, self.players)
+                valid_transaction = self.resource_bank.validate_transaction()
             if valid_transaction:
                 for p in self.players:
                     p.resource_bank.validate_transaction()
@@ -189,13 +172,11 @@ class Board:
     """
     def produce_initial_resources(self, corner, player):
         adjacent_tiles = []
-        for e in corner.edges:
-            for t in e.tiles:
-                if t not in adjacent_tiles:
-                    adjacent_tiles.append(t)
+        for t in corner.tiles:
+            if t not in adjacent_tiles:
+                adjacent_tiles.append(t)
         for at in adjacent_tiles:
-            if ("desert" not in at.resource and "water" not in at.resource and
-                    "port" not in at.resource):
+            if at.resource is not ResourceType.DESERT.value:
                 player.resource_bank.deposit_resource(at.resource, 1)
                 player.resource_bank.validate_transaction()
 
@@ -203,17 +184,17 @@ class Board:
         return self.tiles[random.randint(0, len(self.tiles) - 1)]
 
     def find_robber(self):
-        for t in self.tiles:
+        for t in self.land_tiles:
             if t.robber:
                 return t
     
     def gather_resource_with_settlement(self, tile, corner, players):
         resource = tile.resource
-        if corner.settlement == "city": 
+        if corner.settlement == SettlementLevel.CITY.value:
             quantity = 2
-        elif corner.settlement == "settlement": 
+        elif corner.settlement == SettlementLevel.SETTLEMENT.value:
             quantity = 1
-        else:
+        else: # Settlement level is at none.
             quantity = 0
         if corner.ownership != 0:
             for p in players:
@@ -226,7 +207,7 @@ class Board:
         if corner.does_corner_belong_to_a_player(
                 player.id):
             if not corner.are_neighboring_corners_settled():
-                if corner.settlement == "none":
+                if corner.settlement == SettlementLevel.NONE.value:
                     if (player.game_piece_bank.game_pieces[
                          GamePieceType.SETTLEMENT.value] > 0):
                         if self.current_phase == CurrentPhase.GAME_PHASE.value:
@@ -251,7 +232,7 @@ class Board:
                             return ""
                     else:
                         return "No more settlements in your inventory!"
-                elif corner.settlement == "settlement":
+                elif corner.settlement == SettlementLevel.SETTLEMENT.value:
                     if (player.game_piece_bank.game_pieces[
                          GamePieceType.CITY.value] > 0):
                         if self.reverse_turn_order is True:
@@ -273,7 +254,7 @@ class Board:
             else:
                 return "Neighboring corners have settlements!"
         else:
-            return "You don't own this " + corner.settlement + "!"
+            return "Can't upgrade another player's settlement!"
 
     def start_off_with_extra_resources(self, players):
         for p in players:

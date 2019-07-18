@@ -29,7 +29,8 @@ class LandTileFacade(TileFacade):
     def draw(self):
         super().draw()
 
-        if str(self.tile.resource) != ResourceType.DESERT or self.tile.robber:
+        if (self.tile.resource != ResourceType.DESERT.value
+                or self.tile.robber):
             self.text = self.set_activation_value(
                 str(self.tile.activation_value))
             self.render_token()
