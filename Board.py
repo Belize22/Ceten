@@ -19,7 +19,7 @@ class Board:
     NUM_DICE = 2
     LAND_TILE_QUANTITY = 19
     SEA_TILE_QUANTITY = 18
-    ROAD_COST = [1, 0, 0, 1, 0]
+    ROAD_COST = [0, 0, 0, 0, 0]
     SETTLEMENT_COST = [1, 1, 1, 1, 0]
     CITY_COST = [0, 0, 2, 0, 3]
     EXTRA_RESOURCE_QUANTITIES = [3, 3, 3, 3, 3]
@@ -214,11 +214,31 @@ class Board:
             self.resource_bank.withdraw_resource(resource, quantity)
 
     def place_road(self, edge, player):
-        return ""
+        if edge.road_is_not_occupied():
+            if edge.road_can_be_placed(player):
+                if (player.game_piece_bank.game_pieces[
+                     GamePieceType.ROAD.value] > 0):
+                    player.resource_bank.spend_resources(
+                        self.ROAD_COST)
+                    self.resource_bank.collect_resources(
+                        self.ROAD_COST)
+                    transaction_valid = player \
+                        .resource_bank.validate_transaction()
+                    if transaction_valid:
+                        self.resource_bank.validate_transaction()
+                        player.game_piece_bank.place_road()
+                        return ""
+                    else:
+                        return "Insufficient resources to build a road!"
+                else:
+                    return "No more roads in your inventory!"
+            else:
+                return "Cannot place road here!"
+        else:
+            return "Road has already been built here."
 
     def place_settlement(self, corner, player):
-        if corner.does_corner_belong_to_a_player(
-                player.id):
+        if corner.is_settlement_not_settled_by_current_player(player.id):
             if not corner.are_neighboring_corners_settled():
                 if corner.settlement == SettlementLevel.NONE.value:
                     if (player.game_piece_bank.game_pieces[

@@ -14,7 +14,7 @@ class Corner:
         if self.settlement < len(SettlementLevel):
             self.settlement += 1
 
-    def does_corner_belong_to_a_player(self, ownership):
+    def is_settlement_not_settled_by_current_player(self, ownership):
         does_corner_have_ownership = False
         if ownership == self.ownership or self.ownership == 0:
             does_corner_have_ownership = True
