@@ -1,6 +1,3 @@
-from ResourceType import ResourceType
-
-
 class ResourceBank:
     def __init__(self, starting_quantity=0):
         self.resources = []

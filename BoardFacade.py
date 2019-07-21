@@ -3,10 +3,12 @@ from SubmitButton import SubmitButton
 from TileFacade import TileFacade
 from LandTileFacade import LandTileFacade
 from SeaTileFacade import SeaTileFacade
+from EdgeFacade import EdgeFacade
 from CornerFacade import CornerFacade
 from NotificationPanel import NotificationPanel
 from CurrentPhase import CurrentPhase
 from CurrentGamePhase import CurrentGamePhase
+from CornerCardinality import CornerCardinality
 
 import pygame
 
@@ -17,6 +19,7 @@ class BoardFacade:
         self.screen = screen
         self.land_tile_facades = []
         self.sea_tile_facades = []
+        self.edge_facades = []
         self.corner_facades = []
         self.roll_dice_button = SubmitButton(
             self.screen, (int(self.screen.get_width()*0.9), 275), "Roll Dice")
@@ -36,6 +39,7 @@ class BoardFacade:
         
     def generate_facades(self, size=42.5):
         self.generate_tile_facades(size)
+        self.generate_edge_facades(size)
         self.generate_corner_facades(size)
 
     def generate_tile_facades(self, size):
@@ -45,6 +49,21 @@ class BoardFacade:
             self.land_tile_facades.append(LandTileFacade(self.screen, lt, size))
         for st in sea_tiles:
             self.sea_tile_facades.append(SeaTileFacade(self.screen, st, size))
+
+    def generate_edge_facades(self, size):
+        edge_facade_list = []
+        coordinate_pair_list = []
+        for tf in self.land_tile_facades:
+            hex_pointlist = TileFacade.hex_pointlist_generator(size, tf.center)
+            for i in range(0, len(tf.tile.edges)):
+                if tf.tile.edges[i] not in edge_facade_list:
+                    edge_facade_list.append(tf.tile.edges[i])
+                    coordinate_pair_list.append(
+                        [hex_pointlist[i % len(CornerCardinality)],
+                         hex_pointlist[(i + 1) % len(CornerCardinality)]])
+        for i in range(0, len(edge_facade_list)):
+            self.edge_facades.append(EdgeFacade(
+                coordinate_pair_list[i], edge_facade_list[i], self.screen))
 
     def generate_corner_facades(self, size):
         corner_facade_list = []
@@ -100,8 +119,11 @@ class BoardFacade:
 
     def build_component(self, mouse_pos, player_facade):
         cf = self.find_corner_at(mouse_pos)
+        ef = self.find_edge_at(mouse_pos)
         if cf is not None:
             self.place_settlement(cf, player_facade)
+        elif ef is not None:
+            self.place_road(ef, player_facade)
 
     def end_turn(self, player_facade):
         if player_facade.player.has_player_won():
@@ -134,6 +156,16 @@ class BoardFacade:
             if tf.tile == tile:
                 return tf
 
+    def place_road(self, edge_facade, player_facade):
+        feedback = self.board.place_road(
+            edge_facade.edge, player_facade.player)
+        self.current_feedback = feedback
+        if feedback == "":
+            edge_facade.update(player_facade.player)
+            #current_phase = self.board.get_current_phase()
+            #if current_phase == CurrentPhase.SETUP_PHASE.value:
+            #    self.end_turn(player_facade)
+
     def place_settlement(self, corner_facade, player_facade):
         feedback = self.board.place_settlement(
             corner_facade.corner, player_facade.player)
@@ -148,6 +180,11 @@ class BoardFacade:
         for tf in self.land_tile_facades:
             if tf.hex.collidepoint(pos):
                 return tf
+
+    def find_edge_at(self, pos):
+        for ef in self.edge_facades:
+            if ef.line.collidepoint(pos):
+                return ef
 
     def find_corner_at(self, pos):
         for cf in self.corner_facades:
@@ -198,5 +235,7 @@ class BoardFacade:
             ltf.draw()
         for stf in self.sea_tile_facades:
             stf.draw()
+        for ef in self.edge_facades:
+            ef.draw()
         for cf in self.corner_facades:
             cf.draw()

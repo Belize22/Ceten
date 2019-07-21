@@ -4,3 +4,6 @@ class Edge:
         self.ownership = ownership
         self.port = None
 
+    def update(self, ownership):
+        self.ownership = ownership
+

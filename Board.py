@@ -19,6 +19,7 @@ class Board:
     NUM_DICE = 2
     LAND_TILE_QUANTITY = 19
     SEA_TILE_QUANTITY = 18
+    ROAD_COST = [1, 0, 0, 1, 0]
     SETTLEMENT_COST = [1, 1, 1, 1, 0]
     CITY_COST = [0, 0, 2, 0, 3]
     EXTRA_RESOURCE_QUANTITIES = [3, 3, 3, 3, 3]
@@ -211,6 +212,9 @@ class Board:
                     owner = p
             owner.resource_bank.deposit_resource(resource, quantity)
             self.resource_bank.withdraw_resource(resource, quantity)
+
+    def place_road(self, edge, player):
+        return ""
 
     def place_settlement(self, corner, player):
         if corner.does_corner_belong_to_a_player(
