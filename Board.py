@@ -19,6 +19,7 @@ class Board:
     NUM_DICE = 2
     LAND_TILE_QUANTITY = 19
     SEA_TILE_QUANTITY = 18
+    ROAD_COST = [1, 0, 0, 1, 0]
     SETTLEMENT_COST = [1, 1, 1, 1, 0]
     CITY_COST = [0, 0, 2, 0, 3]
     EXTRA_RESOURCE_QUANTITIES = [3, 3, 3, 3, 3]
@@ -54,6 +55,7 @@ class Board:
         self.current_phase = CurrentPhase.SETUP_PHASE.value
         self.current_game_phase = CurrentGamePhase.ROLL_DICE.value
         self.reverse_turn_order = False
+        self.settlement_placement_during_setup = True
         current_resources = Board.resources.copy()
         for i in range(1, num_players + 1):
             self.players.append(
@@ -212,33 +214,73 @@ class Board:
             owner.resource_bank.deposit_resource(resource, quantity)
             self.resource_bank.withdraw_resource(resource, quantity)
 
+    def place_road(self, edge, player):
+        if edge.road_is_not_occupied():
+            if (player.game_piece_bank.game_pieces[
+                 GamePieceType.ROAD.value] > 0):
+                if self.current_phase == CurrentPhase.GAME_PHASE.value:
+                    if edge.road_can_be_placed(player.id):
+                        player.resource_bank.spend_resources(
+                            self.ROAD_COST)
+                        self.resource_bank.collect_resources(
+                            self.ROAD_COST)
+                        transaction_valid = player \
+                            .resource_bank.validate_transaction()
+                        if transaction_valid:
+                            self.resource_bank.validate_transaction()
+                            player.game_piece_bank.place_road()
+                            return ""
+                        else:
+                            return "Insufficient resources to build a road!"
+                    else:
+                        return "Cannot place road here!"
+                elif not self.settlement_placement_during_setup:
+                    if edge.road_can_be_placed_during_setup(player.id):
+                        player.game_piece_bank.place_road()
+                        self.settlement_placement_during_setup = True
+                        return ""
+                    else:
+                        return "Road must be next to current settlement!"
+                else:
+                    return "Must place a settlement!"
+            else:
+                return "No more roads in your inventory!"
+        else:
+            return "Road has already been built here."
+
     def place_settlement(self, corner, player):
-        if corner.does_corner_belong_to_a_player(
-                player.id):
+        if corner.is_settlement_not_settled_by_current_player(player.id):
             if not corner.are_neighboring_corners_settled():
                 if corner.settlement == SettlementLevel.NONE.value:
                     if (player.game_piece_bank.game_pieces[
                          GamePieceType.SETTLEMENT.value] > 0):
                         if self.current_phase == CurrentPhase.GAME_PHASE.value:
-                            player.resource_bank.spend_resources(
-                                self.SETTLEMENT_COST)
-                            self.resource_bank.collect_resources(
-                                self.SETTLEMENT_COST)
-                            transaction_valid = player\
-                                .resource_bank.validate_transaction()
-                            if transaction_valid:
-                                self.resource_bank.validate_transaction()
-                                player.game_piece_bank.place_settlement()
-                                return ""
+                            if corner.corner_adjacent_to_players_road(
+                                    player.id):
+                                player.resource_bank.spend_resources(
+                                    self.SETTLEMENT_COST)
+                                self.resource_bank.collect_resources(
+                                    self.SETTLEMENT_COST)
+                                transaction_valid = player\
+                                    .resource_bank.validate_transaction()
+                                if transaction_valid:
+                                    self.resource_bank.validate_transaction()
+                                    player.game_piece_bank.place_settlement()
+                                    return ""
+                                else:
+                                    return "Insufficient resources to " \
+                                           "build a settlement!"
                             else:
-                                return "Insufficient resources to" \
-                                       " build a settlement!"
-                        else:
+                                return "Settlement must be next to your road!"
+                        elif self.settlement_placement_during_setup:
                             player.game_piece_bank.place_settlement()
-                            if self.reverse_turn_order is True:
+                            if self.reverse_turn_order:
                                 self.produce_initial_resources(
                                     corner, player)
+                            self.settlement_placement_during_setup = False
                             return ""
+                        else:
+                            return "Must place a road!"
                     else:
                         return "No more settlements in your inventory!"
                 elif corner.settlement == SettlementLevel.SETTLEMENT.value:
