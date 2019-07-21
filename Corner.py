@@ -1,3 +1,4 @@
+from EdgeCardinality import EdgeCardinality
 from CornerCardinality import CornerCardinality
 from SettlementLevel import SettlementLevel
 
@@ -37,3 +38,19 @@ class Corner:
                 is_an_adjacent_corner_settled = True
                 break
         return is_an_adjacent_corner_settled
+
+    def corner_adjacent_to_players_road(self, ownership):
+        is_settlement_adjacent_to_corresponding_road = False
+        neighboring_edges = []
+        for t in self.tiles:
+            for i in range(0, len(EdgeCardinality)):
+                if t.corners[i] == self:
+                    next_index = (i + 1) % len(CornerCardinality)
+                    if t.edges[i] not in neighboring_edges:
+                        neighboring_edges.append(t.edges[i])
+                    if t.edges[next_index] not in neighboring_edges:
+                        neighboring_edges.append(t.edges[next_index])
+        for nc in neighboring_edges:
+            if nc.ownership == ownership:
+                is_settlement_adjacent_to_corresponding_road = True
+        return is_settlement_adjacent_to_corresponding_road

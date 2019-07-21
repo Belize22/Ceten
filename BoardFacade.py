@@ -162,9 +162,9 @@ class BoardFacade:
         self.current_feedback = feedback
         if feedback == "":
             edge_facade.update(player_facade.player)
-            #current_phase = self.board.get_current_phase()
-            #if current_phase == CurrentPhase.SETUP_PHASE.value:
-            #    self.end_turn(player_facade)
+            current_phase = self.board.get_current_phase()
+            if current_phase == CurrentPhase.SETUP_PHASE.value:
+                self.end_turn(player_facade)
 
     def place_settlement(self, corner_facade, player_facade):
         feedback = self.board.place_settlement(
@@ -174,7 +174,8 @@ class BoardFacade:
             corner_facade.update(player_facade.player)
             current_phase = self.board.get_current_phase()
             if current_phase == CurrentPhase.SETUP_PHASE.value:
-                self.end_turn(player_facade)
+                self.current_feedback = player_facade.player. \
+                    retrieve_player_name() + ", place a road."
 
     def find_tile_at(self, pos):
         for tf in self.land_tile_facades:

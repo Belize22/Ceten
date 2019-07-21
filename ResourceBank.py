@@ -7,7 +7,6 @@ class ResourceBank:
             self.resources.append(starting_quantity)
             self.resource_buffers.append(0)
 
-    # TODO: Pass the resource as enum instead of string.
     def deposit_resource(self, resource, quantity):
         self.resource_buffers[resource] += quantity
 
