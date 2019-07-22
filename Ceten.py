@@ -3,6 +3,7 @@ from PublicPlayerFacade import PublicPlayerFacade
 from PrivatePlayerFacade import PrivatePlayerFacade
 from CurrentPhase import CurrentPhase
 from CurrentGamePhase import CurrentGamePhase
+from CurrentTradePhase import CurrentTradePhase
 
 import pygame
 
@@ -60,37 +61,35 @@ class Ceten:
     def handle_mouse(self):
         mouse_pos = pygame.mouse.get_pos()
         phase, game_phase = self.board_facade.get_current_phases()
-
         if phase == CurrentPhase.SETUP_PHASE.value:
-            self.build_component(mouse_pos)
+            self.board_facade.build_component(
+                mouse_pos, self.private_player_facade)
         elif (self.board_facade.end_turn_button.in_boundaries(mouse_pos)
               and phase == CurrentPhase.VICTORY_PHASE.value):
             self.start_game()
-        elif (self.board_facade.roll_dice_button.in_boundaries(mouse_pos)
-                and game_phase == CurrentGamePhase.ROLL_DICE.value):
-            self.roll_dice()
+        elif self.board_facade.roll_dice_button.in_boundaries(mouse_pos):
+            self.board_facade.roll_dice()
         elif (self.board_facade.in_boundaries(mouse_pos)
                 and game_phase == CurrentGamePhase.ROBBER.value):
             self.board_facade.place_robber(mouse_pos)
-        elif (self.board_facade.end_turn_button.in_boundaries(mouse_pos)
-                and game_phase == CurrentGamePhase.BUILDING.value):
-            self.end_turn()
+        elif self.board_facade.end_turn_button.in_boundaries(mouse_pos):
+            self.board_facade.render_control_menu()
+            self.board_facade.end_turn(self.private_player_facade)
+        elif self.board_facade.maritime_trade_button.in_boundaries(mouse_pos):
+            self.board_facade.begin_maritime_trade()
+            self.private_player_facade.begin_maritime_trade()
+        elif self.private_player_facade.resource_submit_button.in_boundaries(
+                mouse_pos):
+            self.private_player_facade.advance_maritime_trade()
+            trade_phase = self.private_player_facade.current_trading_phase
+            if trade_phase == CurrentTradePhase.NONE.value:
+                self.board_facade.end_maritime_trade()
         elif game_phase == CurrentGamePhase.BUILDING.value:
-            self.build_component(mouse_pos)
+            self.board_facade.build_component(
+                mouse_pos, self.private_player_facade)
 
         self.board_facade.update_phase_panel()
         self.board_facade.update_feedback_panel()
-
-    def roll_dice(self):
-        return self.board_facade.roll_dice()
-
-    def build_component(self, mouse_pos):
-        self.board_facade.build_component(
-            mouse_pos, self.private_player_facade)
-
-    def end_turn(self):
-        self.board_facade.render_control_menu()
-        self.board_facade.end_turn(self.private_player_facade)
 
 
 game = Ceten()

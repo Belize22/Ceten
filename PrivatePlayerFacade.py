@@ -2,6 +2,7 @@ from PlayerFacade import PlayerFacade
 from InventoryPanel import InventoryPanel
 from InventoryButtonPanel import InventoryButtonPanel
 from SubmitButton import SubmitButton
+from CurrentTradePhase import CurrentTradePhase
 
 import pygame
 
@@ -34,6 +35,7 @@ class PrivatePlayerFacade(PlayerFacade):
 
     def __init__(self, player, center, screen):
         super().__init__(player, center, screen)
+        self.current_trading_phase = CurrentTradePhase.NONE.value
         self.resource_panel = InventoryPanel(
             self.screen,
             (self.screen.get_width()*0.8 + 2, self.center[1] + 50),
@@ -61,6 +63,21 @@ class PrivatePlayerFacade(PlayerFacade):
             self.development_card_icon_order, self.CARD_ICON_SIZE)
         self.resource_submit_button = SubmitButton(
             self.screen, (int(self.screen.get_width()*0.9), 115), "Submit")
+
+    def begin_maritime_trade(self):
+        self.resource_submit_button.enabled = True
+        self.resource_submit_button.draw()
+        self.advance_maritime_trade()
+
+    def advance_maritime_trade(self):
+        print("Value: " + str(self.current_trading_phase))
+        print("Value: " + str(len(CurrentTradePhase)))
+        if self.current_trading_phase < len(CurrentTradePhase):
+            self.current_trading_phase += 1
+        else:
+            self.current_trading_phase = CurrentTradePhase.NONE.value
+            self.resource_submit_button.enabled = False
+            self.resource_submit_button.draw()
 
     def draw(self):
         pygame.draw.rect(
