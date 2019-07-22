@@ -94,7 +94,7 @@ class BoardFacade:
         self.maritime_trade_button.draw()
         self.end_turn_button.draw()
 
-    def roll_dice(self):
+    def roll_dice(self, player_facade):
         roll = self.board.die_roller.roll_dice()
         pygame.draw.circle(
             self.screen, (228, 205, 180), self.dice_value_position, 30, 0)
@@ -110,12 +110,11 @@ class BoardFacade:
             self.board.advance_game_phase()
             self.board.advance_game_phase()
             self.produce_resources(roll)
-            self.maritime_trade_button.enabled = True
-            self.maritime_trade_button.draw()
+            self.allow_maritime_trade_if_possible(player_facade)
             self.end_turn_button.enabled = True
             self.end_turn_button.draw()
 
-    def place_robber(self, mouse_pos):
+    def place_robber(self, mouse_pos, player_facade):
         tile_facade = self.find_tile_at(mouse_pos)
         if tile_facade is not None:
             robber_tile_facade = self.find_robber()
@@ -128,8 +127,7 @@ class BoardFacade:
                 self.current_feedback = ""
                 self.board.advance_game_phase()
                 self.board.advance_game_phase()
-                self.maritime_trade_button.enabled = True
-                self.maritime_trade_button.draw()
+                self.allow_maritime_trade_if_possible(player_facade)
                 self.end_turn_button.enabled = True
                 self.end_turn_button.draw()
 
@@ -268,6 +266,19 @@ class BoardFacade:
         self.current_feedback = player_facade.player.retrieve_player_name() \
             + ", place a settlement."
         self.feedback_panel.update(self.current_feedback)
+
+    '''
+    allow_maritime_trade_if_possible:
+    Allows player to access maritime trade if they have the sufficient
+    resources to deposit.
+    '''
+    def allow_maritime_trade_if_possible(self, player_facade):
+        for resource, trade_rate in zip(
+                player_facade.player.resource_bank.resources,
+                player_facade.player.trade_rates):
+            if resource >= trade_rate:
+                self.maritime_trade_button.enabled = True
+                self.maritime_trade_button.draw()
 
     def draw(self):
         self.phase_panel.draw()

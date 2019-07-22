@@ -26,4 +26,4 @@ class InventoryButtonPanel(Panel):
             if (self.buttons[i].in_boundaries(position)
                and self.buttons[i].enabled):
                 return i
-        return -1
+        return None

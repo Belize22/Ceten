@@ -70,14 +70,68 @@ class PrivatePlayerFacade(PlayerFacade):
         self.advance_maritime_trade()
 
     def advance_maritime_trade(self):
-        print("Value: " + str(self.current_trading_phase))
-        print("Value: " + str(len(CurrentTradePhase)))
         if self.current_trading_phase < len(CurrentTradePhase):
             self.current_trading_phase += 1
+            self.player.set_resources_before_starting_trade_phase()
         else:
             self.current_trading_phase = CurrentTradePhase.NONE.value
             self.resource_submit_button.enabled = False
             self.resource_submit_button.draw()
+        if self.current_trading_phase == CurrentTradePhase.DEPOSIT.value:
+            self.prepare_buttons_for_maritime_deposit()
+
+    def prepare_buttons_for_maritime_deposit(self):
+        for resource, trade_rate, button in zip(
+                self.player.resource_bank.resources,
+                self.player.trade_rates,
+                self.resource_decrementers.buttons):
+            if resource >= trade_rate:
+                button.enabled = True
+                button.draw()
+
+    def click_increment_for_maritime_trade(self, mouse_pos):
+        resource = self.resource_incrementers.toggle_button_in_boundary(
+            mouse_pos)
+        if resource is not None:
+            if self.current_trading_phase == CurrentTradePhase.DEPOSIT.value:
+                self.player.resource_bank.deposit_resource(
+                    resource, self.player.trade_rates[resource])
+                self.player.resource_bank.validate_transaction()
+                self.draw()
+                self.player.maritime_trade_points -= 1
+                self.handle_incrementers_during_maritime_deposit(resource)
+
+    def click_decrement_for_maritime_trade(self, mouse_pos):
+        resource = self.resource_decrementers.toggle_button_in_boundary(
+            mouse_pos)
+        if resource is not None:
+            if self.current_trading_phase == CurrentTradePhase.DEPOSIT.value:
+                self.player.resource_bank.withdraw_resource(
+                    resource, self.player.trade_rates[resource])
+                self.player.resource_bank.validate_transaction()
+                self.draw()
+                self.player.maritime_trade_points += 1
+                self.handle_decrementers_during_maritime_deposit(resource)
+
+    def handle_incrementers_during_maritime_deposit(self, resource):
+        self.resource_decrementers.buttons[resource].enabled = True
+        self.resource_decrementers.draw()
+        # The current resources and resources recorded at beginning of the
+        # trade phase is always identical due to incrementing and
+        # decrementing values being the resource's trade rate.
+        if (self.player.resource_bank.resources[resource] ==
+                self.player.resources_at_start_of_trade_phase[resource]):
+            self.resource_incrementers.buttons[resource].enabled = False
+            self.resource_incrementers.draw()
+
+    def handle_decrementers_during_maritime_deposit(self, resource):
+        self.resource_incrementers.buttons[resource].enabled = True
+        self.resource_incrementers.draw()
+        # Cannot deposit anymore resources if less than respective trade rate.
+        if (self.player.resource_bank.resources[resource] <
+                self.player.trade_rates[resource]):
+            self.resource_decrementers.buttons[resource].enabled = False
+            self.resource_decrementers.draw()
 
     def draw(self):
         pygame.draw.rect(

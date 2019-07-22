@@ -68,10 +68,11 @@ class Ceten:
               and phase == CurrentPhase.VICTORY_PHASE.value):
             self.start_game()
         elif self.board_facade.roll_dice_button.in_boundaries(mouse_pos):
-            self.board_facade.roll_dice()
+            self.board_facade.roll_dice(self.private_player_facade)
         elif (self.board_facade.in_boundaries(mouse_pos)
                 and game_phase == CurrentGamePhase.ROBBER.value):
-            self.board_facade.place_robber(mouse_pos)
+            self.board_facade.place_robber(
+                mouse_pos, self.private_player_facade)
         elif self.board_facade.end_turn_button.in_boundaries(mouse_pos):
             self.board_facade.render_control_menu()
             self.board_facade.end_turn(self.private_player_facade)
@@ -84,6 +85,11 @@ class Ceten:
             trade_phase = self.private_player_facade.current_trading_phase
             if trade_phase == CurrentTradePhase.NONE.value:
                 self.board_facade.end_maritime_trade()
+        elif game_phase == CurrentGamePhase.MARITIME_TRADE.value:
+            self.private_player_facade.click_increment_for_maritime_trade(
+                mouse_pos)
+            self.private_player_facade.click_decrement_for_maritime_trade(
+                mouse_pos)
         elif game_phase == CurrentGamePhase.BUILDING.value:
             self.board_facade.build_component(
                 mouse_pos, self.private_player_facade)
