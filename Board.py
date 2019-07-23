@@ -22,7 +22,7 @@ class Board:
     ROAD_COST = [1, 0, 0, 1, 0]
     SETTLEMENT_COST = [1, 1, 1, 1, 0]
     CITY_COST = [0, 0, 2, 0, 3]
-    EXTRA_RESOURCE_QUANTITIES = [3, 3, 3, 3, 3]
+    EXTRA_RESOURCE_QUANTITIES = [10, 10, 10, 10, 10]
 
     resources = {
         ResourceType.LUMBER.value: 4,
@@ -91,6 +91,8 @@ class Board:
                 current_coordinate = Tile.change_coordinate(
                     current_coordinate, directions.pop(0))
         self.place_tokens()
+        self.start_off_with_extra_resources(self.players)
+
 
     """place_tokens:
     Places tokens on land tiles. These tokens have an activation value

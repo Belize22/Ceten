@@ -61,12 +61,14 @@ class Ceten:
     def handle_mouse(self):
         mouse_pos = pygame.mouse.get_pos()
         phase, game_phase = self.board_facade.get_current_phases()
+        # Scenarios outside of Game phase
         if phase == CurrentPhase.SETUP_PHASE.value:
             self.board_facade.build_component(
                 mouse_pos, self.private_player_facade)
         elif (self.board_facade.end_turn_button.in_boundaries(mouse_pos)
               and phase == CurrentPhase.VICTORY_PHASE.value):
             self.start_game()
+        # Scenarios within game phase.
         elif self.board_facade.roll_dice_button.in_boundaries(mouse_pos):
             self.board_facade.roll_dice(self.private_player_facade)
         elif (self.board_facade.in_boundaries(mouse_pos)
@@ -77,14 +79,27 @@ class Ceten:
             self.board_facade.render_control_menu()
             self.board_facade.end_turn(self.private_player_facade)
         elif self.board_facade.maritime_trade_button.in_boundaries(mouse_pos):
+            self.board_facade.current_feedback = "Deposit resources!"
             self.board_facade.begin_maritime_trade()
             self.private_player_facade.begin_maritime_trade()
+        # This section advances through the maritime trade phases and
+        # displays the appropriate feedback message depending on the
+        # trade phase.
         elif self.private_player_facade.resource_submit_button.in_boundaries(
                 mouse_pos):
             self.private_player_facade.advance_maritime_trade()
             trade_phase = self.private_player_facade.current_trading_phase
             if trade_phase == CurrentTradePhase.NONE.value:
+                self.board_facade.current_feedback = ""
                 self.board_facade.end_maritime_trade()
+            elif trade_phase == CurrentTradePhase.WITHDRAW.value:
+                self.board_facade.current_feedback = (
+                    "Withdraw "
+                    + str(self.private_player_facade.
+                          get_maritime_trade_points())
+                    + " resources!")
+        # Handles the use of increment and decrement buttons for resources
+        # during maritime trading.
         elif game_phase == CurrentGamePhase.MARITIME_TRADE.value:
             self.private_player_facade.click_increment_for_maritime_trade(
                 mouse_pos)
@@ -93,7 +108,6 @@ class Ceten:
         elif game_phase == CurrentGamePhase.BUILDING.value:
             self.board_facade.build_component(
                 mouse_pos, self.private_player_facade)
-
         self.board_facade.update_phase_panel()
         self.board_facade.update_feedback_panel()
 

@@ -36,7 +36,8 @@ class Player:
         return victory_points >= self.VICTORY_POINTS_TO_WIN
 
     def set_resources_before_starting_trade_phase(self):
-        self.resources_at_start_of_trade_phase = self.resource_bank.resources
+        self.resources_at_start_of_trade_phase = \
+            self.resource_bank.resources.copy()
 
     def retrieve_player_name(self):
         return str(self.name)
