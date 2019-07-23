@@ -9,11 +9,12 @@ class Corner:
         self.settlement = settlement
         self.ownership = ownership
 
-    def update(self, ownership):
+    def update(self, player):
         if self.settlement == SettlementLevel.NONE.value:
-            self.ownership = ownership
+            self.ownership = player.id
         if self.settlement < len(SettlementLevel):
             self.settlement += 1
+        self.update_players_trade_rates(player)
 
     def is_settlement_not_settled_by_current_player(self, ownership):
         does_corner_have_ownership = False
@@ -27,10 +28,9 @@ class Corner:
         for t in self.tiles:
             for i in range(0, len(t.corners)):
                 if t.corners[i] == self:
-                    previous_index = (i - 1) % len(CornerCardinality)
                     next_index = (i + 1) % len(CornerCardinality)
-                    if t.corners[previous_index] not in neighboring_corners:
-                        neighboring_corners.append(t.corners[previous_index])
+                    if t.corners[i] not in neighboring_corners:
+                        neighboring_corners.append(t.corners[i])
                     if t.corners[next_index] not in neighboring_corners:
                         neighboring_corners.append(t.corners[next_index])
         for nc in neighboring_corners:
@@ -41,16 +41,35 @@ class Corner:
 
     def corner_adjacent_to_players_road(self, ownership):
         is_settlement_adjacent_to_corresponding_road = False
-        neighboring_edges = []
-        for t in self.tiles:
-            for i in range(0, len(EdgeCardinality)):
-                if t.corners[i] == self:
-                    next_index = (i + 1) % len(CornerCardinality)
-                    if t.edges[i] not in neighboring_edges:
-                        neighboring_edges.append(t.edges[i])
-                    if t.edges[next_index] not in neighboring_edges:
-                        neighboring_edges.append(t.edges[next_index])
+        neighboring_edges = self.get_neighboring_edges(self.tiles)
         for nc in neighboring_edges:
             if nc.ownership == ownership:
                 is_settlement_adjacent_to_corresponding_road = True
         return is_settlement_adjacent_to_corresponding_road
+
+    def update_players_trade_rates(self, player):
+        ports = self.ports_of_edges_on_corner()
+        player.update_players_trade_rates(ports)
+
+    def ports_of_edges_on_corner(self):
+        neighboring_edges = self.get_neighboring_edges(self.tiles)
+        ports = []
+        for nc in neighboring_edges:
+            if nc.port is not None:
+                ports.append(nc.port)
+        return ports
+
+    def get_neighboring_edges(self, tiles):
+        neighboring_edges = []
+        for t in tiles:
+            for i in range(0, len(EdgeCardinality)):
+                if t.corners[i] == self:
+                    previous_index = (i - 1) % len(CornerCardinality)
+                    if t.edges[previous_index] not in neighboring_edges:
+                        neighboring_edges.append(t.edges[previous_index])
+                    if t.edges[i] not in neighboring_edges:
+                        neighboring_edges.append(t.edges[i])
+        return neighboring_edges
+
+
+

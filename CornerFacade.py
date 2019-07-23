@@ -29,7 +29,7 @@ class CornerFacade:
         self.draw()
 
     def update(self, player):
-        self.corner.update(player.id)
+        self.corner.update(player)
         self.draw()
 
     def draw(self):

@@ -1,6 +1,7 @@
 from ResourceBank import ResourceBank
 from GamePieceBank import GamePieceBank
 from GamePieceType import GamePieceType
+from PortType import PortType
 
 
 class Player:
@@ -34,6 +35,15 @@ class Player:
                     GamePieceType.CITY.value]
                 - self.game_piece_bank.game_pieces[GamePieceType.CITY.value])*2
         return victory_points >= self.VICTORY_POINTS_TO_WIN
+
+    def update_players_trade_rates(self, ports):
+        for p in ports:
+            if p == PortType.STANDARD.value:  # Turn all 4:1 to 3:1's
+                for i in range(0, len(self.trade_rates)):
+                    if self.trade_rates[i] > 3:
+                        self.trade_rates[i] = 3
+            else:  # Turn resource trade rate that port specifies into 2:1
+                self.trade_rates[p - 1] = 2
 
     def set_resources_before_starting_trade_phase(self):
         self.resources_at_start_of_trade_phase = \
