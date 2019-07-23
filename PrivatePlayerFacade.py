@@ -118,13 +118,18 @@ class PrivatePlayerFacade(PlayerFacade):
             if self.current_trading_phase == CurrentTradePhase.DEPOSIT.value:
                 self.player.resource_bank.deposit_resource(
                     resource, self.player.trade_rates[resource])
+                self.player.board.resource_bank.withdraw_resource(
+                    resource, self.player.trade_rates[resource])
                 self.player.resource_bank.validate_transaction()
+                self.player.board.resource_bank.validate_transaction()
                 self.draw()
                 self.handle_incrementers_during_maritime_deposit(resource)
             elif (self.current_trading_phase ==
                     CurrentTradePhase.WITHDRAW.value):
                 self.player.resource_bank.deposit_resource(resource, 1)
+                self.player.board.resource_bank.withdraw_resource(resource, 1)
                 self.player.resource_bank.validate_transaction()
+                self.player.board.resource_bank.validate_transaction()
                 self.draw()
                 self.handle_incrementers_during_maritime_withdraw(resource)
 
@@ -136,13 +141,18 @@ class PrivatePlayerFacade(PlayerFacade):
             if self.current_trading_phase == CurrentTradePhase.DEPOSIT.value:
                 self.player.resource_bank.withdraw_resource(
                     resource, self.player.trade_rates[resource])
+                self.player.board.resource_bank.deposit_resource(
+                    resource, self.player.trade_rates[resource])
                 self.player.resource_bank.validate_transaction()
+                self.player.board.resource_bank.validate_transaction()
                 self.draw()
                 self.handle_decrementers_during_maritime_deposit(resource)
             elif (self.current_trading_phase ==
                     CurrentTradePhase.WITHDRAW.value):
                 self.player.resource_bank.withdraw_resource(resource, 1)
+                self.player.board.resource_bank.deposit_resource(resource, 1)
                 self.player.resource_bank.validate_transaction()
+                self.player.board.resource_bank.validate_transaction()
                 self.draw()
                 self.handle_decrementers_during_maritime_withdraw(resource)
 
@@ -209,7 +219,6 @@ class PrivatePlayerFacade(PlayerFacade):
         self.resource_decrementers.draw()
         self.resource_panel.draw()
         self.game_piece_panel.draw()
-        self.development_card_panel.draw()
         self.resource_submit_button.draw()
 
     def get_player(self):

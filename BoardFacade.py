@@ -99,10 +99,11 @@ class BoardFacade:
         pygame.draw.circle(
             self.screen, (228, 205, 180), self.dice_value_position, 30, 0)
         font = pygame.font.Font(None, 36)
+        font_width, font_height = font.size(str(roll))
         text = font.render(str(roll), 1, (10, 10, 10))
         self.screen.blit(
-            text, [self.dice_value_position[0] - 11,
-                   self.dice_value_position[1] - 8])
+            text, [self.dice_value_position[0] - font_width*0.5,
+                   self.dice_value_position[1] - font_height*0.5])
         self.board.advance_game_phase()
         self.roll_dice_button.enabled = False
         self.roll_dice_button.draw()

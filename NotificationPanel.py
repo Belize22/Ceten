@@ -17,7 +17,7 @@ class NotificationPanel(Panel):
         font = pygame.font.Font(None, 36)
         text = font.render(str(self.dialog), 1, (10, 10, 10))
         font_width, font_height = font.size(str(self.dialog))
-        self.screen.blit(text, (self.center[0]-font_width*0.5, self.center[1]))
+        self.screen.blit(text, [self.center[0]-font_width*0.5, self.center[1]])
 
     def update(self, dialog):
         self.dialog = dialog

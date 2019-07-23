@@ -25,6 +25,8 @@ class LandTileFacade(TileFacade):
     def __init__(self, screen, tile, scale=1):
         super().__init__(screen, tile, scale)
         self.text = ""
+        self.text_width = 0
+        self.text_height = 0
 
     def draw(self):
         super().draw()
@@ -43,6 +45,8 @@ class LandTileFacade(TileFacade):
         if self.tile.robber:
             activation_value = "R"
             color = (255, 255, 255)
+        self.text_width, self.text_height = font.size(
+            str(activation_value))
         return font.render(activation_value, 1, color)
 
     def render_token(self):
@@ -51,7 +55,8 @@ class LandTileFacade(TileFacade):
             color = (27, 50, 75)
         pygame.draw.circle(self.screen, color, self.center, 15, 0)
         self.screen.blit(
-            self.text, [self.center[0] - 11, self.center[1] - 8])
+            self.text, [self.center[0] - self.text_width*0.5,
+                        self.center[1] - self.text_height*0.5])
 
     def set_colour(self):
         return LandTileFacade.colour[self.tile.resource]

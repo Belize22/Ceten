@@ -60,4 +60,3 @@ class PublicPlayerFacade(PlayerFacade):
              + self.screen.get_height()*0.25*(
                          self.player.turn_priority - 1)])
         self.resource_panel.draw()
-        self.development_card_panel.draw()

@@ -5,12 +5,13 @@ from PortType import PortType
 
 
 class Player:
-    VICTORY_POINTS_TO_WIN = 10
+    VICTORY_POINTS_TO_WIN = 6
 
-    def __init__(self, id, name):
+    def __init__(self, id, name, board):
         self.id = id
         self.turn_priority = id
         self.name = name
+        self.board = board
         self.resource_bank = ResourceBank()
         self.game_piece_bank = GamePieceBank()
         self.trade_rates = [4, 4, 4, 4, 4]  # Always start off at 4:1 rate.

@@ -50,7 +50,7 @@ class Board:
         self.sea_tiles = []
         self.players = []
         self.current_player = None
-        self.resource_bank = ResourceBank(19)
+        self.resource_bank = ResourceBank(30)
         self.die_roller = DieRoller(self.NUM_DICE)
         self.current_phase = CurrentPhase.SETUP_PHASE.value
         self.current_game_phase = CurrentGamePhase.ROLL_DICE.value
@@ -58,8 +58,7 @@ class Board:
         self.settlement_placement_during_setup = True
         current_resources = Board.resources.copy()
         for i in range(1, num_players + 1):
-            self.players.append(
-                    Player(i, "Player" + str(i)))
+            self.players.append(Player(i, "Player" + str(i), self))
         self.randomize_turn_order()
         current_coordinate = [0, 0]
         directions = self.retrieve_map_builder_directions()
@@ -171,6 +170,8 @@ class Board:
             for c in pt.corners:
                 self.gather_resource_with_settlement(pt, c, self.players)
                 valid_transaction = self.resource_bank.validate_transaction()
+                if not valid_transaction:
+                    break
             if valid_transaction:
                 for p in self.players:
                     p.resource_bank.validate_transaction()
@@ -194,6 +195,8 @@ class Board:
             if at.resource is not ResourceType.DESERT.value:
                 player.resource_bank.deposit_resource(at.resource, 1)
                 player.resource_bank.validate_transaction()
+                self.resource_bank.withdraw_resource(at.resource, 1)
+                self.resource_bank.validate_transaction()
 
     def __random_tile(self):
         return self.tiles[random.randint(0, len(self.tiles) - 1)]
@@ -279,8 +282,7 @@ class Board:
                         elif self.settlement_placement_during_setup:
                             player.game_piece_bank.place_settlement()
                             if self.reverse_turn_order:
-                                self.produce_initial_resources(
-                                    corner, player)
+                                self.produce_initial_resources(corner, player)
                             self.settlement_placement_during_setup = False
                             return ""
                         else:
