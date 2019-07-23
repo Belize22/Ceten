@@ -4,9 +4,9 @@ import pygame
 
 
 class SubmitButton(Button):
-    BUTTON_COLOR = (155, 155, 255)
-    TEXT_COLOR = (10, 10, 10)
-    BORDER_COLOR = TEXT_COLOR
+    # Button color, text color, border color respectively.
+    DISABLED_COLOR_SCHEME = [(155, 155, 155), (75, 75, 75), (10, 10, 10)]
+    ENABLED_COLOR_SCHEME = [(155, 155, 255), (10, 10, 10), (10, 10, 10)]
 
     def __init__(self, screen, position, dialog):
         super().__init__(screen, position)
@@ -17,27 +17,31 @@ class SubmitButton(Button):
         self.update(dialog)
 
     def draw(self):
+        if self.enabled:
+            current_color_scheme = self.ENABLED_COLOR_SCHEME
+        else:
+            current_color_scheme = self.DISABLED_COLOR_SCHEME
         (self.text_surf, self.text_box) = self.text_objects(
-            self.dialog, self.font)
+            self.dialog, self.font, current_color_scheme[1])
         self.text_box.center = self.position
         font_size = self.font.size(self.dialog)
         pygame.draw.rect(
-            self.screen, self.BUTTON_COLOR,
+            self.screen, current_color_scheme[0],
             ((self.position[0]-font_size[0]/2,
               self.position[1]-font_size[1]/2), font_size), 0)
         pygame.draw.rect(
-            self.screen, self.BORDER_COLOR,
+            self.screen, current_color_scheme[2],
             ((self.position[0]-font_size[0]/2,
               self.position[1]-font_size[1]/2), font_size), 2)
         self.screen.blit(self.text_surf, self.text_box)
 
     def in_boundaries(self, position):
-        return self.text_box.collidepoint(position)
+        return self.text_box.collidepoint(position) and self.enabled
 
     def update(self, dialog):
         self.dialog = dialog
         self.draw()
 
-    def text_objects(self, text, font):
-        text_surface = font.render(text, 1, self.TEXT_COLOR)
+    def text_objects(self, text, font, text_color):
+        text_surface = font.render(text, 1, text_color)
         return text_surface, text_surface.get_rect()

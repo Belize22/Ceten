@@ -148,10 +148,14 @@ class Board:
     def change_phase(self):
         self.current_phase += 1
 
-    def change_game_phase(self):
+    def advance_game_phase(self):
         self.current_game_phase += 1
         if self.current_game_phase > len(CurrentGamePhase):
             self.current_game_phase = CurrentGamePhase.ROLL_DICE.value
+
+    def recede_game_phase(self):
+        if self.current_game_phase > 1:
+            self.current_game_phase -= 1
 
     """produce_resources:
     Gives resources to the settlements adjacent to tiles with 

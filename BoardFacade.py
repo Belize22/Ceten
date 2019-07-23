@@ -23,8 +23,11 @@ class BoardFacade:
         self.corner_facades = []
         self.roll_dice_button = SubmitButton(
             self.screen, (int(self.screen.get_width()*0.9), 275), "Roll Dice")
+        self.maritime_trade_button = SubmitButton(
+            self.screen,
+            (int(self.screen.get_width()*0.9), 400), "Maritime Trade")
         self.end_turn_button = SubmitButton(
-            self.screen, (int(self.screen.get_width()*0.9), 425), "End Turn")
+            self.screen, (int(self.screen.get_width()*0.9), 430), "End Turn")
         self.dice_value_position = (int(self.screen.get_width()*0.9), 275 + 60)
         self.phase_panel = NotificationPanel(
             self.screen,
@@ -88,9 +91,10 @@ class BoardFacade:
             ((self.screen.get_width()*0.8, self.screen.get_height()*0.5),
              (self.screen.get_width()*0.2, self.screen.get_height()*0.5)), 0)
         self.roll_dice_button.draw()
+        self.maritime_trade_button.draw()
         self.end_turn_button.draw()
 
-    def roll_dice(self):
+    def roll_dice(self, player_facade):
         roll = self.board.die_roller.roll_dice()
         pygame.draw.circle(
             self.screen, (228, 205, 180), self.dice_value_position, 30, 0)
@@ -99,12 +103,18 @@ class BoardFacade:
         self.screen.blit(
             text, [self.dice_value_position[0] - 11,
                    self.dice_value_position[1] - 8])
-        self.board.change_game_phase()
+        self.board.advance_game_phase()
+        self.roll_dice_button.enabled = False
+        self.roll_dice_button.draw()
         if roll != 7:
-            self.board.change_game_phase()
+            self.board.advance_game_phase()
+            self.board.advance_game_phase()
             self.produce_resources(roll)
+            self.allow_maritime_trade_if_possible(player_facade)
+            self.end_turn_button.enabled = True
+            self.end_turn_button.draw()
 
-    def place_robber(self, mouse_pos):
+    def place_robber(self, mouse_pos, player_facade):
         tile_facade = self.find_tile_at(mouse_pos)
         if tile_facade is not None:
             robber_tile_facade = self.find_robber()
@@ -115,7 +125,25 @@ class BoardFacade:
                 robber_tile_facade.set_robber(False)
                 tile_facade.set_robber(True)
                 self.current_feedback = ""
-                self.board.change_game_phase()
+                self.board.advance_game_phase()
+                self.board.advance_game_phase()
+                self.allow_maritime_trade_if_possible(player_facade)
+                self.end_turn_button.enabled = True
+                self.end_turn_button.draw()
+
+    def begin_maritime_trade(self):
+        self.board.recede_game_phase()
+        self.maritime_trade_button.enabled = False
+        self.maritime_trade_button.draw()
+        self.end_turn_button.enabled = False
+        self.end_turn_button.draw()
+
+    def end_maritime_trade(self):
+        self.board.advance_game_phase()
+        self.maritime_trade_button.enabled = True
+        self.maritime_trade_button.draw()
+        self.end_turn_button.enabled = True
+        self.end_turn_button.draw()
 
     def build_component(self, mouse_pos, player_facade):
         cf = self.find_corner_at(mouse_pos)
@@ -140,13 +168,21 @@ class BoardFacade:
             current_phase_after = self.board.get_current_phase()
             player_facade.set_next_player(player)
             if current_phase_before != CurrentPhase.SETUP_PHASE.value:
-                self.board.change_game_phase()
+                self.board.advance_game_phase()
+                self.roll_dice_button.enabled = True
+                self.roll_dice_button.draw()
+                self.maritime_trade_button.enabled = False
+                self.maritime_trade_button.draw()
+                self.end_turn_button.enabled = False
+                self.end_turn_button.draw()
                 self.current_feedback = ""
             else:
                 if current_phase_after == CurrentPhase.SETUP_PHASE.value:
                     self.current_feedback = player_facade.player.\
                         retrieve_player_name() + ", place a settlement."
                 else:
+                    self.roll_dice_button.enabled = True
+                    self.roll_dice_button.draw()
                     self.current_feedback = ""
 
     # will always return at least one robber
@@ -217,6 +253,8 @@ class BoardFacade:
                 message = "Roll Dice"
             elif current_game_phase == CurrentGamePhase.ROBBER.value:
                 message = "Move the Robber to a new resource tile"
+            elif current_game_phase == CurrentGamePhase.MARITIME_TRADE.value:
+                message = "Maritime Trading in progress"
             elif current_game_phase == CurrentGamePhase.BUILDING.value:
                 message = "Build something from your Inventory"
         self.phase_panel.update(message)
@@ -228,6 +266,19 @@ class BoardFacade:
         self.current_feedback = player_facade.player.retrieve_player_name() \
             + ", place a settlement."
         self.feedback_panel.update(self.current_feedback)
+
+    '''
+    allow_maritime_trade_if_possible:
+    Allows player to access maritime trade if they have the sufficient
+    resources to deposit.
+    '''
+    def allow_maritime_trade_if_possible(self, player_facade):
+        for resource, trade_rate in zip(
+                player_facade.player.resource_bank.resources,
+                player_facade.player.trade_rates):
+            if resource >= trade_rate:
+                self.maritime_trade_button.enabled = True
+                self.maritime_trade_button.draw()
 
     def draw(self):
         self.phase_panel.draw()
