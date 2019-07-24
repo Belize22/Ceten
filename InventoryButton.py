@@ -14,9 +14,9 @@ class InventoryButton(Button):
         self.triangle_pointlist = []
         self.line_length = 5
         if orientation == "up":
-            degree = math.pi/2
+            degree = math.pi/2    # 90 degrees in unit circle.
         else:
-            degree = 3*math.pi/2
+            degree = 3*math.pi/2  # 270 (-90) degrees in unit circle.
         for i in range(0, 3):
             self.triangle_pointlist.append(
                 [self.position[0]+int(self.line_length*math.cos(degree)),
@@ -34,6 +34,11 @@ class InventoryButton(Button):
         pygame.draw.polygon(
             self.screen, current_color_scheme[0], self.triangle_pointlist, 0)
 
+    """in_boundaries:
+    Determines if the button was clicked by checking if the distance
+    between where the user clicked and the center of the button is
+    less than or equal to the button's radius.
+    """
     def in_boundaries(self, position):
         if ((math.sqrt((position[0]-self.position[0])**2
                        + (position[1]-self.position[1])**2))

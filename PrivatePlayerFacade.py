@@ -85,6 +85,10 @@ class PrivatePlayerFacade(PlayerFacade):
         elif self.current_trading_phase == CurrentTradePhase.WITHDRAW.value:
             self.prepare_buttons_for_maritime_withdraw()
 
+    """prepare_buttons_for_maritime_deposit:
+    All resources that are able to be traded have their decrement
+    buttons active.
+    """
     def prepare_buttons_for_maritime_deposit(self):
         for resource, trade_rate, button in zip(
                 self.player.resource_bank.resources,
@@ -92,8 +96,13 @@ class PrivatePlayerFacade(PlayerFacade):
                 self.resource_decrementers.buttons):
             if resource >= trade_rate:
                 button.enabled = True
-        self.resource_incrementers.draw()
+        self.resource_decrementers.draw()
 
+    """prepare_buttons_for_maritime_withdraw:
+    If any resources were deposited, all increment buttons will be
+    active (player can choose any resource for each individual
+    resource they are allowed to get).
+    """
     def prepare_buttons_for_maritime_withdraw(self):
         for resource, trade_rate, increment_button, decrement_button in zip(
                 self.player.resource_bank.resources,
@@ -110,6 +119,16 @@ class PrivatePlayerFacade(PlayerFacade):
         self.resource_incrementers.draw()
         self.resource_decrementers.draw()
 
+    """click_increment_for_maritime_trade:
+    During Deposit Phase:
+    - Player deposit resources base on the trade rate. For each
+      deposit, the player gains 1 withdrawal for next phase.
+    - Disables incrementer for specified resource if it's equal to
+      how many the player had when the trading phase began.
+    During Withdraw Phase:
+    - Players cancels a withdrawal for the particular resource
+    - Disables incrementer if player has used all his/her withdrawals.
+    """
     def click_increment_for_maritime_trade(self, mouse_pos):
         resource = self.resource_incrementers.toggle_button_in_boundary(
             mouse_pos)
@@ -133,6 +152,16 @@ class PrivatePlayerFacade(PlayerFacade):
                 self.draw()
                 self.handle_incrementers_during_maritime_withdraw(resource)
 
+    """click_decrement_for_maritime_trade:
+    During Deposit Phase:
+    - Player cancels deposits.
+    - Disables decrementer for specified resource if the player does
+      not have the sufficient amount of the specified resource to
+      do further deposits.
+    During Withdraw Phase:
+    - Players uses a withdrawal for the particular resource.
+    - Disables decrementer has not taken any withdrawals.
+    """
     def click_decrement_for_maritime_trade(self, mouse_pos):
         resource = self.resource_decrementers.toggle_button_in_boundary(
             mouse_pos)
@@ -224,6 +253,10 @@ class PrivatePlayerFacade(PlayerFacade):
     def get_player(self):
         return self.player
 
+    """get_maritime_trade_points:
+    Returns points that equate to how many resources a player can
+    withdraw during maritime trading.
+    """
     def get_maritime_trade_points(self):
         return self.player.maritime_trade_points
 

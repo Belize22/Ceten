@@ -40,6 +40,11 @@ class Ceten:
         self.board_facade.update_phase_panel()
         self.board_facade.update_feedback_panel()
 
+    """run:
+    This is the main game loop of Ceten. Detects when the user has
+    clicked on the game window and will quit the game when the
+    user desires.
+    """
     def run(self):
         running = True
         while running:
@@ -58,6 +63,12 @@ class Ceten:
         pygame.display.flip()
         self.clock.tick(15)
 
+    """handle_mouse:
+    This is the mouse control handler for the game loop. This is
+    the basis of playing Ceten since no keyboard controls have
+    been implemented yet and is therefore responsible for
+    allowing the user to get involved with Ceten's game mechanics.
+    """
     def handle_mouse(self):
         mouse_pos = pygame.mouse.get_pos()
         phase, game_phase = self.board_facade.get_current_phases()
@@ -91,7 +102,8 @@ class Ceten:
             trade_phase = self.private_player_facade.current_trading_phase
             if trade_phase == CurrentTradePhase.NONE.value:
                 self.board_facade.current_feedback = ""
-                self.board_facade.end_maritime_trade()
+                self.board_facade.end_maritime_trade(
+                    self.private_player_facade)
             elif trade_phase == CurrentTradePhase.WITHDRAW.value:
                 self.board_facade.current_feedback = (
                     "Withdraw "

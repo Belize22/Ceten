@@ -22,6 +22,12 @@ class Corner:
             does_corner_have_ownership = True
         return does_corner_have_ownership
 
+    """are_neighboring_corners_settled:
+    Determines if players have placed settlements in neighboring
+    corners by taking all the tiles the corner is associated with
+    and finding the current corner. It then checks adjacent corners
+    within each tile and determines if all of them are free or not.
+    """
     def are_neighboring_corners_settled(self):
         is_an_adjacent_corner_settled = False
         neighboring_corners = []
@@ -39,6 +45,10 @@ class Corner:
                 break
         return is_an_adjacent_corner_settled
 
+    """corners_adjacent_to_players_road:
+    Determines whether a road from the current player is
+    next to this corner or not.
+    """
     def corner_adjacent_to_players_road(self, ownership):
         is_settlement_adjacent_to_corresponding_road = False
         neighboring_edges = self.get_neighboring_edges(self.tiles)
@@ -51,6 +61,11 @@ class Corner:
         ports = self.ports_of_edges_on_corner()
         player.update_players_trade_rates(ports)
 
+    """ports_of_edges_on_corner:
+    Determines whether any neighboring edge of this corner is
+    associated with a port or not. Returns the list of ports
+    found.
+    """
     def ports_of_edges_on_corner(self):
         neighboring_edges = self.get_neighboring_edges(self.tiles)
         ports = []
@@ -59,6 +74,12 @@ class Corner:
                 ports.append(nc.port)
         return ports
 
+    """get_neighboring_edges:
+    Gathers the corner's neighboring edges by taking all the
+    tiles associated with this corner, finding the corner in
+    each tile, then taking the adjacent edges based on
+    the corner's cardinality.
+    """
     def get_neighboring_edges(self, tiles):
         neighboring_edges = []
         for t in tiles:

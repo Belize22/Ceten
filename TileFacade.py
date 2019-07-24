@@ -35,6 +35,16 @@ class TileFacade(ABC):
                  center[1] + scale*-math.sin(rad)])
         return hex_pointlist
 
+    """set_center:
+    The center point of the hexagon on the screen is determined by
+    the tile's abstract coordinate. The tile with (0,0) as the abstract
+    coordinate is at the center of the screen. Horizontal position
+    is based on the x-coordinate and uses the hexagon's apothem as a
+    basis. Vertical position is based on the y-coordinate and uses
+    the hexagon's radius as a basis. An offset for vertical position
+    exists for tiles with an even y-coordinate so that each tile
+    can truly be adjacent to each other.
+    """
     @staticmethod
     def set_center(screen, scale, tile_coordinate):
         center = [screen.get_width()*0.5,

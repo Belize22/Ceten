@@ -19,6 +19,11 @@ class LandTile(Tile):
         else:
             self.robber = False
 
+    """generate_corners:
+    Checks if any tiles are adjacent to this one. If so, the corners
+    shared by the adjacent tiles are taken. Otherwise, new corners are 
+    generated.
+    """
     def generate_corners(self, tile_aggregate):
         base_coordinate = self.coordinate
         for direction in EdgeCardinality:
@@ -28,10 +33,13 @@ class LandTile(Tile):
             # Copy existing corners from adjacent tile of current direction
             for t in tile_aggregate:
                 if t.coordinate == adjacent_coordinate:
-                    contrary_first_corner_direction = (direction.value - 2) \
-                                                      % len(EdgeCardinality)
-                    contrary_second_corner_direction = (direction.value + 3) \
-                                                      % len(EdgeCardinality)
+                    # Shared corners have a 1 corner gap for absolute position
+                    # in their respective tiles. Index difference of 2 for i
+                    # and i + 1 will get these corners.
+                    contrary_first_corner_direction = (
+                        (direction.value - 2) % len(EdgeCardinality))
+                    contrary_second_corner_direction = (
+                        (direction.value + 3) % len(EdgeCardinality))
                     self.corners[direction.value] = t.corners[
                         contrary_first_corner_direction]
                     self.corners[next_direction] = t.corners[

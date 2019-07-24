@@ -12,6 +12,11 @@ class Tile(ABC):
         self.generate_edges(tile_aggregate)
         super().__init__()
 
+    """generate_corners:
+    Checks if any edges are adjacent to this one. If so, the corners
+    shared by the adjacent tiles are taken. Otherwise, new corners are 
+    generated.
+    """
     def generate_edges(self, tile_aggregate):
         base_coordinate = self.coordinate
         for direction in EdgeCardinality:
@@ -20,8 +25,11 @@ class Tile(ABC):
             # Copy existing edges from adjacent tile of current direction
             for t in tile_aggregate:
                 if t.coordinate == adjacent_coordinate:
-                    contrary_edge_direction = (direction.value + 3) \
-                                              % len(EdgeCardinality)
+                    # 6 directions in a hexagon. Therefore, i + 3 is the
+                    # contrary edge in relation to this edge in terms of
+                    # absolute position for both tiles.
+                    contrary_edge_direction = (
+                        (direction.value + 3) % len(EdgeCardinality))
                     self.edges[direction.value] = t.edges[
                         contrary_edge_direction]
             # Generate new edge if adjacent tile for current direction doesn't
