@@ -301,12 +301,13 @@ class BoardFacade:
     resources to deposit.
     """
     def allow_maritime_trade_if_possible(self, player_facade):
+        self.maritime_trade_button.enabled = False
         for resource, trade_rate in zip(
                 player_facade.player.resource_bank.resources,
                 player_facade.player.trade_rates):
             if resource >= trade_rate:
                 self.maritime_trade_button.enabled = True
-                self.maritime_trade_button.draw()
+        self.maritime_trade_button.draw()
 
     """draw:
     Renders every game component related to interaction with the
