@@ -23,6 +23,7 @@ class Board:
     SETTLEMENT_COST = [1, 1, 1, 1, 0]
     CITY_COST = [0, 0, 2, 0, 3]
     EXTRA_RESOURCE_QUANTITIES = [3, 3, 3, 3, 3]
+    NAMES = ["Feng", "Suggs", "Lotus", "Regina"]
 
     resources = {
         ResourceType.LUMBER.value: 4,
@@ -57,7 +58,7 @@ class Board:
         self.reverse_turn_order = False
         self.settlement_placement_during_setup = True
         for i in range(1, num_players + 1):
-            self.players.append(Player(i, "Player" + str(i), self))
+            self.players.append(Player(i, self.NAMES[i - 1], self))
         self.randomize_turn_order()
         current_coordinate = [0, 0]
         current_resources = Board.resources.copy()
